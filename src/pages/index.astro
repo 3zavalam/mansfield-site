@@ -8,6 +8,7 @@ const posts = (await getPosts()).slice(0, 3);
   <section>
     <p class="eyebrow">Runnin' down my dream</p>
     <h1 class="serif mt-4 text-[2.6rem] leading-[1.05] tracking-tight sm:text-6xl">Mansfield</h1>
+    <p class="serif mt-5 max-w-2xl text-xl leading-relaxed text-stone-600 italic sm:text-2xl dark:text-stone-300">Building data, software and AI tools in public, and learning how businesses actually work.</p>
   </section>
 
   <section class="mt-10 max-w-2xl space-y-4 text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">
@@ -18,6 +19,25 @@ const posts = (await getPosts()).slice(0, 3);
   <section class="mt-16">
     <div class="flex items-baseline justify-between"><h2 class="eyebrow">Now</h2><a href="/now" class="text-sm text-stone-500 hover:text-accent dark:text-stone-400">More →</a></div>
     <p class="mt-4 max-w-2xl text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">I'm in the León internship online, and I'm living in my hometown while I go to Spain.</p>
+  </section>
+
+  <section class="mt-16">
+    <div class="flex items-baseline justify-between"><h2 class="eyebrow">What I do</h2><a href="/work-with-me" class="text-sm text-stone-500 hover:text-accent dark:text-stone-400">Details →</a></div>
+    <ul class="mt-5 grid gap-px overflow-hidden rounded-xl border border-stone-200 bg-stone-200 sm:grid-cols-2 lg:grid-cols-4 dark:border-stone-800 dark:bg-stone-800">
+      <li class="bg-paper p-5 dark:bg-night"><p class="text-sm font-medium">Data & dashboards</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Power BI, Python and SQL. The stuff I have the most experience in.</p></li>
+      <li class="bg-paper p-5 dark:bg-night"><p class="text-sm font-medium">The last 20% of your MVP</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Deploys, auth, payments, databases, so it actually ships.</p></li>
+      <li class="bg-paper p-5 dark:bg-night"><p class="text-sm font-medium">AI automations & chatbots</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Scripts and bots that kill the boring, repetitive work.</p></li>
+      <li class="bg-paper p-5 dark:bg-night"><p class="text-sm font-medium">Sports analysis</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Football data, scouting tools, xG models. My favorite kind.</p></li>
+    </ul>
+  </section>
+
+  <section class="mt-16">
+    <div class="flex items-baseline justify-between"><h2 class="eyebrow">Featured projects</h2><a href="/projects" class="text-sm text-stone-500 hover:text-accent dark:text-stone-400">All →</a></div>
+    <div class="mt-5 grid gap-4 sm:grid-cols-3">
+      <a href="/projects" class="rounded-xl border border-accent/50 p-5 transition hover:border-accent sm:col-span-1"><p class="eyebrow !text-accent dark:!text-accent-dark">Most proud of</p><p class="serif mt-2 text-xl">Winner Way</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">An AI tennis coach that analyzes biomechanics and strategy from video.</p></a>
+      <a href="/projects" class="rounded-xl border border-stone-200 p-5 transition hover:border-ink dark:border-stone-800"><p class="eyebrow">Club León FC</p><p class="serif mt-2 text-xl">Scouting tool</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Helps scouts build player profiles and reports with less manual work.</p></a>
+      <a href="/projects" class="rounded-xl border border-stone-200 p-5 transition hover:border-ink dark:border-stone-800"><p class="eyebrow">Football</p><p class="serif mt-2 text-xl">xG model</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Expected Goals trained on 2022 World Cup data.</p></a>
+    </div>
   </section>
 
   {posts.length > 0 && (

@@ -1,31 +1,31 @@
 ---
 import Base from '../layouts/Base.astro';
-type P = { t: string; role?: string; when?: string; d: string; stack: string; links?: [string, string][]; img?: [string, string][] };
+type P = { t: string; note?: string; role?: string; when?: string; d: string; stack: string; links?: [string, string][]; img?: [string, string][] };
 const G = 'https://github.com/3zavalam/';
 const work: P[] = [
-  { t: 'Club León FC: scouting tool', role: 'Data Analyst & Software Development Intern', when: 'Aug 2026 – present', d: 'Data tool for the scouting team. Internal; no details shared here.', stack: 'Data tooling · Software development' },
-  { t: 'INRS × Mitacs: AI and scraping research', role: 'Research Intern, Montreal', when: 'May – Aug 2026', d: "AI and web scraping research, including implementing a professor's paper that uses Kalman filters to predict World Cup outcomes.", stack: 'Python · Web scraping · Kalman filters' },
-  { t: 'Piquero: event chatbot & Hy-Tek to Excel converter', role: 'Software Developer Intern', when: 'Summer 2025', d: 'A Q&A chatbot for a national swimming event, and a Python script that converts Hy-Tek (.hy3) files to Excel.', stack: 'Python · Chatbot · Data conversion' },
-  { t: 'RIANSA: Power BI sales dashboards', role: 'Data Analyst Intern', when: 'Summer 2024', d: 'Power BI dashboards for sales data.', stack: 'Power BI · Sales analytics' },
+  { t: 'Club León FC: scouting tool', role: 'Data Analyst & Software Development Intern', when: 'Aug 2026 – present', d: 'A tool that helps the scouting team build player profiles and reports and compare prospects with less manual work. So far a scout has created 13 player profiles and 4 reports with it. Internal tool; no proprietary details shared here.', stack: 'Data tooling · Software development' },
+  { t: 'INRS × Mitacs: AI and scraping research', role: 'Research Intern, Montreal', when: 'May – Aug 2026', d: "Applied AI and web scraping techniques to research problems under faculty supervision, including implementing a professor's paper that uses Kalman filters to predict World Cup outcomes.", stack: 'Python · Web scraping · Kalman filters' },
+  { t: 'Piquero: event chatbot & Hy-Tek to Excel converter', role: 'Software Developer Intern', when: 'Summer 2025', d: 'A Q&A chatbot for a national swimming event with 500+ attendees that automated FAQ responses for staff, and a Python algorithm that converts Hy-Tek (.hy3) files to Excel, eliminating manual data entry.', stack: 'Python · Chatbot · Data conversion' },
+  { t: 'RIANSA: Power BI sales dashboards', role: 'Data Analyst Intern', when: 'Summer 2024', d: 'Built and managed Power BI dashboards for nationwide sales data, and identified top products and highest-volume client locations to inform sales strategy.', stack: 'Power BI · Sales analytics' },
 ];
 const builds: P[] = [
-  { t: 'Winner Way: AI tennis coach (most proud of)', d: "The one I'm most proud of, and the one I'm most disappointed I didn't continue. An AI tennis-coach app that analyzes tennis video.", stack: 'React · Python · Flask · OpenCV', links: [['Frontend', G + 'frontend'], ['Backend', G + 'ww-backend']] },
+  { t: 'Winner Way: AI tennis coach', note: "The one I'm most proud of, and the one I'm most disappointed I didn't continue.", d: 'Full-stack tennis analysis platform with an AI coach that analyzes player biomechanics and strategy from video, using OpenCV for court keypoint detection and Dynamic Time Warping for movement analysis.', stack: 'React · Python · Flask · OpenCV', links: [['Frontend', G + 'frontend'], ['Backend', G + 'ww-backend']] },
   { t: 'xG model', d: 'A logistic regression Expected Goals model trained on StatsBomb data from the 2022 FIFA World Cup.', stack: 'Python · scikit-learn · Pandas', links: [['GitHub', G + 'xG-Model']] },
-  { t: 'Post-match dashboard', d: 'Match dashboards built from data scraped from SofaScore and Fotmob.', stack: 'Python · Web scraping · Data visualization', links: [['GitHub', G + 'Match-Report-Analysis']] },
-  { t: 'Interactive Web: Liga MX & MLS', d: 'A Streamlit app with radar charts, shot maps and team stats for Liga MX and MLS matches.', stack: 'Python · Streamlit · BeautifulSoup · Matplotlib', links: [['GitHub', G + 'Interactive-Web']] },
-  { t: 'Reservaciones: booking system', d: 'A reservation system for night clubs and venues.', stack: 'FastAPI · React · TypeScript · Supabase', links: [['GitHub', G + 'reservaciones']] },
+  { t: 'Post-match dashboard', d: 'Two dashboards built from data scraped from SofaScore and Fotmob: a match recap with key stats, shots and team performance, and shot maps with a Player of the Match analysis.', stack: 'Python · Web scraping · Data visualization', links: [['GitHub', G + 'Match-Report-Analysis']] },
+  { t: 'Interactive Web: Liga MX & MLS', d: 'An interactive Streamlit app that generates radar charts, shot maps and team statistics for Liga MX and MLS matches.', stack: 'Python · Streamlit · BeautifulSoup · Matplotlib', links: [['GitHub', G + 'Interactive-Web']] },
+  { t: 'Reservaciones: booking system', d: 'A reservation system for night clubs and venues with an admin dashboard, a customer app and a door-staff view: three roles, no double-bookings, real-time table state.', stack: 'FastAPI · React · TypeScript · Supabase', links: [['GitHub', G + 'reservaciones']] },
 ];
 const demos: P[] = [
-  { t: 'Superstore sales dashboard', d: 'A Power BI sales dashboard on the public Sample Superstore data.', stack: 'Python · Star schema · Power BI / DAX', img: [['/img/superstore-1.png', 'Superstore dashboard overview page'], ['/img/superstore-2.png', 'Superstore dashboard detail page']] },
-  { t: 'Messy files → clean Excel report', d: 'Messy CSV exports cleaned into an Excel report with Python. Synthetic data.', stack: 'Python · Pandas · openpyxl · cron', img: [['/img/messy-before.png', 'Raw messy CSV files before cleaning'], ['/img/messy-after.png', 'Clean Excel summary sheet after automation']] },
+  { t: 'Superstore sales dashboard', d: 'Public Sample Superstore data modelled into a star schema in Python, with DAX measures and a three-page sales dashboard plus a written insights memo. A demo of the dashboard service.', stack: 'Python · Star schema · Power BI / DAX', img: [['/img/superstore-1.png', 'Superstore dashboard overview page'], ['/img/superstore-2.png', 'Superstore dashboard detail page']] },
+  { t: 'Messy files → clean Excel report', d: 'Three inconsistent point-of-sale CSV exports (mixed encodings, separators, date formats, duplicates) cleaned and consolidated into a formatted Excel report with one scheduled command. Built on synthetic data.', stack: 'Python · Pandas · openpyxl · cron', img: [['/img/messy-before.png', 'Raw messy CSV files before cleaning'], ['/img/messy-after.png', 'Clean Excel summary sheet after automation']] },
 ];
 ---
-<Base title="Projects" description="Things I've built: Winner Way (AI tennis coach), Club León, research, sports data projects and demos.">
+<Base title="Projects" description="Things I've built: Winner Way (AI tennis coach), Club León scouting tool, xG model, dashboards, automations and research.">
   <p class="eyebrow">Projects</p>
   <h1 class="serif mt-4 text-4xl tracking-tight sm:text-5xl">Things I've built</h1>
-  <p class="mt-5 max-w-2xl text-[17px] leading-relaxed text-stone-600 dark:text-stone-400">Code is linked where it's public.</p>
+  <p class="mt-5 max-w-2xl text-[17px] leading-relaxed text-stone-600 dark:text-stone-400">Work for teams and companies, personal builds, and demos of the freelance services. Code is linked where it's public.</p>
 
-  {[['Personal builds', builds], ['Work', work], ['Demos', demos]].map(([h, list]) => (
+  {[['Personal builds', builds], ['Work', work], ['Freelance demos', demos]].map(([h, list]) => (
     <section class="mt-14">
       <h2 class="eyebrow">{h as string}</h2>
       <div class="mt-4 divide-y divide-stone-200 border-t border-stone-200 dark:divide-stone-800 dark:border-stone-800">
@@ -35,6 +35,7 @@ const demos: P[] = [
               <h3 class="serif text-2xl leading-snug">{p.t}</h3>
               {p.when && <p class="shrink-0 text-sm tabular-nums text-stone-500">{p.when}</p>}
             </div>
+            {p.note && <p class="mt-2 serif text-lg italic text-accent dark:text-accent-dark">{p.note}</p>}
             {p.role && <p class="mt-1 text-sm text-stone-500 dark:text-stone-400">{p.role}</p>}
             <p class="mt-3 leading-relaxed text-stone-700 dark:text-stone-300">{p.d}</p>
             {p.img && (
