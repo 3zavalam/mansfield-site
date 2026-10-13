@@ -4,13 +4,9 @@ import PostList from '../../components/PostList.astro';
 import { getPosts } from '../../posts';
 const posts = await getPosts();
 ---
-<Base title="Writing" description="Posts and business analyses by Emilio Zavala Miceli.">
+<Base title="Writing" description="Analysis of businesses, mainly sports companies.">
   <p class="eyebrow">Writing</p>
-  <h1 class="serif mt-4 text-4xl tracking-tight sm:text-5xl">Notes, progress and business analyses</h1>
-  <p class="mt-5 max-w-2xl text-[17px] leading-relaxed text-stone-600 dark:text-stone-400">What I'm building, what I'm learning, and how I think businesses work.</p>
+  <h1 class="serif mt-4 text-4xl tracking-tight sm:text-5xl">Writing</h1>
+  <p class="mt-5 max-w-2xl text-[17px] leading-relaxed text-stone-600 dark:text-stone-400">I'm writing just about analysis of businesses, mainly sports companies, but not at a very serious or good level, because I'm starting.</p>
   <div class="mt-10"><PostList posts={posts} /></div>
-  <section class="mt-12 rounded-xl border border-dashed border-stone-300 p-6 dark:border-stone-700">
-    <p class="eyebrow">Business analyses</p>
-    <p class="mt-3 leading-relaxed text-stone-600 dark:text-stone-400">Coming soon. Each analysis will break down how a business makes money, what I think and why, and what would change my mind, with every number sourced.</p>
-  </section>
 </Base>
