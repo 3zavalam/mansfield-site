@@ -3,7 +3,7 @@ import '../styles/global.css';
 import { SITE_TITLE, SITE_DESCRIPTION, EMAIL, GITHUB_URL, X_URL, LINKEDIN_URL } from '../consts';
 interface Props { title?: string; description?: string; type?: string }
 const { title, description = SITE_DESCRIPTION, type = 'website' } = Astro.props;
-const fullTitle = title ? `${title} · Emilio Zavala Miceli` : `Emilio Zavala Miceli · ${SITE_TITLE}`;
+const fullTitle = title ? `${title} · Mansfield` : `Mansfield · ${SITE_TITLE}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const og = new URL('/og.png', Astro.site);
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -32,7 +32,7 @@ const nav = [
   <meta property="og:image" content={og} />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:site_name" content={SITE_TITLE} />
+  <meta property="og:site_name" content="Mansfield" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={fullTitle} />
   <meta name="twitter:description" content={description} />
@@ -47,7 +47,7 @@ const nav = [
 <body class="min-h-screen">
   <div class="mx-auto max-w-3xl px-5 sm:px-8">
     <header class="flex items-center justify-between gap-4 py-6 sm:py-8">
-      <a href="/" class="serif text-lg leading-tight sm:text-xl">Emilio Zavala<span class="text-accent dark:text-accent-dark">.</span></a>
+      <a href="/" class="serif text-lg leading-tight sm:text-xl">Mansfield<span class="text-accent dark:text-accent-dark">.</span></a>
       <div class="flex items-center gap-1 sm:gap-2">
         <nav class="hidden items-center gap-5 text-sm sm:flex">
           {nav.map(([l, h]) => <a href={h} class:list={['transition-colors hover:text-accent dark:hover:text-accent-dark', path.startsWith(h) ? 'text-ink dark:text-white font-medium' : 'text-stone-500 dark:text-stone-400']}>{l}</a>)}
@@ -68,7 +68,7 @@ const nav = [
     </nav>
     <main class="pb-20 pt-6 sm:pt-10"><slot /></main>
     <footer class="flex flex-col gap-3 border-t border-stone-200 py-8 text-sm text-stone-500 sm:flex-row sm:justify-between dark:border-stone-800 dark:text-stone-400">
-      <p>© {new Date().getFullYear()} Emilio Zavala Miceli · Runnin' down my dream.</p>
+      <p>© {new Date().getFullYear()} Mansfield · getmansfield.com · Runnin' down my dream.</p>
       <div class="flex flex-wrap gap-4">
         <a class="hover:text-ink dark:hover:text-white" href={`mailto:${EMAIL}`}>Email</a>
         <a class="hover:text-ink dark:hover:text-white" href={GITHUB_URL}>GitHub</a>

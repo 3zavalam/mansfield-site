@@ -1,6 +1,6 @@
 export const SITE_TITLE = "Runnin' Down My Dream";
 export const SITE_DESCRIPTION =
-  "Emilio Zavala Miceli builds in public: data, software and AI projects, business analyses, and freelance work that funds a master's in Valencia.";
+  "Mansfield: building in public: data, software and AI projects, business analyses, and freelance work that funds a master's in Valencia.";
 export const EMAIL = 'hello@getmansfield.com';
 // PLACEHOLDER: replace with Emilio's real Upwork profile URL
 export const UPWORK_URL = 'https://www.upwork.com/';
