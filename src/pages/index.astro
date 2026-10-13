@@ -5,15 +5,12 @@ import { getPosts } from '../posts';
 const posts = (await getPosts()).slice(0, 3);
 ---
 <Base>
-  <section class="flex items-end justify-between gap-8">
-    <div class="min-w-0">
+  <section>
     <p class="eyebrow">Runnin' down my dream</p>
-    <h1 class="serif mt-4  text-[2.6rem] leading-[1.05] tracking-tight sm:text-6xl">Mansfield</h1>
-    <p class="serif mt-5 max-w-2xl  text-xl leading-relaxed text-stone-600 italic sm:text-2xl dark:text-stone-300">
+    <h1 class="serif mt-4 text-[2.6rem] leading-[1.05] tracking-tight sm:text-6xl">Mansfield</h1>
+    <p class="serif mt-5 max-w-2xl text-xl leading-relaxed text-stone-600 italic sm:text-2xl dark:text-stone-300">
       Engineer building data, software and AI tools in public, and learning how businesses actually work.
     </p>
-  </div>
-    <picture class="hidden w-36 shrink-0 md:block lg:w-44"><source srcset="/images/emilio-hero.webp" type="image/webp" /><img src="/images/emilio-hero.jpg" alt="Flat illustration of Emilio in a black hoodie, white cap and blue sport glasses, holding a phone" width="440" height="675" class="w-full rounded-2xl dark:opacity-90" /></picture>
   </section>
 
   <section class="mt-14 max-w-2xl space-y-4 text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">

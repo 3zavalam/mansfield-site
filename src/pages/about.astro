@@ -8,14 +8,23 @@ const links = [
 ];
 ---
 <Base title="About" description="About Emilio Zavala Miceli: Computer Systems Engineer from México, heading to Valencia, Spain, and why the site is called Mansfield.">
-  <div class="flex flex-col gap-8 sm:flex-row sm:items-end">
-    <picture class="block w-56 shrink-0 sm:w-60"><source srcset="/images/emilio-about.webp" type="image/webp" /><img src="/images/emilio-about.jpg" alt="Flat illustration of Emilio Zavala Miceli: black hoodie and shorts, white cap, blue sport glasses" width="1200" height="1600" class="aspect-[3/4] w-full rounded-2xl object-cover shadow-sm ring-1 ring-stone-200 dark:ring-stone-800" /></picture>
-    <div>
-      <p class="eyebrow">About</p>
-      <h1 class="serif mt-4 text-4xl tracking-tight sm:text-5xl">Hi, I'm Emilio.</h1>
+  <section class="relative isolate overflow-hidden border-b border-stone-300 dark:border-stone-700">
+    <p aria-hidden="true" class="serif pointer-events-none absolute inset-x-0 bottom-0 -z-10 select-none text-center text-[19vw] leading-[0.8] tracking-tight text-stone-200/80 sm:text-[7.6rem] dark:text-stone-800/70">MANSFIELD</p>
+    <div class="grid grid-cols-[1fr_auto] items-end gap-4">
+      <div class="pb-12 sm:pb-20">
+        <p class="eyebrow">About</p>
+        <h1 class="serif mt-4 text-4xl tracking-tight sm:text-5xl">Hi, I'm Emilio.</h1>
+      </div>
+      <div class="relative flex items-end">
+        <div aria-hidden="true" class="absolute -left-10 top-6 bottom-0 hidden flex-col items-center sm:flex">
+          <div class="rounded-[4px] bg-accent px-3 py-1.5 text-white shadow-sm ring-2 ring-white ring-inset dark:bg-accent-dark dark:ring-night"><p class="text-[9px] uppercase tracking-[0.2em] opacity-90">Rue</p><p class="serif -mt-0.5 text-lg leading-none">Mansfield</p></div>
+          <div class="w-1 flex-1 bg-stone-400 dark:bg-stone-600"></div>
+        </div>
+        <picture class="relative block w-32 sm:ml-16 sm:w-52"><source srcset="/images/emilio-cutout.webp" type="image/webp" /><img src="/images/emilio-cutout.png" alt="Flat illustration of Emilio Zavala Miceli in a black hoodie and shorts, white cap and blue sport glasses, taking a mirror selfie" width="577" height="898" class="w-full dark:[filter:drop-shadow(0_0_1px_rgba(255,255,255,0.55))]" /></picture>
+      </div>
     </div>
-  </div>
-  <div class="mt-8 max-w-2xl space-y-5 text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">
+  </section>
+  <div class="mt-10 max-w-2xl space-y-5 text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">
     <p>I'm from México. I studied Computer Systems Engineering at UDLAP and graduated in 2026.</p>
     <p>I like turning messy data into something people can decide with: dashboards, predictive models, automations and small tools. Football and sports analytics pulled me in first; business is what I want to understand next.</p>
     <p>I've worked as a data analyst intern at RIANSA, a software developer intern at Piquero Technology and Sports, a research intern at INRS in Montreal (Mitacs Globalink), and now at Club León FC.</p>
