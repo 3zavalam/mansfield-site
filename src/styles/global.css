@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-paper: #faf8f3;
+  --color-ink: #1a1917;
+  --color-night: #121211;
+  --color-accent: #c2410c;
+  --color-accent-dark: #fb923c;
+}
+html { -webkit-text-size-adjust: 100%; }
+body { @apply bg-paper text-ink antialiased dark:bg-night dark:text-stone-200; font-family: var(--font-sans); }
+.serif { font-family: var(--font-serif); }
+a.link { @apply underline decoration-stone-300 underline-offset-4 transition-colors hover:decoration-accent dark:decoration-stone-600 dark:hover:decoration-accent-dark; }
+.eyebrow { @apply text-xs font-medium uppercase tracking-[0.16em] text-stone-500 dark:text-stone-400; }
+.prose { --tw-prose-links: var(--color-ink); }
+.dark .prose { --tw-prose-links: #e7e5e4; }

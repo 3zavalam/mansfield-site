@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import { getPosts } from '../posts';
+const posts = (await getPosts()).slice(0, 3);
+---
+<Base>
+  <section>
+    <p class="eyebrow">Runnin' down my dream</p>
+    <h1 class="serif mt-4 text-[2.6rem] leading-[1.05] tracking-tight sm:text-6xl">Emilio Zavala Miceli</h1>
+    <p class="serif mt-5 max-w-2xl text-xl leading-relaxed text-stone-600 italic sm:text-2xl dark:text-stone-300">
+      Engineer building data, software and AI tools in public, and learning how businesses actually work.
+    </p>
+  </section>
+
+  <section class="mt-14 max-w-2xl space-y-4 text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">
+    <p>I'm a Computer Systems Engineer from Villahermosa, Mexico (UDLAP, 2026). Right now I build scouting tools at Club León. Before that: AI and web scraping research in Montreal, Power BI dashboards for a sales team, and a chatbot that answered questions for a 500+ person event.</p>
+    <p>In February 2027 I move to Valencia, Spain, for a master's. I pay for that with freelance work, and I'm documenting the whole thing here: what I build, how, and what I learn about business along the way. <a class="link" href="/writing/why-im-running-down-my-dream">Why I'm doing this →</a></p>
+  </section>
+
+  <section class="mt-16">
+    <div class="flex items-baseline justify-between"><h2 class="eyebrow">Now</h2><a href="/now" class="text-sm text-stone-500 hover:text-accent dark:text-stone-400">More →</a></div>
+    <ul class="mt-5 grid gap-px overflow-hidden rounded-xl border border-stone-200 bg-stone-200 sm:grid-cols-3 dark:border-stone-800 dark:bg-stone-800">
+      <li class="bg-paper p-5 dark:bg-night"><p class="text-sm font-medium">Club León FC</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Building data tools for the scouting team.</p></li>
+      <li class="bg-paper p-5 dark:bg-night"><p class="text-sm font-medium">Freelance</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Taking on first projects to fund my master's.</p></li>
+      <li class="bg-paper p-5 dark:bg-night"><p class="text-sm font-medium">Valencia, Feb 2027</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Preparing the move to Spain.</p></li>
+    </ul>
+  </section>
+
+  <section class="mt-16">
+    <div class="flex items-baseline justify-between"><h2 class="eyebrow">Latest writing</h2><a href="/writing" class="text-sm text-stone-500 hover:text-accent dark:text-stone-400">All →</a></div>
+    <div class="mt-2"><PostList posts={posts} /></div>
+  </section>
+
+  <section class="mt-16 rounded-2xl bg-ink px-6 py-10 text-paper sm:px-10 dark:bg-stone-100 dark:text-night">
+    <p class="eyebrow !text-stone-400 dark:!text-stone-500">Work with me</p>
+    <h2 class="serif mt-3 text-3xl leading-tight sm:text-4xl">Built 80% of your product with AI? I'll help you ship the last 20%.</h2>
+    <p class="mt-4 max-w-xl leading-relaxed text-stone-300 dark:text-stone-600">Deploys, auth, payments, databases, dashboards and automations, for founders and small teams in the US, Canada and Europe. My first 5 projects are free in exchange for a testimonial.</p>
+    <a href="/work-with-me" class="mt-7 inline-block rounded-full bg-paper px-5 py-2.5 text-sm font-medium text-ink transition hover:bg-accent hover:text-white dark:bg-night dark:text-stone-100">See services & pricing →</a>
+  </section>
+</Base>
