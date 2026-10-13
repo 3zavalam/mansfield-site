@@ -20,12 +20,12 @@ const demos: P[] = [
   { t: 'Messy files → clean Excel report', d: 'Three inconsistent point-of-sale CSV exports (mixed encodings, separators, date formats, duplicates) cleaned and consolidated into a formatted Excel report with one scheduled command. Built on synthetic data.', stack: 'Python · Pandas · openpyxl · cron', img: [['/img/messy-before.png', 'Raw messy CSV files before cleaning'], ['/img/messy-after.png', 'Clean Excel summary sheet after automation']] },
 ];
 ---
-<Base title="Projects" description="Things I've built: Winner Way (AI tennis coach), Club León scouting tool, xG model, dashboards, automations and research.">
+<Base title="Projects" description="Case studies from Emilio Zavala Miceli: Club León scouting tool, AI tennis coach, xG model, dashboards, automations and research.">
   <p class="eyebrow">Projects</p>
   <h1 class="serif mt-4 text-4xl tracking-tight sm:text-5xl">Things I've built</h1>
   <p class="mt-5 max-w-2xl text-[17px] leading-relaxed text-stone-600 dark:text-stone-400">Work for teams and companies, personal builds, and demos of the freelance services. Code is linked where it's public.</p>
 
-  {[['Personal builds', builds], ['Work', work], ['Freelance demos', demos]].map(([h, list]) => (
+  {[['Work', work], ['Personal builds', builds], ['Freelance demos', demos]].map(([h, list]) => (
     <section class="mt-14">
       <h2 class="eyebrow">{h as string}</h2>
       <div class="mt-4 divide-y divide-stone-200 border-t border-stone-200 dark:divide-stone-800 dark:border-stone-800">

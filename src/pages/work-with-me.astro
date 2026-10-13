@@ -2,46 +2,61 @@
 import Base from '../layouts/Base.astro';
 import { EMAIL, UPWORK_URL } from '../consts';
 const services = [
-  { t: 'Power BI & data dashboards', d: 'Turn spreadsheets and exports into a clean data model and a dashboard your team actually opens. Clear KPIs, sensible DAX, documented so you can maintain it.', f: 'Small teams with data in Excel' },
-  { t: 'Python automation & scraping', d: 'Scripts that clean messy files, build your reports, or collect data from the web on a schedule, so the manual morning routine becomes one command.', f: 'Anyone doing repetitive data work' },
-  { t: 'Finish your AI-built MVP', d: "You built 80% of your product with Claude, Lovable, Bolt or Cursor, and now it's stuck. I'll do the last 20%: deploy it, fix the bugs, set up authentication, payments and the database, so real users can use it.", f: 'Non-technical founders' },
-  { t: 'Web apps', d: 'Small full-stack apps with React, Flask or FastAPI and Supabase, like a booking system with an admin dashboard, a customer app and a door-staff view.', f: 'Small businesses and side projects' },
-  { t: 'AI chatbots & automations', d: 'A chatbot that answers your FAQs from your own content, or AI steps wired into the tools you already use. Scoped to what saves you time, not hype.', f: 'Events, services, support teams' },
-  { t: 'Sports & football analysis', d: 'Scouting tools, xG models, match reports and shot maps from public or club data. The kind of work I enjoy most.', f: 'Clubs, scouts, analysts, media' },
+  { n: '01', t: 'Finish your AI-built MVP', p: 'From $1,200', d: "You built 80% of your product with Claude, Lovable, Bolt or Cursor, and now it's stuck. I'll do the last 20%: deploy it, fix the bugs, set up authentication, payments and the database, so real users can use it.", f: 'Non-technical founders' },
+  { n: '02', t: 'Power BI & data dashboards', p: '$800–1,200', d: 'Turn spreadsheets and exports into a clean data model and a dashboard your team actually opens. Clear KPIs, sensible DAX, documented so you can maintain it.', f: 'Small teams with data in Excel' },
+  { n: '03', t: 'Python automation & scraping', p: '$500–900', d: 'Scripts that clean messy files, build your reports, or collect data from the web on a schedule, so the manual morning routine becomes one command.', f: 'Anyone doing repetitive data work' },
+  { n: '04', t: 'AI chatbots & automations', p: '$450–1,500', d: 'A chatbot that answers your FAQs from your own content, or AI steps wired into the tools you already use. Scoped to what saves you time, not hype.', f: 'Events, services, support teams' },
+  { n: '05', t: 'Grassroots Club Analytics', p: 'Free pilot, then $29 / $59 / $99 per month', d: 'Simple analytics for volunteer-run football clubs: players, matches and attendance in one place, without needing a data person. Start with a free pilot; pick a plan only if it helps.', f: 'Volunteer-run football clubs' },
 ];
 ---
-<Base title="Work with me" description="Data and dashboards, Python automation, finishing AI-built MVPs, web apps, AI chatbots and sports analysis.">
+<Base title="Work with me" description="Freelance help finishing AI-built MVPs, dashboards, Python automation and AI chatbots, for clients in the US, Canada and Europe. Prices in USD.">
   <p class="eyebrow">Work with me</p>
-  <h1 class="serif mt-4 text-4xl leading-tight tracking-tight sm:text-5xl">Work with me</h1>
+  <h1 class="serif mt-4 text-4xl leading-tight tracking-tight sm:text-5xl">I freelance to pay for my life through a master's.</h1>
   <div class="mt-6 max-w-2xl space-y-4 text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">
     <p>I like doing the data stuff and I'm more experienced there, but helping people get the last 20% of their MVPs, I'd love that.</p>
+    <p>That's the honest version. In February 2027 I move to Valencia, Spain, to study, and I want to fund it with good work for good people. I work with founders and small teams in the <strong class="font-medium">US, Canada and Europe</strong>. All prices are in <strong class="font-medium">USD</strong> and agreed up front, per project.</p>
   </div>
-  <section class="mt-12">
-    <h2 class="eyebrow">What I can help with</h2>
+
+  <section class="mt-14">
+    <h2 class="eyebrow">Services</h2>
     <ol class="mt-4 divide-y divide-stone-200 border-y border-stone-200 dark:divide-stone-800 dark:border-stone-800">
-      {services.map((s, i) => (
+      {services.map((s) => (
         <li class="grid gap-3 py-7 sm:grid-cols-[3rem_1fr]">
-          <span class="serif text-lg text-stone-400 dark:text-stone-600">{String(i + 1).padStart(2, '0')}</span>
-          <div><h3 class="serif text-2xl leading-snug">{s.t}</h3><p class="mt-3 leading-relaxed text-stone-600 dark:text-stone-400">{s.d}</p><p class="mt-3 text-xs uppercase tracking-wider text-stone-500">For: {s.f}</p></div>
+          <span class="serif text-lg text-stone-400 dark:text-stone-600">{s.n}</span>
+          <div>
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+              <h3 class="serif text-2xl leading-snug">{s.t}</h3>
+              <p class="shrink-0 text-sm font-medium text-accent dark:text-accent-dark">{s.p}</p>
+            </div>
+            <p class="mt-3 leading-relaxed text-stone-600 dark:text-stone-400">{s.d}</p>
+            <p class="mt-3 text-xs uppercase tracking-wider text-stone-500">For: {s.f}</p>
+          </div>
         </li>
       ))}
     </ol>
+  </section>
+
+  <section class="mt-14 rounded-2xl border border-amber-500/40 bg-amber-50 p-6 sm:p-8 dark:border-amber-400/30 dark:bg-amber-400/5">
+    <p class="eyebrow !text-amber-800 dark:!text-amber-400">First 5 projects free</p>
+    <h2 class="serif mt-3 text-2xl leading-snug sm:text-3xl">I'm new to freelancing, so I'll earn the proof.</h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-stone-700 dark:text-stone-300">My first five projects are free. In exchange, you give me an honest testimonial and let me publish a short case study of the work (I'll leave out anything confidential and you approve it before it goes up). Projects need to be well-scoped, roughly in line with the services above.</p>
   </section>
 
   <section class="mt-14">
     <h2 class="eyebrow">How it works</h2>
     <ol class="mt-5 grid gap-6 sm:grid-cols-3">
       <li><p class="serif text-lg">1. Tell me the problem</p><p class="mt-2 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Email me what you have and what's blocking you. Links and screenshots help.</p></li>
-      <li><p class="serif text-lg">2. Get a fixed scope</p><p class="mt-2 text-sm leading-relaxed text-stone-600 dark:text-stone-400">I reply with what I'd do, a price and a timeline before any work starts.</p></li>
+      <li><p class="serif text-lg">2. Get a fixed scope</p><p class="mt-2 text-sm leading-relaxed text-stone-600 dark:text-stone-400">I reply with what I'd do, a price in USD and a timeline before any work starts.</p></li>
       <li><p class="serif text-lg">3. Ship it</p><p class="mt-2 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Regular updates, then a handover with docs so you're not dependent on me.</p></li>
     </ol>
   </section>
+
   <section class="mt-16 border-t border-stone-200 pt-10 dark:border-stone-800">
     <h2 class="serif text-3xl">Let's talk</h2>
     <p class="mt-3 text-stone-600 dark:text-stone-400">The fastest way is email. You can also hire me through Upwork.</p>
     <div class="mt-6 flex flex-col gap-3 sm:flex-row">
       <a href={`mailto:${EMAIL}`} class="rounded-full bg-ink px-5 py-3 text-center text-sm font-medium text-paper transition hover:bg-accent dark:bg-stone-100 dark:text-night">{EMAIL}</a>
-      <a href={UPWORK_URL} class="rounded-full border border-stone-300 px-5 py-3 text-center text-sm font-medium transition hover:border-ink dark:border-stone-700 dark:hover:border-stone-300">Upwork →</a>
+      <a href={UPWORK_URL} class="rounded-full border border-stone-300 px-5 py-3 text-center text-sm font-medium transition hover:border-ink dark:border-stone-700 dark:hover:border-stone-300">Hire me on Upwork →</a>
     </div>
   </section>
 </Base>
