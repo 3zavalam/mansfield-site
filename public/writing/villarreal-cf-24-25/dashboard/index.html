@@ -1,0 +1,905 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Villarreal 24/25 por dentro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans+Condensed:wght@400;500;600&display=swap">
+<style>
+/* Layout: columna editorial de lectura (~68ch) con índice fijo a la izquierda en escritorio y barra de capítulos arriba en móvil; las gráficas respiran un poco más anchas que el texto. */
+:root{
+  --paper:#F8F7F3; --paper-2:#EFEDE6; --ink:#1B2233; --ink-2:#4A5163; --rule:#D9D5CA;
+  --ochre:#B98309; --ochre-wash:#E8B931; --azul:#2E5A88; --azul-wash:#7FA3C7; --loss:#A63D2F; --gain:#3C6E57;
+  --display:"Libre Caslon Display", "Libre Caslon Text", Georgia, serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --util:"IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --wash-op:.9;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#15171C; --paper-2:#1E2128; --ink:#ECE8DE; --ink-2:#A9AAB2; --rule:#33363F;
+  --ochre:#E2B43C; --ochre-wash:#C99A1E; --azul:#8DB1D8; --azul-wash:#4C77A3; --loss:#E07B6B; --gain:#7FB89C; --wash-op:.75; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15171C; --paper-2:#1E2128; --ink:#ECE8DE; --ink-2:#A9AAB2; --rule:#33363F;
+  --ochre:#E2B43C; --ochre-wash:#C99A1E; --azul:#8DB1D8; --azul-wash:#4C77A3; --loss:#E07B6B; --gain:#7FB89C; --wash-op:.75; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.6;margin:0}
+a{color:var(--azul)}
+::selection{background:var(--ochre-wash);color:#1B2233}
+.wrap{display:grid;grid-template-columns:230px minmax(0,1fr);gap:56px;max-width:1180px;margin:0 auto;padding-inline:28px;padding-block:0 80px}
+main{min-width:0;max-width:760px}
+:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+
+/* ---- índice ---- */
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;padding-top:36px;max-height:100vh;overflow:auto}
+.toc .brand{font-family:var(--util);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin:0 0 14px}
+.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;counter-reset:t}
+.toc a{display:block;text-decoration:none;color:var(--ink-2);font-family:var(--util);font-size:14.5px;padding:5px 0 5px 12px;border-left:2px solid var(--rule);line-height:1.3}
+.toc a:hover{color:var(--ink)}
+.toc a.on{color:var(--ink);border-left-color:var(--ochre);font-weight:600}
+.toc li[hidden]{display:none}
+.tools{display:flex;flex-direction:column;gap:10px;margin:0 0 22px}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--rule);background:var(--paper-2);padding:7px 10px;border-radius:3px}
+.search svg{flex:none;color:var(--ink-2)}
+.search input{border:0;background:transparent;color:var(--ink);font-family:var(--util);font-size:15px;width:100%;min-width:0}
+.search input:focus{outline:none}
+.search:focus-within{border-color:var(--ochre)}
+.btn{font-family:var(--util);font-size:13.5px;background:transparent;border:1px solid var(--rule);color:var(--ink);padding:6px 10px;border-radius:3px;cursor:pointer;text-align:left}
+.btn:hover{border-color:var(--ink-2)}
+.count{font-family:var(--util);font-size:13px;color:var(--ink-2);min-height:1em}
+
+/* ---- móvil ---- */
+.mbar{display:none}
+@media (max-width:900px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:0;padding-inline:18px}
+  nav.toc{display:none}
+  .mbar{display:block;position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--rule);padding:10px 18px 8px}
+  .mbar .row{display:flex;gap:8px;align-items:center}
+  .mbar .search{flex:1;padding:6px 9px}
+  .chips{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chips a{flex:none;font-family:var(--util);font-size:13.5px;text-decoration:none;color:var(--ink-2);border:1px solid var(--rule);padding:4px 10px;border-radius:20px;white-space:nowrap}
+  .chips a.on{color:var(--ink);border-color:var(--ochre);background:var(--paper-2)}
+  .chips a[hidden]{display:none}
+  body{font-size:17px}
+}
+
+/* ---- hero ---- */
+header.hero{padding-top:44px}
+.kicker{font-family:var(--util);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--ochre);margin:0 0 10px;font-weight:600}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(40px,7vw,72px);line-height:1.02;margin:0 0 16px;letter-spacing:-.01em;text-wrap:balance}
+.dek{font-size:clamp(19px,2.4vw,22px);color:var(--ink-2);margin:0 0 18px;max-width:36em;line-height:1.45}
+.byline{font-family:var(--util);font-size:13.5px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:6px 16px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:9px 0;margin:0 0 6px}
+.hero-art{margin:18px 0 6px;width:100%;max-width:100%}
+.hero-art svg{display:block;width:100%;height:auto}
+.legend-kinds{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--util);font-size:13px;color:var(--ink-2);margin:10px 0 0}
+.legend-kinds span{display:inline-flex;align-items:center;gap:6px}
+
+/* ---- tipografía de secciones ---- */
+section.sec{padding-top:56px;scroll-margin-top:20px}
+@media (max-width:900px){section.sec{scroll-margin-top:110px}}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:18px;align-items:end;border-bottom:1px solid var(--ink);padding-bottom:10px;margin-bottom:22px}
+@media (max-width:560px){.sec-head{grid-template-columns:minmax(0,1fr) 84px}}
+.eyebrow{font-family:var(--util);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin:0 0 4px}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(30px,4.4vw,42px);line-height:1.08;margin:0;text-wrap:balance}
+h3{font-family:var(--util);font-weight:600;font-size:15px;letter-spacing:.08em;text-transform:uppercase;margin:30px 0 8px;color:var(--ink)}
+p{margin:0 0 16px;max-width:68ch}
+.vig svg{width:100%;height:auto;display:block}
+.lede{font-size:1.08em}
+
+/* ---- ideas clave ---- */
+.keys{display:grid;gap:0;margin:8px 0 0;counter-reset:k}
+.key{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 22px;padding:20px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.key .n{font-family:var(--display);font-size:56px;line-height:.9;color:var(--ochre);min-width:2.8ch;text-align:right;font-variant-numeric:tabular-nums}
+.key .n small{font-size:.42em;color:var(--ink-2)}
+.key h4{font-family:var(--body);font-weight:600;font-size:1.06em;margin:0 0 4px;line-height:1.35}
+.key p{margin:0;color:var(--ink-2);font-size:.96em}
+@media (max-width:560px){.key{grid-template-columns:minmax(0,1fr)}.key .n{text-align:left;font-size:46px}}
+
+/* ---- cifras grandes ---- */
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:18px 28px;margin:6px 0 24px}
+.fig .v{font-family:var(--display);font-size:46px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.fig .v .u{font-size:.45em;color:var(--ink-2);margin-left:3px;font-family:var(--util)}
+.fig .l{font-family:var(--util);font-size:14px;color:var(--ink);margin-top:6px;font-weight:600;line-height:1.3}
+.fig .w{font-size:15px;color:var(--ink-2);margin-top:4px;line-height:1.45}
+.v.neg{color:var(--loss)} .v.pos{color:var(--gain)} .v.och{color:var(--ochre)}
+
+/* ---- tablas ---- */
+.tbl{overflow-x:auto;margin:6px 0 20px}
+table{border-collapse:collapse;width:100%;font-family:var(--util);font-size:15px;font-variant-numeric:tabular-nums}
+@media (max-width:480px){table{font-size:14px}th,td{padding-right:8px}}
+th,td{padding:7px 10px 7px 0;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+th{font-weight:600;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);border-bottom:1px solid var(--ink)}
+td.n,th.n{text-align:right}
+tr.tot td{font-weight:600;border-top:1px solid var(--ink)}
+
+/* ---- gráficas ---- */
+figure.chart{margin:10px 0 26px;padding:0}
+figure.chart .cv{width:100%;min-height:120px}
+figure.chart svg{display:block;overflow:visible}
+figcaption{font-family:var(--util);font-size:13.5px;color:var(--ink-2);margin-top:8px;line-height:1.45;max-width:70ch}
+figcaption b{color:var(--ink);font-weight:600}
+.ctitle{font-family:var(--util);font-weight:600;font-size:15.5px;margin:0 0 2px;color:var(--ink)}
+.csub{font-family:var(--util);font-size:13.5px;color:var(--ink-2);margin:0 0 10px}
+svg text{font-family:var(--util)}
+#tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--paper);font-family:var(--util);font-size:13.5px;line-height:1.35;padding:7px 10px;border-radius:3px;max-width:260px;opacity:0;transition:opacity .12s}
+#tip.show{opacity:1}
+[data-tip]{cursor:pointer}
+
+/* ---- detalle plegable ---- */
+details.more{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:22px 0 4px}
+details.more>summary{list-style:none;cursor:pointer;font-family:var(--util);font-weight:600;font-size:15px;padding:12px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--ink)}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary .pm{font-family:var(--util);font-weight:400;color:var(--ochre);font-size:22px;line-height:1;transition:transform .2s}
+details.more[open]>summary .pm{transform:rotate(45deg)}
+details.more .inner{padding:4px 0 14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---- notas, tags ---- */
+.tag{display:inline-block;font-family:var(--util);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;padding:1px 6px;border-radius:2px;vertical-align:2px;margin-right:6px;font-weight:600;white-space:nowrap}
+.tag.a{background:var(--paper-2);color:var(--azul);border:1px solid var(--azul-wash)}
+.tag.p{background:var(--paper-2);color:var(--ochre);border:1px solid var(--ochre-wash)}
+.aside{border-left:3px solid var(--ochre-wash);padding:2px 0 2px 16px;margin:18px 0;color:var(--ink-2);font-size:.96em}
+.aside p:last-child{margin-bottom:0}
+.analogy{font-style:italic;color:var(--ink-2)}
+ul.clean{padding-left:1.1em;margin:0 0 16px}
+ul.clean li{margin:0 0 6px}
+.qs{counter-reset:q;list-style:none;padding:0;margin:0 0 16px}
+.qs li{counter-increment:q;padding:8px 0 8px 34px;position:relative;border-bottom:1px solid var(--rule)}
+.qs li::before{content:counter(q);position:absolute;left:0;top:6px;font-family:var(--display);font-size:24px;color:var(--ochre);line-height:1}
+
+/* ---- citas ---- */
+button.cite{all:unset;cursor:pointer;font-family:var(--util);font-size:.68em;vertical-align:super;line-height:0;color:var(--azul);padding:0 1px;font-weight:600;font-variant-numeric:tabular-nums}
+button.cite::before{content:"["} button.cite::after{content:"]"}
+button.cite:hover,button.cite[aria-expanded="true"]{color:var(--ochre)}
+button.cite:focus-visible{outline:2px solid var(--ochre);outline-offset:1px}
+#pop{position:fixed;z-index:70;width:min(340px,calc(100vw - 32px));background:var(--paper);color:var(--ink);border:1px solid var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.18);padding:14px 16px;font-family:var(--util);font-size:14px;line-height:1.45}
+#pop[hidden]{display:none!important}
+#pop .k{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#pop .t{font-family:var(--body);font-size:16px;font-weight:600;margin:0 0 4px;line-height:1.3}
+#pop .m{color:var(--ink-2);margin:0 0 6px}
+#pop .loc{background:var(--paper-2);padding:4px 7px;margin:6px 0;border-left:2px solid var(--ochre)}
+#pop .x{position:absolute;top:6px;right:8px;all:unset;cursor:pointer;font-size:20px;color:var(--ink-2);padding:2px 6px}
+#pop .x{position:absolute;top:6px;right:8px}
+.vbadge{font-size:11px;letter-spacing:.08em;padding:1px 6px;border-radius:2px;border:1px solid currentColor}
+.vb-ok{color:var(--gain)} .vb-ext{color:var(--azul)} .vb-unv{color:var(--loss)} .vb-own{color:var(--ochre)}
+@media (max-width:600px){#pop{left:16px!important;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));top:auto!important;width:auto}}
+
+/* ---- fuentes ---- */
+.srcgroup h3{margin-top:26px}
+ol.srcs{list-style:none;padding:0;margin:0}
+ol.srcs li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;padding:10px 0;border-bottom:1px solid var(--rule);font-family:var(--util);font-size:14.5px;line-height:1.45}
+ol.srcs li:target{background:var(--paper-2)}
+ol.srcs .id{font-family:var(--display);font-size:22px;color:var(--ochre);line-height:1}
+ol.srcs .st{font-family:var(--body);font-size:16px;font-weight:600;display:block}
+ol.srcs a{word-break:break-word}
+.nolink{color:var(--ink-2);font-style:italic}
+
+/* ---- decisiones / pendientes ---- */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px 34px}
+.check{list-style:none;padding:0;margin:0}
+.check li{padding:9px 0 9px 26px;position:relative;border-bottom:1px solid var(--rule);font-size:.96em}
+.check li::before{content:"";position:absolute;left:2px;top:15px;width:11px;height:11px;border:1.5px solid var(--ochre);border-radius:50%}
+.check.done li::before{background:var(--ochre)}
+.empty{font-family:var(--util);color:var(--ink-2);padding:30px 0;display:none}
+footer{margin-top:60px;border-top:1px solid var(--rule);padding-top:16px;font-family:var(--util);font-size:13px;color:var(--ink-2)}
+mark{background:var(--ochre-wash);color:#1B2233;padding:0 2px}
+</style>
+
+<!-- Filtros de acuarela compartidos -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="wc" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="4" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="22" xChannelSelector="R" yChannelSelector="G" result="disp"/>
+      <feGaussianBlur in="disp" stdDeviation="1.4" result="soft"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="2" result="grain"/>
+      <feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.2 1.25" result="grainA"/>
+      <feComposite in="soft" in2="grainA" operator="in" result="grained"/>
+      <feMorphology in="grained" operator="erode" radius="2" result="inner"/>
+      <feComposite in="grained" in2="inner" operator="out" result="rim"/>
+      <feColorMatrix in="rim" type="matrix" values="0.75 0 0 0 0  0 0.75 0 0 0  0 0 0.75 0 0  0 0 0 0.9 0" result="rimDark"/>
+      <feMerge><feMergeNode in="grained"/><feMergeNode in="rimDark"/></feMerge>
+    </filter>
+    <filter id="wc2" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="21" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="G" result="disp"/>
+      <feGaussianBlur in="disp" stdDeviation="0.9"/>
+    </filter>
+    <filter id="ink" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="mbar" id="mbar">
+  <div class="row">
+    <label class="search" for="q2"><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.6"/></svg><input id="q2" type="search" placeholder="Buscar: caja, cantera, LaLiga…" autocomplete="off"></label>
+    <button class="btn" id="tog2" type="button">Abrir todo</button>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<div class="wrap">
+<nav class="toc" aria-label="Índice">
+  <p class="brand">Villarreal CF · 24/25</p>
+  <div class="tools">
+    <label class="search" for="q1"><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.6"/></svg><input id="q1" type="search" placeholder="Buscar en el resumen" autocomplete="off"></label>
+    <button class="btn" id="tog1" type="button">Abrir todos los detalles</button>
+    <div class="count" id="count" aria-live="polite"></div>
+  </div>
+  <ol id="toclist"></ol>
+</nav>
+
+<main id="main">
+<header class="hero" id="top">
+  <p class="kicker">Cuaderno de análisis · Running Down My Dream</p>
+  <h1>El Villarreal, leído como su presidente</h1>
+  <p class="dek">Lo que aprendimos al desarmar las cuentas 2024/25 del Villarreal CF, nota por nota, con cada cifra atada a su página. Un club que gana dinero en papel, quema caja en el día a día y vive de vender bien.</p>
+  <div class="byline"><span>Análisis de Emilio, con apoyo de Claude</span><span>10–13 de octubre de 2026</span><span>Temporadas 23/24, 24/25 y presupuesto 25/26</span></div>
+  <div class="hero-art" role="img" aria-label="Acuarela de un submarino amarillo navegando sobre agua azul, con un fondo de azulejo cerámico">
+  <svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet">
+    <g opacity="0.18" filter="url(#wc2)">
+      <g fill="none" stroke="var(--azul)" stroke-width="2">
+        <path d="M40 40h120v120H40zM160 40h120v120H160zM280 40h120v120H280zM640 30h120v120H640zM760 30h120v120H760z"/>
+        <path d="M100 52l46 48-46 48-46-48zM220 52l46 48-46 48-46-48zM340 52l46 48-46 48-46-48zM700 42l46 48-46 48-46-48zM820 42l46 48-46 48-46-48z"/>
+      </g>
+    </g>
+    <g filter="url(#wc)" opacity="var(--wash-op)">
+      <path d="M0 250 C120 228 210 268 330 246 S560 226 680 248 S840 262 900 244 V380 H0 Z" fill="var(--azul-wash)" opacity=".55"/>
+      <path d="M0 290 C140 270 260 306 400 284 S650 270 760 292 S860 300 900 288 V380 H0 Z" fill="var(--azul)" opacity=".45"/>
+    </g>
+    <g filter="url(#wc)" opacity="var(--wash-op)">
+      <path d="M230 214 C230 172 300 150 440 150 C590 150 690 166 712 200 C726 222 700 254 640 262 C540 274 330 272 270 256 C244 248 230 234 230 214 Z" fill="var(--ochre-wash)"/>
+      <path d="M410 150 L418 104 C420 96 428 92 436 92 L500 92 C510 92 516 98 517 106 L524 150 Z" fill="var(--ochre-wash)"/>
+      <path d="M232 214 C232 236 250 250 280 258 C360 270 560 272 640 262 C690 256 712 236 712 214" fill="var(--ochre)" opacity=".55"/>
+    </g>
+    <g filter="url(#ink)" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" opacity=".85">
+      <path d="M230 214 C230 172 300 150 440 150 C590 150 690 166 712 200 C726 222 700 254 640 262 C540 274 330 272 270 256 C244 248 230 234 230 214 Z"/>
+      <path d="M410 150 L418 104 C420 96 428 92 436 92 L500 92 C510 92 516 98 517 106 L524 150"/>
+      <path d="M470 92 V52 H508"/>
+      <circle cx="330" cy="208" r="13"/><circle cx="400" cy="206" r="13"/><circle cx="470" cy="205" r="13"/><circle cx="540" cy="206" r="13"/><circle cx="610" cy="208" r="13"/>
+      <path d="M228 206 l-34 -22 M228 222 l-34 22 M194 184 v60"/>
+      <path d="M440 118 h52"/>
+    </g>
+    <g fill="none" stroke="var(--azul)" stroke-width="1.6" opacity=".7" filter="url(#ink)">
+      <circle cx="740" cy="170" r="7"/><circle cx="762" cy="140" r="5"/><circle cx="778" cy="112" r="9"/><circle cx="800" cy="84" r="4"/>
+    </g>
+    <text x="900" y="372" text-anchor="end" font-size="13" fill="var(--ink-2)" font-family="IBM Plex Sans Condensed, sans-serif" letter-spacing="1.5">EL SUBMARINO AMARILLO · ACUARELA DIGITAL</text>
+  </svg>
+  </div>
+  <div class="legend-kinds">
+    <span><span class="vbadge vb-ok">verificado</span> cuentas o documento oficial</span>
+    <span><span class="vbadge vb-ext">externo</span> Transfermarkt, prensa, LaLiga web</span>
+    <span><span class="tag p">cálculo propio</span> operación nuestra con datos citados</span>
+    <span><span class="tag a">análisis</span> interpretación, no dato</span>
+  </div>
+</header>
+
+<!-- ============ IDEAS CLAVE ============ -->
+<section class="sec" id="ideas" data-title="Ideas clave">
+  <div class="sec-head"><div><p class="eyebrow">Resumen</p><h2>Cinco ideas que nos llevamos</h2></div><div class="vig" data-v="book"></div></div>
+  <div class="keys">
+    <div class="key"><div class="n">+13,7</div><div><h4>Ganó dinero en papel, pero la caja bajó 30 M€.</h4><p>Resultado del ejercicio de +13,7 M€<button class="cite" data-s="1" data-loc="PyG, p. 10">1</button>, mientras el efectivo cayó de 47,6 a 17,6 M€<button class="cite" data-s="1" data-loc="Estado de flujos de efectivo, p. 11 (p. 12 en versión OCR)">1</button>. Beneficio y caja son cosas distintas.</p></div></div>
+    <div class="key"><div class="n">−45</div><div><h4>El negocio del día a día quema unos 45 M€ al año.</h4><p><span class="tag p">cálculo propio</span>TV, abonos y patrocinio no alcanzan para sueldos y gastos. Lo cubren las ventas de jugadores: +94,7 M€ de resultado por traspasos en 24/25<button class="cite" data-s="1" data-loc="Nota 13.4.4, pp. 42–43">1</button>.</p></div></div>
+    <div class="key"><div class="n">0</div><div><h4>Cero deuda con bancos: la única deuda financiera es el préstamo LaLiga.</h4><p>108,6 M€ del plan LaLiga Impulso (fondo CVC) a devolver hasta 2072<button class="cite" data-s="1" data-loc="Nota 9, pp. 33–34">1</button>. El dueño "no requiere rentabilidad financiera"<button class="cite" data-s="4" data-loc="EINF 24/25, p. 7">4</button>. Problema de modelo, no de deuda.</p></div></div>
+    <div class="key"><div class="n">~20</div><div><h4>Europa vale unos 20 M€ al año para este club.</h4><p>Los ingresos de TV UEFA pasaron de 20,4 a 1,6 M€ al no jugar Europa<button class="cite" data-s="1" data-loc="Nota 13.1, p. 38">1</button>. Con Champions, el presupuesto 25/26 sube los ingresos a 161,4 M€<button class="cite" data-s="1" data-loc="Nota 25.3, p. 48">1</button>.</p></div></div>
+    <div class="key"><div class="n">99,8<small>%</small></div><div><h4>Gastó prácticamente todo el límite de plantilla que LaLiga le permitía.</h4><p><span class="tag p">cálculo propio</span>Coste de plantilla 135,6 M€<button class="cite" data-s="1" data-loc="Nota 13.2, p. 39">1</button> frente a un límite de 135,9 M€<button class="cite" data-s="7">7</button>. En 25/26 el límite sube a 173,1 M€<button class="cite" data-s="6">6</button>: margen para fichar.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ CÓMO LEER ============ -->
+<section class="sec" id="leer" data-title="Cómo leer unas cuentas" data-k="balance pyg flujos amortizacion beneficio caja aprendizaje">
+  <div class="sec-head"><div><p class="eyebrow">Fundamentos</p><h2>Cómo leer unas cuentas de fútbol</h2></div><div class="vig" data-v="ledger"></div></div>
+  <p class="lede">Un club publica tres fotos distintas del mismo año. Leer una sola engaña: hay que cruzarlas.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Estado</th><th>Pregunta que responde</th><th>Villarreal 24/25</th></tr></thead>
+    <tbody>
+      <tr><td>Balance</td><td>¿Qué tiene y qué debe el 30 de junio?</td><td>Activo 325,8 M€<button class="cite" data-s="1" data-loc="Balance, p. 9">1</button></td></tr>
+      <tr><td>Pérdidas y ganancias</td><td>¿Ganó o perdió según las reglas contables?</td><td>+13,7 M€<button class="cite" data-s="1" data-loc="PyG, p. 10">1</button></td></tr>
+      <tr><td>Flujo de efectivo</td><td>¿Entró o salió dinero de verdad?</td><td>−30,0 M€<button class="cite" data-s="1" data-loc="Flujos, p. 11">1</button></td></tr>
+    </tbody></table></div>
+  <h3>La amortización no es un pago</h3>
+  <p>Fichar es comprar los derechos del jugador; se registran como un activo y su coste se reparte entre los años de contrato. Ese reparto es un gasto en libros. El pago real va aparte y depende de lo negociado: al contado o a plazos.</p>
+  <figure class="chart"><p class="ctitle">Un jugador de 10 M€ con contrato de 5 años, pagado en dos plazos</p><p class="csub">Ejemplo didáctico, no es un jugador real</p><div class="cv" id="ch-amort"></div><figcaption>Al final las dos columnas suman 10. Lo que cambia es <b>cuándo</b> aparece cada cosa: por eso la PyG y la caja cuentan historias distintas.</figcaption></figure>
+  <details class="more"><summary>Más conceptos que aclaramos <span class="pm">+</span></summary><div class="inner">
+    <ul class="clean">
+      <li><b>% pendiente de amortizar</b> se mide sobre el dinero invertido, no sobre el número de jugadores. Alto = fichajes recientes; bajo = fichajes antiguos ya casi amortizados. Los canteranos no entran: valen 0 en libros. No hay un número "sano".</li>
+      <li><b>Vender por debajo de lo que pagaste puede dar beneficio.</b> Costó 10, se vende en el año 3 por 5; quedan 4 en libros, así que la PyG muestra +1. La pérdida real ya se fue registrando como amortización.</li>
+      <li><b>La venta cuenta el año en que se firma</b>, no cuando se cobra. Los plazos cobrados de ventas antiguas no son ingreso otra vez; los variables nuevos sí.</li>
+      <li><b>Pérdidas por traspasos</b>: vender por debajo del valor que queda en libros, rescindir a un jugador con valor pendiente, gastos de cesión o formación.</li>
+    </ul>
+    <p class="analogy">Analogía: una laptop de 1.500 € con tres años de vida útil. La pagas hoy o a meses, pero en la contabilidad apuntas 500 € de gasto cada año.</p>
+  </div></details>
+</section>
+
+<!-- ============ RESULTADO Y SUELDOS ============ -->
+<section class="sec" id="resultado" data-title="Resultado y sueldos" data-k="pyg sueldos ratio soriano personal cifra de negocios relevancia primera plantilla 120% 60% 51%">
+  <div class="sec-head"><div><p class="eyebrow">Pérdidas y ganancias</p><h2>Un beneficio que depende de vender</h2></div><div class="vig" data-v="ball"></div></div>
+  <div class="figs">
+    <div class="fig"><div class="v pos">+13,7<span class="u">M€</span></div><div class="l">Resultado 24/25</div><div class="w">Fue −14,1 M€ en 23/24<button class="cite" data-s="1" data-loc="PyG, p. 10">1</button>.</div></div>
+    <div class="fig"><div class="v neg">−43,3<span class="u">M€</span></div><div class="l">EBITDA sin traspasos</div><div class="w"><span class="tag p">cálculo propio</span>Lo que deja el negocio antes de amortizar y sin vender jugadores.</div></div>
+    <div class="fig"><div class="v och">120<span class="u">%</span></div><div class="l">Gastos de personal / cifra de negocios</div><div class="w">114,1 de personal frente a 95,4 de ingresos del negocio<button class="cite" data-s="1" data-loc="PyG, líneas 1 y 6, p. 10">1</button>.</div></div>
+  </div>
+  <figure class="chart"><p class="ctitle">El mismo club, tres porcentajes de sueldos</p><p class="csub">Cada fórmula responde una pregunta distinta. Toca una barra para ver la fórmula.</p><div class="cv" id="ch-sueldos"></div><figcaption>La banda gris es la referencia de Ferran Soriano (50–65%)<button class="cite" data-s="25">25</button>, aún pendiente de verificar su definición exacta en el libro.</figcaption></figure>
+  <details class="more"><summary>Las tres fórmulas, explicadas <span class="pm">+</span></summary><div class="inner">
+    <div class="tbl"><table>
+      <thead><tr><th>Fórmula</th><th>Pregunta</th><th class="n">24/25</th><th class="n">23/24</th></tr></thead>
+      <tbody>
+        <tr><td>Personal ÷ cifra de negocios</td><td>¿El negocio normal paga los sueldos sin vender jugadores?</td><td class="n">120%</td><td class="n">90%</td></tr>
+        <tr><td>Personal ÷ (cifra de negocios + resultado neto por traspasos)</td><td>Contando lo vendido ese año, ¿qué parte se va en sueldos?</td><td class="n">60%</td><td class="n">73%</td></tr>
+        <tr><td>"Relevancia de la primera plantilla" (LaLiga)</td><td>De todo lo que entra, ¿cuánto se lleva el primer equipo?</td><td class="n">51%</td><td class="n">—</td></tr>
+      </tbody></table></div>
+    <p>Datos: gastos de personal 114,1 y 108,1; cifra de negocios 95,4 y 119,7<button class="cite" data-s="1" data-loc="PyG, p. 10">1</button>; resultado neto por traspasos 94,7 y 28,5<button class="cite" data-s="1" data-loc="Nota 13.4.4, pp. 42–43">1</button>. El 51% lo publica el club<button class="cite" data-s="1" data-loc="Nota 25.5, p. 51">1</button>; mi reconstrucción da 50,5%: primer equipo sin amortización (125,0 − 23,7 = 101,3)<button class="cite" data-s="1" data-loc="Nota 13.2, p. 39">1</button> entre ingresos relevantes 200,4<button class="cite" data-s="1" data-loc="Nota 25.2.1, pp. 46–47">1</button>. La fórmula exacta de LaLiga no aparece en el documento.</p>
+    <p class="analogy">Analogía de la familia: con el sueldo solo, los gastos de personas son el 120%. Si cuentas también el coche que vendieron este año, baja al 60%. Si solo miras lo que se gastó en el hijo mayor sobre todo lo que entró, 51%.</p>
+  </div></details>
+</section>
+
+<!-- ============ INGRESOS ============ -->
+<section class="sec" id="ingresos" data-title="Ingresos y Pamesa" data-k="ingresos tv uefa patrocinio pamesa dueño publicidad abonados tienda europa">
+  <div class="sec-head"><div><p class="eyebrow">Ingresos</p><h2>Sin Europa, faltan 24 millones</h2></div><div class="vig" data-v="tile"></div></div>
+  <p class="lede">Los ingresos del negocio cayeron de 120,4 a 96,9 M€<button class="cite" data-s="1" data-loc="Nota 13.1 (cuadro LFP), p. 38">1</button>. Casi toda la caída es la Europa League que no se jugó y la TV de LaLiga por quedar más abajo; el patrocinio del grupo del dueño compensó una parte.</p>
+  <figure class="chart"><p class="ctitle">De dónde viene el dinero (M€)</p><p class="csub">Cuadro de LaLiga en la nota 13.1. Toca cada tramo.</p><div class="cv" id="ch-ingresos"></div><figcaption>"Grupo del dueño" son todos los ingresos de empresas del accionista: 13,76 M€ en 24/25, casi todos de Pamesa Grupo Empresarial (13,72)<button class="cite" data-s="1" data-loc="Nota 13.4.1, pp. 40–41">1</button>. Se muestran dentro de publicidad, donde la nota 13 los ubica por importe; el concepto exacto no se publica.</figcaption></figure>
+  <div class="figs">
+    <div class="fig"><div class="v och">49<span class="u">%</span></div><div class="l">del patrocinio viene del grupo del dueño</div><div class="w"><span class="tag p">cálculo propio</span>13,76 de 28,12 M€.</div></div>
+    <div class="fig"><div class="v">62<span class="u">%</span></div><div class="l">de los ingresos es TV</div><div class="w">Era 75% con Europa en 23/24<button class="cite" data-s="1" data-loc="Nota 13.1, p. 38">1</button>.</div></div>
+    <div class="fig"><div class="v neg">~11,2<span class="u">M€</span></div><div class="l">de Pamesa sin explicar</div><div class="w">Frente a ~2,5 M€ que citaba la prensa<button class="cite" data-s="24">24</button>.</div></div>
+  </div>
+  <details class="more"><summary>Pamesa y el dueño: lo que sabemos y lo que no <span class="pm">+</span></summary><div class="inner">
+    <ul class="clean">
+      <li>Las operaciones con el grupo "se hicieron a precios de mercado"<button class="cite" data-s="1" data-loc="Nota 23">1</button>, y en la conciliación de LaLiga la línea de "ingresos por encima del valor razonable" está vacía<button class="cite" data-s="1" data-loc="Nota 25.2.1, p. 47">1</button>.</li>
+      <li>La ciudad deportiva se llama oficialmente "Ciudad Deportiva Pamesa"<button class="cite" data-s="4" data-loc="EINF, p. 7">4</button>: un indicio de que el pago incluye naming, sin confirmar.</li>
+      <li>El accionista Nomar Patrimonial tiene el 98,79%<button class="cite" data-s="1" data-loc="Nota 9, p. 34">1</button>.</li>
+    </ul>
+    <p><span class="tag a">análisis</span>Para Emilio el dueño es una fortaleza hoy. La recomendación fue separar "ingreso del negocio" de "apoyo del dueño" para saber si el modelo se sostiene solo y cuánto valdría el club para otro comprador.</p>
+    <p>Otros ingresos accesorios (fuera del cuadro): 4,98 M€, con cesiones de jugadores 1,04 y tienda 1,50<button class="cite" data-s="1" data-loc="Nota 13.4.9, pp. 44–45">1</button>. La tienda aparece como 1,36 en el cuadro LFP y 1,50 aquí; el documento no lo explica.</p>
+  </div></details>
+</section>
+
+<!-- ============ CAJA ============ -->
+<section class="sec" id="caja" data-title="La caja" data-k="flujo efectivo caja cobros pagos factoring traspasos plazos deudores">
+  <div class="sec-head"><div><p class="eyebrow">Flujo de efectivo</p><h2>Adónde se fueron 30 millones</h2></div><div class="vig" data-v="coins"></div></div>
+  <p class="lede">El estado oficial reparte la compraventa de jugadores entre sus tres bloques (explotación −87,1, inversión +45,3, financiación +11,7)<button class="cite" data-s="1" data-loc="Flujos, p. 11">1</button>, así que por separado no se pueden leer. Reconstruimos la caja por origen con el balance y las notas.</p>
+  <figure class="chart"><p class="ctitle">Caja del 30/06/2024 al 30/06/2025 (M€)</p><p class="csub"><span class="tag p">cálculo propio</span>con notas 7, 9 y 28</p><div class="cv" id="ch-caja"></div><figcaption>Compraventa: ventas firmadas 114,2 menos la subida de lo que deben los clubes (+55,0) da ≈59,2 cobrado; fichajes 61,3 menos la subida de lo que se debe a clubes (+20,2) da ≈41,1 pagado<button class="cite" data-s="1" data-loc="Nota 7.2.2, p. 29 · Nota 28, ctas. 2330, 2720 y 2940">1</button>. El "día a día" sale por diferencia y se contrasta: resultado antes de impuestos − traspasos + amortización = −45,6.</figcaption></figure>
+  <div class="figs">
+    <div class="fig"><div class="v">127,5<span class="u">M€</span></div><div class="l">le deben otros clubes</div><div class="w">93% de sus deudores<button class="cite" data-s="1" data-loc="Nota 28, cta. 2330">1</button>.</div></div>
+    <div class="fig"><div class="v">47,7<span class="u">M€</span></div><div class="l">debe a otros clubes</div><div class="w">18,3 a largo y 29,4 a corto<button class="cite" data-s="1" data-loc="Nota 28, ctas. 2720 y 2940">1</button>.</div></div>
+    <div class="fig"><div class="v">17,6<span class="u">M€</span></div><div class="l">en caja al cierre</div><div class="w">Con 47,0 M€ de sueldos pendientes<button class="cite" data-s="1" data-loc="Nota 9, p. 32">1</button>.</div></div>
+  </div>
+  <details class="more"><summary>Correcciones que hicimos en el camino <span class="pm">+</span></summary><div class="inner">
+    <ul class="clean">
+      <li>Los +11,7 M€ de financiación no son dinero nuevo de LaLiga: son acreedores comerciales a largo plazo (+14,7) menos la devolución del préstamo (−2,9)<button class="cite" data-s="1" data-loc="Nota 9, pp. 32–33">1</button>.</li>
+      <li>Los 65,4 M€ de "cobros por ventas" del flujo de inversión no son caja limpia: no cuadran con la subida de 55 M€ en lo que deben los clubes.</li>
+      <li>El impago entre clubes es raro porque FIFA y LaLiga sancionan<button class="cite" data-s="27">27</button>. Lo que importa es cuándo entra la caja; por eso muchos clubes venden esos cobros a un banco con descuento.</li>
+    </ul>
+    <p class="analogy">Analogía: una constructora que vende casas a plazos. Apunta la ganancia hoy, cobra en dos o tres años y mientras tanto paga sueldos.</p>
+  </div></details>
+</section>
+
+<!-- ============ JUGADORES ============ -->
+<section class="sec" id="jugadores" data-title="Jugadores" data-k="fichajes ventas traspasos amortizacion sorloth baena barry jorgensen valor de mercado libros plusvalia">
+  <div class="sec-head"><div><p class="eyebrow">Plantilla</p><h2>Comprar, revalorizar, vender</h2></div><div class="vig" data-v="ball"></div></div>
+  <div class="figs">
+    <div class="fig"><div class="v pos">114,2<span class="u">M€</span></div><div class="l">vendido en 24/25 (13 jugadores)</div><div class="w">7 jugadores y 24,1 M€ en 23/24<button class="cite" data-s="1" data-loc="Nota 7.2.2, p. 29">1</button>.</div></div>
+    <div class="fig"><div class="v">61,3<span class="u">M€</span></div><div class="l">fichado en 24/25</div><div class="w">58,1 a clubes, 2,0 a agentes, 1,2 en opciones<button class="cite" data-s="1" data-loc="Nota 7, p. 28">1</button>.</div></div>
+    <div class="fig"><div class="v och">90,8<span class="u">M€</span></div><div class="l">beneficio neto de las ventas del año</div><div class="w">Precio − valor en libros − agentes − terceros<button class="cite" data-s="1" data-loc="Nota 7.2.2, p. 29">1</button>.</div></div>
+  </div>
+  <figure class="chart"><p class="ctitle">Lo que valen en libros y lo que vale el mercado (M€)</p><p class="csub">Libros a 30/06/2025; mercado según Transfermarkt en octubre de 2026</p><div class="cv" id="ch-libros"></div><figcaption>La diferencia (~300 M€) exagera lo que ganaría el club: hay 20 jugadores con acuerdos para compartir una futura venta con otros clubes<button class="cite" data-s="1" data-loc="Nota 7.2.3, p. 30">1</button>, más comisiones. Fechas distintas: orientativo.</figcaption></figure>
+  <details class="more"><summary>Ventas y fichajes jugador por jugador <span class="pm">+</span></summary><div class="inner">
+    <p>Transfermarkt suma 76,7 M€ de ventas con fecha en 24/25 frente a 114,2 en las cuentas<button class="cite" data-s="14">14</button>. La diferencia (~37,5) podría ser Baena (42, fecha TM 02/07/2025) o Barry + Ferrari (30 + 2,5) si se firmaron antes del 30 de junio. No confirmado.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Venta 24/25 (TM)</th><th>Club</th><th class="n">M€</th></tr></thead>
+      <tbody><tr><td>Alexander Sørloth</td><td>Atlético</td><td class="n">32,0</td></tr><tr><td>Filip Jørgensen</td><td>Chelsea</td><td class="n">24,5</td></tr><tr><td>Ben Brereton Díaz</td><td>Southampton</td><td class="n">8,3</td></tr><tr><td>Jorge Cuenca</td><td>Fulham</td><td class="n">6,7</td></tr><tr><td>Haissem Hassan</td><td>Real Oviedo</td><td class="n">3,7</td></tr><tr><td>Johan Mojica</td><td>Mallorca</td><td class="n">1,5</td></tr><tr class="tot"><td>Total con fecha en 24/25</td><td></td><td class="n">76,7</td></tr></tbody></table></div>
+    <p>Fichajes 24/25 según Transfermarkt: Barry 20 · Logan Costa 18 · Luiz Júnior 12 · Kambwala 10 · Conde 4 · Ayoze 4<button class="cite" data-s="14">14</button>.</p>
+    <ul class="clean">
+      <li>35 jugadores con derechos en balance; se invirtieron 145,2 M€ y queda 46% por amortizar (40% en 23/24)<button class="cite" data-s="1" data-loc="Nota 7.2.3, p. 30">1</button>.</li>
+      <li>Duración media de contratos: 2,2 años. 26 fichajes con variables pendientes<button class="cite" data-s="1" data-loc="Nota 7, p. 30">1</button>.</li>
+      <li>Pérdidas por traspasos: 3,47 M€<button class="cite" data-s="1" data-loc="Nota 13.4.4, p. 42">1</button>; LaLiga lo amplía a 4,50 con gastos de cesión y formación<button class="cite" data-s="1" data-loc="Nota 25.2.1, p. 47">1</button>.</li>
+      <li>Rareza: el texto dice que 7 jugadores no son 100% del club y la tabla suma 17<button class="cite" data-s="1" data-loc="Nota 7.2.3, p. 30">1</button>.</li>
+    </ul>
+    <p><span class="tag a">análisis</span>En 24/25 las ventas grandes fueron de jugadores fichados (Sørloth, Brereton, Cuenca). Las de canteranos fuertes llegaron en verano de 2025 (Baena, Pino). El modelo es comprar barato, revalorizar y vender, con la cantera como una de las fuentes.</p>
+  </div></details>
+</section>
+
+<!-- ============ CANTERA ============ -->
+<section class="sec" id="cantera" data-title="Cantera" data-k="cantera canterano soriano coste por canterano filial rodri pau torres baena pino jackson">
+  <div class="sec-head"><div><p class="eyebrow">Fútbol base</p><h2>Unos pocos aciertos pagan toda la cantera</h2></div><div class="vig" data-v="sprout"></div></div>
+  <p class="lede">La cuenta analítica de la cantera "pierde" 11,5 M€ al año<button class="cite" data-s="1" data-loc="Nota 25.7, p. 52">1</button>, porque no incluye las ventas de canteranos ni el ahorro de no fichar. Usamos la idea de Ferran Soriano<button class="cite" data-s="25">25</button>: coste de la cantera en diez años dividido entre los que llegan al primer equipo.</p>
+  <div class="figs">
+    <div class="fig"><div class="v och">≈3,8<span class="u">M€</span></div><div class="l">coste por canterano</div><div class="w"><span class="tag p">cálculo propio</span>114,6 M€ en 10 años (supuesto) ÷ 30 subidos al primer equipo<button class="cite" data-s="14">14</button>.</div></div>
+    <div class="fig"><div class="v pos">223,7<span class="u">M€</span></div><div class="l">en ventas de esos 30</div><div class="w">Netas de recompras; importes brutos de Transfermarkt<button class="cite" data-s="14">14</button>.</div></div>
+    <div class="fig"><div class="v">≈2,0<span class="u">x</span></div><div class="l">ventas por cada € gastado</div><div class="w"><span class="tag p">cálculo propio</span>≈2,3x sumando el valor de Romero y Navarro (40 M€)<button class="cite" data-s="16">16</button>.</div></div>
+  </div>
+  <figure class="chart"><p class="ctitle">Ventas de canteranos subidos entre 15/16 y 24/25 (M€)</p><p class="csub">Transfermarkt, importes brutos. Toca cada barra.</p><div class="cv" id="ch-cantera"></div><figcaption>Siete ventas suman 207,6 de los 223,7 M€. Jackson y Jørgensen llegaron al filial desde otros clubes: la definición "subido del filial" es amplia.</figcaption></figure>
+  <details class="more"><summary>Avisos y casos <span class="pm">+</span></summary><div class="inner">
+    <ul class="clean">
+      <li>El coste de 10 años aplica el de 24/25 a todos los años; si antes costaba menos, el coste por canterano real es menor.</li>
+      <li>Soriano cuenta para el Barça unos 2 M€ por jugador<button class="cite" data-s="25">25</button>, pero su definición exacta queda para el chat sobre el libro.</li>
+      <li>Gerard Moreno salió al Espanyol por 1,5 M€ en 2015 y volvió por 20 M€ en 2018<button class="cite" data-s="14">14</button>: dejar ir a uno bueno sale caro.</li>
+      <li>Morlanes fue vendido al Almería por 3 M€ y recomprado una semana después por 4 M€ (julio 2021)<button class="cite" data-s="14">14</button>. Operación a revisar.</li>
+      <li>La cantera tiene unos 532 jugadores en 32 equipos<button class="cite" data-s="3" data-loc="Informe de gestión, pp. 1–2">3</button>.</li>
+    </ul>
+    <p class="analogy">Analogía: el departamento de I+D de una farmacéutica. En su propia cuenta solo gasta; de ahí salen los productos que pagan todo.</p>
+  </div></details>
+</section>
+
+<!-- ============ DEUDA ============ -->
+<section class="sec" id="deuda" data-title="Deuda y LaLiga Impulso" data-k="deuda prestamo laliga impulso cvc bancos vencimientos deuda neta grupo 19 millones">
+  <div class="sec-head"><div><p class="eyebrow">Balance</p><h2>Sin bancos, con CVC</h2></div><div class="vig" data-v="scale"></div></div>
+  <div class="figs">
+    <div class="fig"><div class="v">0<span class="u">M€</span></div><div class="l">deuda con bancos</div><div class="w">En ambos años<button class="cite" data-s="1" data-loc="Nota 9, p. 32">1</button>.</div></div>
+    <div class="fig"><div class="v">108,6<span class="u">M€</span></div><div class="l">préstamo LaLiga Impulso</div><div class="w">Hasta 2072; 2,71 M€ al año<button class="cite" data-s="1" data-loc="Nota 9, pp. 33–34">1</button>.</div></div>
+    <div class="fig"><div class="v neg">91,0<span class="u">M€</span></div><div class="l">deuda financiera neta</div><div class="w"><span class="tag p">cálculo propio</span>108,6 − 17,6 de caja. Era 63,9.</div></div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>A 30/06 (M€)</th><th class="n">2025</th><th class="n">2024</th></tr></thead>
+    <tbody>
+      <tr><td>Préstamo LaLiga Impulso</td><td class="n">108,6</td><td class="n">111,6</td></tr>
+      <tr><td>Deuda con clubes por fichajes</td><td class="n">47,7</td><td class="n">27,5</td></tr>
+      <tr><td>Sueldos pendientes</td><td class="n">47,0</td><td class="n">48,5</td></tr>
+      <tr><td>Hacienda (incluye impuesto diferido)</td><td class="n">20,4</td><td class="n">5,8</td></tr>
+      <tr><td>Le deben clubes</td><td class="n">127,5</td><td class="n">72,4</td></tr>
+      <tr class="tot"><td>Posición neta con clubes</td><td class="n">+79,8</td><td class="n">+44,9</td></tr>
+    </tbody></table></div>
+  <p>Fuentes de la tabla: nota 9<button class="cite" data-s="1" data-loc="Nota 9, pp. 31–34">1</button> y nota 28<button class="cite" data-s="1" data-loc="Nota 28, pp. 53–57">1</button>.</p>
+  <details class="more"><summary>Cuánto cuesta el préstamo de CVC <span class="pm">+</span></summary><div class="inner">
+    <p>El club paga el 1,52% de los ingresos de TV, unos 0,9 M€; cuadra con los 0,88 M€ de gastos financieros<button class="cite" data-s="1" data-loc="Nota 9, p. 33 · PyG, p. 10">1</button>. Además, CVC recibe el 10,95% de los ingresos que gestiona LaLiga para el club<button class="cite" data-s="1" data-loc="Nota 9, p. 33">1</button>.</p>
+    <p><span class="tag p">cálculo propio</span>10,95% × 58,3 M€ de TV LaLiga ≈ 6,4 M€ al año. Total ≈ 7,3 M€, un 6,7% del préstamo pendiente. La nota no dice cómo se registra el 10,95%.</p>
+    <p>En 23/24 el club devolvió 19 M€ a empresas del grupo<button class="cite" data-s="1" data-loc="Flujos 23/24, p. 11">1</button>. Es devolución de un préstamo, no un dividendo. En esos dos años el grupo pagó al club ≈19,8 M€ por patrocinio y otros conceptos (13,8 + 6,0)<button class="cite" data-s="1" data-loc="Nota 13.4.1">1</button>.</p>
+    <p>Pendiente: el informe de gestión dice que se recibió "el último plazo" del préstamo<button class="cite" data-s="3" data-loc="Informe de gestión, p. 1">3</button>, pero el saldo bajó 2,9 M€.</p>
+    <p class="analogy">Analogía: una hipoteca a 50 años donde pagas un pequeño porcentaje de lo que facturas, y el banco se queda casi el 11% de tus ventas principales, como el royalty de una franquicia.</p>
+  </div></details>
+</section>
+
+<!-- ============ LALIGA ============ -->
+<section class="sec" id="laliga" data-title="LaLiga y límite de plantilla" data-k="laliga lcpd limite de coste de plantilla fair play presupuesto 25/26 resultado del futbol sevilla valencia barcelona ratios">
+  <div class="sec-head"><div><p class="eyebrow">Control económico</p><h2>Un permiso, no dinero en el banco</h2></div><div class="vig" data-v="shield"></div></div>
+  <p class="lede">LaLiga fija a cada club un límite de coste de plantilla: lo máximo que puede gastar en sueldos, primas y amortización de fichajes. Se calcula con ingresos previstos (incluidas ventas de jugadores) menos gastos no deportivos y deuda a pagar<button class="cite" data-s="5">5</button>.</p>
+  <figure class="chart"><p class="ctitle">Límite de coste de plantilla al inicio de cada temporada (M€)</p><p class="csub">Documentos oficiales de LaLiga, 20/21 a 25/26<button class="cite" data-s="11">11</button><button class="cite" data-s="10">10</button><button class="cite" data-s="9">9</button><button class="cite" data-s="8">8</button><button class="cite" data-s="7">7</button><button class="cite" data-s="6">6</button></p><div class="cv" id="ch-lcpd"></div><figcaption>El Villarreal estuvo entre los 5 límites más altos de LaLiga las seis temporadas<button class="cite" data-s="29">29</button>. El punto aislado es su coste real de plantilla en 24/25 (135,6), casi igual al límite<button class="cite" data-s="1" data-loc="Nota 13.2, p. 39">1</button>.</figcaption></figure>
+  <div class="figs">
+    <div class="fig"><div class="v pos">+31,3<span class="u">M€</span></div><div class="l">"resultado del fútbol" 24/25</div><div class="w">LaLiga cuenta las ventas como ingreso. Sin traspasos: ≈ −63<button class="cite" data-s="1" data-loc="Nota 25.2.1, pp. 46–48">1</button>.</div></div>
+    <div class="fig"><div class="v">161,4<span class="u">M€</span></div><div class="l">ingresos presupuestados 25/26</div><div class="w">Plantilla 142,9 y ventas de jugadores +51,0 para quedar en 0<button class="cite" data-s="1" data-loc="Nota 25.3, p. 48">1</button>.</div></div>
+    <div class="fig"><div class="v och">173,1<span class="u">M€</span></div><div class="l">límite 25/26</div><div class="w">≈30 M€ de margen sobre el presupuesto<button class="cite" data-s="6">6</button>.</div></div>
+  </div>
+  <details class="more"><summary>Cómo funciona el exceso, y el caso Sevilla <span class="pm">+</span></summary><div class="inner">
+    <ul class="clean">
+      <li><b>Pagar sueldos (caja) y cumplir el límite (regla) son cosas distintas.</b> Un club por encima de su límite sigue pagando a los que tiene, pero no puede inscribir fichajes ni renovaciones libremente: solo usa una parte de lo que ahorre o venda.</li>
+      <li><b>Préstamos no suben el límite</b>; dinero de capital (ampliación, aportación de socios) sí. Que un inversor compre el club no mete dinero en el club si compra las acciones a los dueños actuales.</li>
+      <li>El Barça tuvo un límite de −144 M€ en el invierno de 21/22<button class="cite" data-s="10">10</button>. El Sevilla pasó de ~200 M€ (21/22) a 2,5 M€ (24/25)<button class="cite" data-s="10">10</button><button class="cite" data-s="7">7</button>.</li>
+      <li>Sobre el Sevilla hubo un proceso de venta: oferta liderada por Sergio Ramos en enero de 2026<button class="cite" data-s="18">18</button> que se cayó entre mayo y junio<button class="cite" data-s="19">19</button><button class="cite" data-s="20">20</button>; hay titulares sobre Goldman Sachs<button class="cite" data-s="21">21</button> e inversores chinos<button class="cite" data-s="22">22</button>, sin confirmar.</li>
+      <li>Ratios A y B para aprobar el presupuesto: el club cumple ambos con holgura; LaLiga resta los créditos con clubes como si fueran dinero<button class="cite" data-s="1" data-loc="Nota 25.4, pp. 49–50">1</button>.</li>
+    </ul>
+    <p class="analogy">Analogía: el límite no es tu saldo, es tu historial crediticio. Puedes pagar la renta con tu sueldo, pero con mal historial no te dan crédito nuevo hasta que reduzcas deudas o alguien ponga dinero propio.</p>
+  </div></details>
+</section>
+
+<!-- ============ ESTADIO Y AFICIÓN ============ -->
+<section class="sec" id="estadio" data-title="Estadio y afición" data-k="estadio ceramica aforo abonados asistencia espectador matchday ayuntamiento cesion 2033 precio">
+  <div class="sec-head"><div><p class="eyebrow">Día de partido</p><h2>Lleno, barato y de propiedad ajena</h2></div><div class="vig" data-v="stadium"></div></div>
+  <div class="figs">
+    <div class="fig"><div class="v">93<span class="u">%</span></div><div class="l">del aforo son abonados</div><div class="w">19.773 abonados para 21.332 asientos<button class="cite" data-s="4" data-loc="EINF, pp. 7 y 10">4</button>.</div></div>
+    <div class="fig"><div class="v och">273<span class="u">€</span></div><div class="l">por abonado al año</div><div class="w"><span class="tag p">cálculo propio</span>≈14 € por partido de Liga; 282 € en 23/24.</div></div>
+    <div class="fig"><div class="v">2033</div><div class="l">fin de la cesión del estadio</div><div class="w">Convenio de 2008 a 25 años, ampliable a 50<button class="cite" data-s="1" data-loc="Nota 7.3, p. 30">1</button>.</div></div>
+  </div>
+  <figure class="chart"><p class="ctitle">Lo que deja cada espectador, y su peso en los ingresos</p><p class="csub">Matchday = taquilla de todas las competiciones + abonados, definición de LaLiga</p><div class="cv" id="ch-matchday"></div><figcaption>Villarreal: 6,85 M€ entre 347.057 espectadores de Liga<button class="cite" data-s="1" data-loc="Nota 13.1, p. 38">1</button><button class="cite" data-s="15">15</button>. LaLiga: 902,1 M€ entre 17,4 millones de asistentes, Primera y Segunda, con Madrid y Barça<button class="cite" data-s="12" data-loc="Cuenta de resultados detallada y gráfico 4">12</button>. Los 18 clubes de Primera sin los dos mayores: 354,9 de 1.947,3 M€<button class="cite" data-s="12" data-loc="p. 33">12</button>.</figcaption></figure>
+  <figure class="chart"><p class="ctitle">Asistencia media en Liga, temporadas completas</p><p class="csub">Transfermarkt; la línea punteada es el aforo oficial actual</p><div class="cv" id="ch-asist"></div><figcaption>El récord de 06/07 (21.368) supera el aforo actual: el estadio cambió con las obras y las ocupaciones antiguas no son comparables<button class="cite" data-s="15">15</button>.</figcaption></figure>
+  <details class="more"><summary>El estadio y el margen de mejora <span class="pm">+</span></summary><div class="inner">
+    <ul class="clean">
+      <li>El estadio es del Ayuntamiento; el club invirtió en estadio y ciudad deportiva 110,5 M€ brutos (72,4 netos), registrados como derechos sobre instalaciones cedidas<button class="cite" data-s="1" data-loc="Nota 7, pp. 27 y 30">1</button>.</li>
+      <li>La reforma se terminó en 23/24, financiada con el préstamo de LaLiga<button class="cite" data-s="1" data-loc="Nota 7.1, p. 27">1</button>. Prensa: presupuesto inicial de 35 M€ que creció a 50 M€<button class="cite" data-s="23">23</button>.</li>
+      <li>Transfermarkt da 23.500 asientos y dueño "Ayuntamiento de Villarreal"<button class="cite" data-s="17">17</button>; usamos el aforo oficial de 21.332 del EINF<button class="cite" data-s="4" data-loc="EINF, pp. 7 y 10">4</button>.</li>
+      <li>Ciudad deportiva: terrenos municipales en concesión gratuita desde 2015 por 75 años<button class="cite" data-s="1" data-loc="Nota 7.3, p. 30">1</button>.</li>
+    </ul>
+    <p><span class="tag a">análisis</span>Con 30 € por espectador entrarían unos +3,6 M€ al año; con 40 €, unos +7 M€. Es dinero real, pero no cambia el modelo: el techo es físico (21.332 asientos en una ciudad pequeña).</p>
+  </div></details>
+</section>
+
+<!-- ============ AUDITORÍA ============ -->
+<section class="sec" id="auditoria" data-title="Auditoría y dirección" data-k="auditoria betea opinion favorable enfasis informe de gestion einf objetivo plano roig">
+  <div class="sec-head"><div><p class="eyebrow">Garantías</p><h2>Cuentas limpias, modelo exigente</h2></div><div class="vig" data-v="ledger"></div></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Pregunta</th><th>Respuesta</th></tr></thead>
+    <tbody>
+      <tr><td>Opinión del auditor (BETEA)</td><td>Favorable, sin salvedades<button class="cite" data-s="2" data-loc="p. 1">2</button></td></tr>
+      <tr><td>¿Párrafo de énfasis o dudas de continuidad?</td><td>No<button class="cite" data-s="2">2</button></td></tr>
+      <tr><td>Lo que más revisó</td><td>Valor de los jugadores (67,4 M€) e ingresos (93,7% de la cifra de negocios)<button class="cite" data-s="2" data-loc="pp. 2–3">2</button></td></tr>
+      <tr><td>Objetivo de la dirección</td><td>"Cuenta de resultados plana, sin beneficios ni pérdidas"<button class="cite" data-s="3" data-loc="p. 1">3</button></td></tr>
+      <tr><td>Plan 25/26</td><td>Champions; la plantilla se financia "sobre todo" con venta de jugadores<button class="cite" data-s="3" data-loc="p. 2">3</button></td></tr>
+    </tbody></table></div>
+  <p><span class="tag a">análisis</span>Una auditoría limpia certifica que las cuentas reflejan la realidad; no dice si el negocio es sano. El informe escribe "67,38 miles de euros" cuando son millones<button class="cite" data-s="2" data-loc="p. 2">2</button>.</p>
+</section>
+
+<!-- ============ VALENCIA ============ -->
+<section class="sec" id="valencia" data-title="Villarreal y Valencia" data-k="valencia comparativa lim bonos deuda problema de modelo">
+  <div class="sec-head"><div><p class="eyebrow">Comparar</p><h2>Problema de modelo frente a problema de deuda</h2></div><div class="vig" data-v="scale"></div></div>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>Villarreal</th><th>Valencia</th></tr></thead>
+    <tbody>
+      <tr><td>Deuda financiera</td><td>Préstamo LaLiga 108,6 M€<button class="cite" data-s="1" data-loc="Nota 9">1</button></td><td>≈470 M€ refinanciados en bonos al 5,82% hasta 2052<button class="cite" data-s="26">26</button></td></tr>
+      <tr><td>Auditoría</td><td>Sin énfasis<button class="cite" data-s="2">2</button></td><td>Énfasis por dependencia del accionista<button class="cite" data-s="26">26</button></td></tr>
+      <tr><td>Límite de plantilla 24/25</td><td>135,9 M€<button class="cite" data-s="7">7</button></td><td>74,6 M€<button class="cite" data-s="7">7</button></td></tr>
+      <tr><td>Límite de plantilla 25/26</td><td>173,1 M€<button class="cite" data-s="6">6</button></td><td>91,2 M€<button class="cite" data-s="6">6</button></td></tr>
+    </tbody></table></div>
+  <p><span class="tag a">análisis</span>El Valencia tiene que pagar lo que debe; el Villarreal pierde en el día a día y depende de vender y de Europa. Los datos del Valencia salvo el límite vienen de un análisis anterior y hay que verificarlos con sus cuentas.</p>
+</section>
+
+<!-- ============ DECISIONES Y PENDIENTES ============ -->
+<section class="sec" id="decisiones" data-title="Decisiones y pendientes" data-k="decisiones metodo pendientes siguientes pasos soriano fair play valencia pamesa excel">
+  <div class="sec-head"><div><p class="eyebrow">Cómo trabajamos</p><h2>Decisiones tomadas y lo que falta</h2></div><div class="vig" data-v="book"></div></div>
+  <div class="cols">
+    <div><h3>Decisiones</h3><ul class="check done">
+      <li>Emilio hace el análisis; Claude aporta datos con documento y página.</li>
+      <li>No inventar cifras. Lo externo se marca como estimación.</li>
+      <li>Páginas citadas con la numeración del visor de PDF.</li>
+      <li>Todo se guarda en Excel con fórmulas y comprobaciones<button class="cite" data-s="28">28</button>.</li>
+      <li>Para el desglose de ingresos, el cuadro de LaLiga de la nota 13.1.</li>
+      <li>Cada ratio con su fórmula escrita.</li>
+      <li>Riesgos como volatilidad, calendario de caja y negocio frente a apoyo del dueño, no como "¿y si desaparece?".</li>
+      <li>Mismas definiciones para todos los clubes<button class="cite" data-s="29">29</button>.</li>
+      <li>Guardar aprendizajes como ideas, nunca como leyes<button class="cite" data-s="31">31</button>.</li>
+    </ul></div>
+    <div><h3>Pendientes</h3><ul class="check">
+      <li>Concepto de los 13,72 M€ de Pamesa.</li>
+      <li>Origen de los 19 M€ devueltos al grupo en 23/24.</li>
+      <li>"Último plazo" del préstamo LaLiga frente al saldo que baja.</li>
+      <li>¿Se amplió la cesión del estadio más allá de 2033?</li>
+      <li>Presupuesto 24/25 frente a real y datos 22/23: hacen falta las cuentas 23/24.</li>
+      <li>Plazos de cobro y pago de traspasos en prensa y X: Baena, Sørloth, Barry, Jørgensen.</li>
+      <li>€ por espectador de clubes medianos, empezando por el Valencia.</li>
+      <li>Chat aparte sobre el libro de Soriano (definición del 50–65%).</li>
+      <li>Chat aparte sobre el fair play financiero de LaLiga y UEFA.</li>
+    </ul></div>
+  </div>
+  <h3>Las preguntas de Emilio para la conclusión</h3>
+  <ol class="qs">
+    <li>¿Qué hacer en un año bajo en ventas?</li>
+    <li>Si el equipo no funciona, ¿cómo aseguras que la cantera dé el paso?</li>
+    <li>¿Qué hacer con el dinero de los traspasos?</li>
+    <li>¿Qué otros ingresos pueden bajar el % que se va a sueldos?</li>
+  </ol>
+  <p style="font-size:.9em;color:var(--ink-2)">De las notas de Emilio del 13/10/2026<button class="cite" data-s="30">30</button>.</p>
+</section>
+
+<!-- ============ FUENTES ============ -->
+<section class="sec" id="fuentes" data-title="Fuentes" data-k="fuentes">
+  <div class="sec-head"><div><p class="eyebrow">Referencias</p><h2>Fuentes</h2></div><div class="vig" data-v="ledger"></div></div>
+  <p>Cada número entre corchetes del texto abre su fuente. Los documentos del club fueron archivos que aportó Emilio y no tenemos su link original; LaLiga publica las cuentas de los clubes en su portal de transparencia<button class="cite" data-s="13">13</button>.</p>
+  <div id="srclist"></div>
+</section>
+
+<p class="empty" id="empty">Ninguna sección coincide con la búsqueda.</p>
+<footer>Resumen de la conversación del 10 al 13 de octubre de 2026. Cifras en millones de euros salvo que se indique. Revisado contra el Excel de trabajo antes de publicar.</footer>
+</main>
+</div>
+
+<div id="tip" role="tooltip"></div>
+<div id="pop" role="dialog" aria-label="Fuente" hidden></div>
+
+<script>
+(function(){
+"use strict";
+/* ------------ FUENTES ------------ */
+var S={
+ 1:{g:"pdf",v:"ok",t:"Cuentas anuales 2024/25 del Villarreal CF (firmadas)",w:"PDF aportado por Emilio · 3.a.v-CCAA-Villarreal-24-25-firmado.pdf",d:"Formuladas el 22/09/2025",u:null},
+ 2:{g:"pdf",v:"ok",t:"Informe de auditoría de las cuentas 2024/25",w:"PDF aportado por Emilio · BETEA España Auditores",d:"30/09/2025",u:null},
+ 3:{g:"pdf",v:"ok",t:"Informe de gestión 2024/25",w:"PDF aportado por Emilio",d:"2025, publicado junto a las cuentas",u:null},
+ 4:{g:"pdf",v:"ok",t:"Estado de Información No Financiera (EINF) 2024/25",w:"PDF aportado por Emilio (52 páginas)",d:"2025",u:null},
+ 5:{g:"liga",v:"ext",t:"Límite de coste de plantilla — Transparencia",w:"laliga.com",d:"Consultado el 11/10/2026",u:"https://www.laliga.com/transparencia/gestion-economica/limite-coste-plantilla"},
+ 6:{g:"liga",v:"ext",t:"LCPD temporada 2025/26 (sep-25 y mar-26)",w:"LaLiga · PDF oficial",d:"03/03/2026",u:"https://assets.laliga.com/assets/2026/03/03/originals/5e4da6bc680942afb87e7a51daa063d2.pdf"},
+ 7:{g:"liga",v:"ext",t:"LCPD temporada 2024/25 (sep-24 y feb-25)",w:"LaLiga · PDF oficial",d:"18/02/2025",u:"https://assets.laliga.com/assets/2025/02/18/originals/2cf671f0200a20525d1b02601663139c.pdf"},
+ 8:{g:"liga",v:"ext",t:"LCPD temporada 2023/24 (sep-23 y feb-24)",w:"LaLiga · imagen oficial",d:"20/02/2024",u:"https://assets.laliga.com/assets/2024/02/20/originals/cf67c13e1479042dabdfa92dc8b8b7be.jpeg"},
+ 9:{g:"liga",v:"ext",t:"LCPD temporada 2022/23 (sep-22 y feb-23)",w:"LaLiga · PDF oficial",d:"20/02/2023",u:"https://assets.laliga.com/assets/2023/02/20/originals/2d18e5130d1a236fa704a4e0e544e8f8.pdf"},
+ 10:{g:"liga",v:"ext",t:"LCPD temporada 2021/22 (verano e invierno)",w:"LaLiga · imagen oficial",d:"14/03/2022",u:"https://assets.laliga.com/assets/2022/03/14/originals/06f8caba0451494ddd79f5519f97160f.jpeg"},
+ 11:{g:"liga",v:"ext",t:"LCPD temporada 2020/21 (verano, invierno y final)",w:"LaLiga · PDF oficial",d:"21/10/2021",u:"https://assets.laliga.com/assets/2021/10/21/originals/4311e049ed0278b672d86471912d7636.pdf"},
+ 12:{g:"liga",v:"ext",t:"Informe Económico Financiero 2024/25",w:"LaLiga · PDF oficial (41 páginas)",d:"18/03/2026",u:"https://assets.laliga.com/assets/2026/03/18/originals/5658090da03d3a5134540accdc341c89.pdf"},
+ 13:{g:"liga",v:"ext",t:"Cuentas anuales de los clubes — Transparencia",w:"laliga.com",d:"Consultado el 13/10/2026",u:"https://www.laliga.com/transparencia/gestion-economica/cuentas-anuales"},
+ 14:{g:"ext",v:"ext",t:"Fichajes, ventas y canteranos del Villarreal",w:"Transfermarkt · exportado por Emilio (fichajes.csv, origen.csv)",d:"10–11/10/2026",u:"https://www.transfermarkt.mx"},
+ 15:{g:"ext",v:"ext",t:"Asistencia en Liga por temporada y ficha del estadio",w:"Transfermarkt · exportado por Emilio (asistencia.csv, estadio.csv)",d:"11/10/2026",u:"https://www.transfermarkt.mx"},
+ 16:{g:"ext",v:"ext",t:"Valor de mercado de la plantilla (368,05 M€) y de cada jugador",w:"Transfermarkt · dato aportado por Emilio",d:"11/10/2026",u:"https://www.transfermarkt.mx"},
+ 17:{g:"ext",v:"ext",t:"Ficha del Estadio de la Cerámica",w:"Transfermarkt · exportado por Emilio (estadio.csv)",d:"11/10/2026",u:"https://www.transfermarkt.mx",note:"Da 23.500 asientos; usamos el aforo oficial del EINF."},
+ 18:{g:"ext",v:"ext",t:"Sergio Ramos encabeza una oferta millonaria para comprar el Sevilla FC",w:"beIN Sports",d:"05/01/2026",u:"https://www.beinsports.com/es-us/football/la-liga/articles/sergio-ramos-encabeza-una-oferta-millonaria-para-comprar-el-sevilla-fc-2026-01-05"},
+ 19:{g:"ext",v:"ext",t:"Inversores mexicanos se retiran y ponen en riesgo la compra del Sevilla",w:"Récord",d:"20/05/2026",u:"https://record.com.mx/historia/inversores-mexicanos-se-retiran-y-ponen-en-riesgo-la-compra-del-sevilla-encabezada-por-sergio-ramos-2026052022543023491"},
+ 20:{g:"ext",v:"ext",t:"Consecuencias de la negociación rota de Sergio Ramos por el Sevilla",w:"El Debate",d:"28/05/2026",u:"https://www.eldebate.com/deportes/futbol/20260528/consecuencias-tendra-sevilla-negociacion-rota-sergio-ramos-compra-club_422540_amp.html"},
+ 21:{g:"ext",v:"unv",t:"Goldman Sachs ya manda en el Sevilla FC en medio del proceso de venta",w:"El Gol Digital",d:"Fecha no comprobada",u:"https://www.elgoldigital.com/futbol/sevilla-fc/goldman-sachs-ya-manda-en-el-sevilla-fc-en-medio-del-proceso-de-venta/"},
+ 22:{g:"ext",v:"unv",t:"El acuerdo con inversores chinos marca un punto de inflexión para el Sevilla FC",w:"El Gol Digital",d:"Fecha no comprobada",u:"https://www.elgoldigital.com/futbol/sevilla-fc/el-sevilla-fc-a-un-paso-de-ser-chino/"},
+ 23:{g:"ext",v:"unv",t:"Coste de la reforma del Estadio de la Cerámica (35 → 50 M€)",w:"The Stadium Business",d:"04/01/2023",u:null,note:"No guardamos el link del artículo."},
+ 24:{g:"mine",v:"unv",t:"Patrocinio de Pamesa de ~2,5 M€ al año",w:"Búsqueda de Emilio en internet",d:"10/10/2026",u:null,note:"Sin fuente concreta identificada."},
+ 25:{g:"gen",v:"unv",t:"Ferran Soriano, La pelota no entra por azar",w:"Libro leído por Emilio · conocimiento general",d:"—",u:null,note:"Rango 50–65% de sueldos y ~2 M€ por canterano en el Barça; definición exacta pendiente de verificar en el libro."},
+ 26:{g:"gen",v:"unv",t:"Análisis previo del Valencia CF",w:"Conversación anterior de Emilio",d:"Antes del 10/10/2026",u:null,note:"Bonos, tipo, vencimiento y énfasis de auditoría: verificar con las cuentas del Valencia."},
+ 27:{g:"gen",v:"unv",t:"Sanciones por impago de traspasos (FIFA y LaLiga)",w:"Conocimiento general de Claude",d:"—",u:null,note:"No se consultó una fuente concreta en esta conversación."},
+ 28:{g:"mine",v:"own",t:"Villarreal_Analisis_2425.xlsx",w:"Archivo de trabajo (≈1.600 fórmulas, comprobaciones en cero)",d:"10–13/10/2026",u:null,note:"Contiene cada cifra con su nota y página."},
+ 29:{g:"mine",v:"own",t:"Comparativa_Clubes.xlsx",w:"Archivo de trabajo: deuda, coste CVC, LCPD 20/21–25/26, matchday",d:"11–12/10/2026",u:null},
+ 30:{g:"mine",v:"own",t:"Notas generales del Villarreal (notas_villarreal.pdf)",w:"Notas manuscritas de Emilio",d:"13/10/2026",u:null},
+ 31:{g:"mine",v:"own",t:"aprendizajes_finanzas.txt e ideas_analisis_clubes.txt",w:"Archivos del proyecto Running Down My Dream",d:"11–13/10/2026",u:null}
+};
+var VB={ok:["vb-ok","Verificado"],ext:["vb-ext","Externo"],unv:["vb-unv","Sin verificar"],own:["vb-own","Archivo propio"]};
+var GROUPS=[["pdf","Documentos oficiales del club (PDF)"],["liga","LaLiga (web y PDF oficiales)"],["ext","Datos externos y prensa"],["mine","Archivos y notas de Emilio"],["gen","Conocimiento general y fuentes sin link"]];
+
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+
+/* lista de fuentes */
+(function(){
+  var host=document.getElementById("srclist"),h="";
+  GROUPS.forEach(function(g){
+    var ids=Object.keys(S).filter(function(k){return S[k].g===g[0];}).map(Number).sort(function(a,b){return a-b;});
+    if(!ids.length)return;
+    h+='<div class="srcgroup"><h3>'+esc(g[1])+'</h3><ol class="srcs">';
+    ids.forEach(function(id){var s=S[id],vb=VB[s.v];
+      h+='<li id="src-'+id+'"><span class="id">'+id+'</span><span><span class="st">'+esc(s.t)+'</span>'+esc(s.w)+' · '+esc(s.d)+' · <span class="vbadge '+vb[0]+'">'+vb[1]+'</span><br>'+
+        (s.u?'<a href="'+esc(s.u)+'" target="_blank" rel="noopener">'+esc(s.u)+'</a>':'<span class="nolink">Sin link'+(s.note?': '+esc(s.note):'')+'</span>')+
+        (s.u&&s.note?'<br><span class="nolink">'+esc(s.note)+'</span>':'')+'</span></li>';});
+    h+='</ol></div>';
+  });
+  host.innerHTML=h;
+})();
+
+/* popover de citas */
+var pop=document.getElementById("pop"),openBtn=null;
+function closePop(){pop.hidden=true;if(openBtn){openBtn.setAttribute("aria-expanded","false");openBtn=null;}}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("button.cite");
+  if(b){e.preventDefault();e.stopPropagation();
+    if(openBtn===b){closePop();return;}
+    if(openBtn)openBtn.setAttribute("aria-expanded","false");
+    var s=S[b.dataset.s];if(!s)return;var vb=VB[s.v],loc=b.dataset.loc;
+    pop.innerHTML='<button class="x" type="button" aria-label="Cerrar">×</button><div class="k"><span>Fuente '+b.dataset.s+'</span><span class="vbadge '+vb[0]+'">'+vb[1]+'</span></div><p class="t">'+esc(s.t)+'</p><p class="m">'+esc(s.w)+'<br>'+esc(s.d)+'</p>'+
+      (loc?'<div class="loc">'+esc(loc)+'</div>':'')+(s.note?'<p class="m">'+esc(s.note)+'</p>':'')+
+      (s.u?'<a href="'+esc(s.u)+'" target="_blank" rel="noopener">Abrir fuente ↗</a>':'<span class="nolink">Sin link disponible</span>')+
+      ' · <a href="#src-'+b.dataset.s+'" data-jump="1">Ver en la lista</a>';
+    pop.hidden=false;b.setAttribute("aria-expanded","true");openBtn=b;
+    var r=b.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight;
+    var left=Math.min(Math.max(16,r.left-pw/2),window.innerWidth-pw-16);
+    var top=r.bottom+8;if(top+ph>window.innerHeight-12)top=Math.max(12,r.top-ph-8);
+    pop.style.left=left+"px";pop.style.top=top+"px";
+    pop.querySelector(".x").focus({preventScroll:true});
+    return;
+  }
+  if(e.target.closest(".x")){closePop();return;}
+  if(e.target.closest("[data-jump]")){closePop();return;}
+  if(!e.target.closest("#pop"))closePop();
+});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!pop.hidden){var b=openBtn;closePop();if(b)b.focus();}});
+window.addEventListener("scroll",function(){if(!pop.hidden&&window.innerWidth>600)closePop();},{passive:true});
+document.querySelectorAll("button.cite").forEach(function(b){b.type="button";b.setAttribute("aria-expanded","false");b.setAttribute("aria-label","Fuente "+b.dataset.s);});
+
+/* ------------ ÍNDICE, BÚSQUEDA, PLEGABLES ------------ */
+var secs=[].slice.call(document.querySelectorAll("section.sec"));
+var toc=document.getElementById("toclist"),chips=document.getElementById("chips");
+secs.forEach(function(s){
+  var li=document.createElement("li");li.innerHTML='<a href="#'+s.id+'">'+esc(s.dataset.title)+'</a>';toc.appendChild(li);
+  var c=document.createElement("a");c.href="#"+s.id;c.textContent=s.dataset.title;chips.appendChild(c);
+});
+var tocLinks=[].slice.call(toc.querySelectorAll("a")),chipLinks=[].slice.call(chips.querySelectorAll("a"));
+function setActive(id){
+  tocLinks.forEach(function(a){a.classList.toggle("on",a.getAttribute("href")==="#"+id);});
+  chipLinks.forEach(function(a){var on=a.getAttribute("href")==="#"+id;a.classList.toggle("on",on);if(on&&window.innerWidth<=900){var p=a.parentNode;var l=a.offsetLeft-p.clientWidth/2+a.clientWidth/2;p.scrollTo({left:l,behavior:"smooth"});}});
+}
+if("IntersectionObserver" in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)setActive(e.target.id);});},{rootMargin:"-30% 0px -60% 0px"});
+  secs.forEach(function(s){io.observe(s);});
+}
+function norm(t){return (t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
+var cache=secs.map(function(s){return norm(s.textContent+" "+(s.dataset.k||""));});
+var count=document.getElementById("count"),empty=document.getElementById("empty");
+var q1=document.getElementById("q1"),q2=document.getElementById("q2");
+function search(v){
+  var q=norm(v.trim()),n=0;
+  secs.forEach(function(s,i){
+    var hit=!q||cache[i].indexOf(q)>-1||s.id==="fuentes"&&!q;
+    if(q&&s.id==="fuentes")hit=cache[i].indexOf(q)>-1;
+    s.hidden=!hit;tocLinks[i].parentNode.hidden=!hit;chipLinks[i].hidden=!hit;
+    if(hit)n++;
+    if(q&&hit)s.querySelectorAll("details.more").forEach(function(d){d.open=true;});
+  });
+  count.textContent=q?(n+(n===1?" sección":" secciones")+" con “"+v.trim()+"”"):"";
+  empty.style.display=(q&&n===0)?"block":"none";
+}
+q1.addEventListener("input",function(){q2.value=q1.value;search(q1.value);});
+q2.addEventListener("input",function(){q1.value=q2.value;search(q2.value);});
+var allOpen=false;
+function toggleAll(){allOpen=!allOpen;document.querySelectorAll("details.more").forEach(function(d){d.open=allOpen;});
+  document.getElementById("tog1").textContent=allOpen?"Cerrar todos los detalles":"Abrir todos los detalles";
+  document.getElementById("tog2").textContent=allOpen?"Cerrar todo":"Abrir todo";}
+document.getElementById("tog1").addEventListener("click",toggleAll);
+document.getElementById("tog2").addEventListener("click",toggleAll);
+
+/* ------------ VIÑETAS DE ACUARELA ------------ */
+var V={
+ book:'<g filter="url(#wc)" opacity="var(--wash-op)"><path d="M14 22 L60 16 L60 82 L14 88 Z" fill="var(--azul-wash)"/><path d="M60 16 L106 22 L106 88 L60 82 Z" fill="var(--ochre-wash)"/></g><g filter="url(#ink)" fill="none" stroke="var(--ink)" stroke-width="1.6"><path d="M14 22 L60 16 L106 22 L106 88 L60 82 L14 88 Z M60 16 V82"/><path d="M24 36 L50 33 M24 46 L50 43 M24 56 L46 53 M70 33 L96 36 M70 43 L96 46 M70 53 L92 56"/></g>',
+ ledger:'<g filter="url(#wc)" opacity="var(--wash-op)"><rect x="20" y="14" width="72" height="76" fill="var(--paper-2)"/><rect x="20" y="14" width="72" height="16" fill="var(--azul-wash)"/><rect x="62" y="52" width="30" height="38" fill="var(--ochre-wash)" opacity=".8"/></g><g filter="url(#ink)" fill="none" stroke="var(--ink)" stroke-width="1.5"><rect x="20" y="14" width="72" height="76"/><path d="M20 30 H92 M20 44 H92 M20 58 H92 M20 72 H92 M50 30 V90"/></g>',
+ ball:'<g filter="url(#wc)" opacity="var(--wash-op)"><circle cx="60" cy="52" r="34" fill="var(--paper-2)"/><path d="M60 34 L76 46 L70 64 L50 64 L44 46 Z" fill="var(--azul)" opacity=".7"/><ellipse cx="60" cy="92" rx="34" ry="5" fill="var(--ochre-wash)" opacity=".7"/></g><g filter="url(#ink)" fill="none" stroke="var(--ink)" stroke-width="1.5"><circle cx="60" cy="52" r="34"/><path d="M60 34 L76 46 L70 64 L50 64 L44 46 Z M60 34 V18 M76 46 L92 40 M70 64 L80 80 M50 64 L40 80 M44 46 L28 40"/></g>',
+ tile:'<g filter="url(#wc)" opacity="var(--wash-op)"><rect x="16" y="10" width="88" height="80" fill="var(--paper-2)"/><path d="M60 16 L96 50 L60 84 L24 50 Z" fill="var(--azul-wash)"/><circle cx="60" cy="50" r="12" fill="var(--ochre-wash)"/></g><g filter="url(#ink)" fill="none" stroke="var(--ink)" stroke-width="1.4"><rect x="16" y="10" width="88" height="80"/><path d="M60 16 L96 50 L60 84 L24 50 Z"/><circle cx="60" cy="50" r="12"/></g>',
+ coins:'<g filter="url(#wc)" opacity="var(--wash-op)"><ellipse cx="46" cy="78" rx="26" ry="8" fill="var(--ochre-wash)"/><rect x="20" y="40" width="52" height="38" fill="var(--ochre-wash)"/><ellipse cx="46" cy="40" rx="26" ry="8" fill="var(--ochre)"/><ellipse cx="88" cy="82" rx="18" ry="6" fill="var(--azul-wash)"/></g><g filter="url(#ink)" fill="none" stroke="var(--ink)" stroke-width="1.4"><ellipse cx="46" cy="40" rx="26" ry="8"/><path d="M20 40 V78 M72 40 V78 M20 78 A26 8 0 0 0 72 78 M20 52 A26 8 0 0 0 72 52 M20 65 A26 8 0 0 0 72 65"/><path d="M88 20 V60 M80 52 L88 62 L96 52"/></g>',
+ sprout:'<g filter="url(#wc)" opacity="var(--wash-op)"><path d="M60 52 C40 50 28 36 28 22 C46 22 58 34 60 52 Z" fill="var(--gain)" opacity=".7"/><path d="M60 46 C74 40 88 30 92 16 C74 16 62 28 60 46 Z" fill="var(--gain)" opacity=".55"/><path d="M22 74 H98 L90 94 H30 Z" fill="var(--ochre-wash)"/></g><g filter="url(#ink)" fill="none" stroke="var(--ink)" stroke-width="1.5"><path d="M60 74 V40 M60 52 C40 50 28 36 28 22 C46 22 58 34 60 52 M60 46 C74 40 88 30 92 16 C74 16 62 28 60 46 M22 74 H98 L90 94 H30 Z"/></g>',
+ scale:'<g filter="url(#wc)" opacity="var(--wash-op)"><path d="M14 58 A18 10 0 0 0 50 58 Z" fill="var(--azul-wash)"/><path d="M70 50 A18 10 0 0 0 106 50 Z" fill="var(--ochre-wash)"/><rect x="50" y="86" width="20" height="6" fill="var(--ink-2)" opacity=".4"/></g><g filter="url(#ink)" fill="none" stroke="var(--ink)" stroke-width="1.5"><path d="M60 14 V88 M40 92 H80 M22 30 L98 22 M22 30 L14 58 M22 30 L50 58 M98 22 L70 50 M98 22 L106 50 M14 58 A18 10 0 0 0 50 58 M70 50 A18 10 0 0 0 106 50"/></g>',
+ shield:'<g filter="url(#wc)" opacity="var(--wash-op)"><path d="M60 10 L96 22 V50 C96 72 80 86 60 94 C40 86 24 72 24 50 V22 Z" fill="var(--azul-wash)"/><path d="M60 10 L96 22 V50 C96 72 80 86 60 94 Z" fill="var(--ochre-wash)" opacity=".75"/></g><g filter="url(#ink)" fill="none" stroke="var(--ink)" stroke-width="1.5"><path d="M60 10 L96 22 V50 C96 72 80 86 60 94 C40 86 24 72 24 50 V22 Z M42 52 L54 64 L80 38"/></g>',
+ stadium:'<g filter="url(#wc)" opacity="var(--wash-op)"><path d="M8 70 C8 44 112 44 112 70 L112 84 C112 92 8 92 8 84 Z" fill="var(--ochre-wash)"/><ellipse cx="60" cy="68" rx="38" ry="10" fill="var(--gain)" opacity=".6"/><path d="M8 70 C8 44 112 44 112 70" fill="none" stroke="var(--azul-wash)" stroke-width="8"/></g><g filter="url(#ink)" fill="none" stroke="var(--ink)" stroke-width="1.5"><path d="M8 70 C8 44 112 44 112 70 L112 84 C112 92 8 92 8 84 Z"/><ellipse cx="60" cy="68" rx="38" ry="10"/><path d="M20 40 V24 M100 40 V24 M60 34 V16"/></g>'
+};
+document.querySelectorAll(".vig").forEach(function(el){var k=el.dataset.v;if(V[k])el.innerHTML='<svg viewBox="0 0 120 100" aria-hidden="true">'+V[k]+'</svg>';});
+
+fixVars(document);
+/* ------------ GRÁFICAS ------------ */
+var NS="http://www.w3.org/2000/svg";
+var VK={fill:1,stroke:1,opacity:1};
+function E(tag,at,parent){var e=document.createElementNS(NS,tag);for(var k in at){var val=at[k];if(k==="text")e.textContent=val;else if(VK[k]&&typeof val==="string"&&val.indexOf("var(")===0)e.style.setProperty(k,val);else e.setAttribute(k,val);}if(parent)parent.appendChild(e);return e;}
+function fixVars(root){root.querySelectorAll("svg *").forEach(function(n){["fill","stroke","opacity"].forEach(function(a){var v=n.getAttribute(a);if(v&&v.indexOf("var(")===0){n.style.setProperty(a,v);n.removeAttribute(a);}});});}
+function fmt(x,d){d=d===undefined?1:d;return x.toLocaleString("es-ES",{minimumFractionDigits:d,maximumFractionDigits:d});}
+function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function svgFor(el,h){el.innerHTML="";var w=Math.max(280,el.clientWidth);var s=E("svg",{width:w,height:h,viewBox:"0 0 "+w+" "+h,role:"img"},el);return {s:s,w:w,h:h};}
+var tip=document.getElementById("tip");
+function bindTip(node,html){node.setAttribute("data-tip","1");node.setAttribute("tabindex","0");
+  function show(ev){tip.innerHTML=html;tip.classList.add("show");place(ev);}
+  function place(ev){var x,y;if(ev&&ev.clientX!==undefined){x=ev.clientX;y=ev.clientY;}else{var r=node.getBoundingClientRect();x=r.left+r.width/2;y=r.top;}
+    var tw=tip.offsetWidth,th=tip.offsetHeight;tip.style.left=Math.min(Math.max(8,x-tw/2),window.innerWidth-tw-8)+"px";tip.style.top=(y-th-14<8?y+18:y-th-14)+"px";}
+  node.addEventListener("pointerenter",show);node.addEventListener("pointermove",place);
+  node.addEventListener("pointerleave",function(){tip.classList.remove("show");});
+  node.addEventListener("focus",function(){show();});node.addEventListener("blur",function(){tip.classList.remove("show");});
+  node.addEventListener("click",function(ev){show(ev);ev.stopPropagation();});
+}
+document.addEventListener("click",function(){tip.classList.remove("show");});
+window.addEventListener("scroll",function(){tip.classList.remove("show");},{passive:true});
+function lbl(p,x,y,t,o){o=o||{};return E("text",{x:x,y:y,"font-size":o.fs||13,fill:o.c||"var(--ink-2)","text-anchor":o.a||"start","font-weight":o.fw||400,text:t},p);}
+
+/* 1. amortización */
+function chAmort(){var el=document.getElementById("ch-amort");var g=svgFor(el,230),s=g.s,w=g.w;
+  var L=46,R=12,T=26,B=40,cw=w-L-R,ch=g.h-T-B,yrs=[1,2,3,4,5],caja=[5,5,0,0,0],amort=[2,2,2,2,2],max=6;
+  var y=function(v){return T+ch-(v/max)*ch;};
+  [0,2,4,6].forEach(function(v){E("line",{x1:L,x2:w-R,y1:y(v),y2:y(v),stroke:"var(--rule)"},s);lbl(s,L-8,y(v)+4,v,{a:"end",fs:12});});
+  var bw=Math.min(26,cw/5/3);
+  yrs.forEach(function(yr,i){var cx=L+cw*(i+.5)/5;
+    var r1=E("rect",{x:cx-bw-2,y:y(caja[i]),width:bw,height:Math.max(0.5,y(0)-y(caja[i])),fill:"var(--azul)"},s);
+    var r2=E("rect",{x:cx+2,y:y(amort[i]),width:bw,height:y(0)-y(amort[i]),fill:"var(--ochre-wash)"},s);
+    bindTip(r1,"<b>Año "+yr+"</b><br>Caja que sale: "+caja[i]+" M€");bindTip(r2,"<b>Año "+yr+"</b><br>Gasto en PyG (amortización): 2 M€<br>Valor en libros al final: "+(10-2*yr)+" M€");
+    lbl(s,cx,g.h-B+18,"Año "+yr,{a:"middle",fs:12.5});});
+  var cx1=L+cw*.5/5;lbl(s,cx1-bw-2,y(5)-8,"Caja: 5",{fs:12.5,c:"var(--azul)",fw:600});
+  var cx3=L+cw*2.5/5;lbl(s,cx3+2,y(2)-8,"Amortización: 2 cada año",{fs:12.5,c:"var(--ochre)",fw:600});
+  lbl(s,L,14,"M€",{fs:12});
+}
+
+/* 2. sueldos */
+function chSueldos(){var el=document.getElementById("ch-sueldos");var rows=[
+  {l:"Personal / cifra de negocios",y:"24/25",v:120,c:"var(--loss)",f:"114,1 ÷ 95,4 (PyG, p. 10)"},
+  {l:"Personal / cifra de negocios",y:"23/24",v:90,c:"var(--loss)",f:"108,1 ÷ 119,7 (PyG, p. 10)"},
+  {l:"Con resultado por traspasos",y:"24/25",v:60,c:"var(--ochre)",f:"114,1 ÷ (95,4 + 94,7)"},
+  {l:"Con resultado por traspasos",y:"23/24",v:73,c:"var(--ochre)",f:"108,1 ÷ (119,7 + 28,5)"},
+  {l:"LaLiga · primera plantilla",y:"24/25",v:51,c:"var(--azul)",f:"≈101,3 ÷ 200,4 (nota 25.5 da 51%)"}];
+  var narrow=el.clientWidth<520,rh=narrow?50:36,T=22,g=svgFor(el,T+rows.length*rh+30),s=g.s,w=g.w;
+  var L=narrow?12:240,R=46,cw=w-L-R,x=function(v){return L+cw*v/130;};
+  E("rect",{x:x(50),y:T-6,width:x(65)-x(50),height:rows.length*rh+4,fill:"var(--paper-2)"},s);
+  lbl(s,x(57.5),T-10,"Soriano 50–65%",{a:"middle",fs:12});
+  E("line",{x1:x(100),x2:x(100),y1:T-6,y2:T+rows.length*rh,stroke:"var(--ink-2)","stroke-dasharray":"3 3"},s);
+  lbl(s,x(100)+4,T+rows.length*rh+16,"100%: todos los ingresos",{fs:12});
+  rows.forEach(function(r,i){var yy=T+i*rh;var by=narrow?yy+20:yy+6,bh=narrow?16:18;
+    lbl(s,narrow?L:L-12,narrow?yy+14:yy+19,r.l+" · "+r.y,{a:narrow?"start":"end",fs:13,c:"var(--ink)"});
+    var rect=E("rect",{x:L,y:by,width:x(r.v)-L,height:bh,fill:r.c,opacity:.85},s);
+    lbl(s,x(r.v)+6,by+bh-4,r.v+"%",{fs:13.5,c:"var(--ink)",fw:600});
+    bindTip(rect,"<b>"+r.l+" ("+r.y+")</b><br>"+r.f+" = "+r.v+"%");});
+}
+
+/* 3. ingresos */
+function chIngresos(){var el=document.getElementById("ch-ingresos");
+  var cats=[{k:"TV LaLiga",c:"var(--azul)"},{k:"TV UEFA",c:"var(--azul-wash)"},{k:"Grupo del dueño",c:"var(--ochre)"},{k:"Otros patrocinios",c:"var(--ochre-wash)"},{k:"Abonos y taquilla",c:"var(--gain)"},{k:"Tienda y comercial",c:"var(--ink-2)"}];
+  var data=[{y:"23/24",v:[69.584,20.395,6.041,15.140,6.921,2.335],t:120.4},{y:"24/25",v:[58.263,1.587,13.761,14.360,6.847,2.107],t:96.9}];
+  var narrow=el.clientWidth<560,g=svgFor(el,narrow?250:210),s=g.s,w=g.w;
+  var L=52,R=56,T=40,bh=narrow?44:40,gap=narrow?70:52,cw=w-L-R,x=function(v){return cw*v/125;};
+  data.forEach(function(d,i){var yy=T+i*(bh+gap),acc=0;
+    lbl(s,L-10,yy+bh/2+5,d.y,{a:"end",fs:14,c:"var(--ink)",fw:600});
+    d.v.forEach(function(v,j){var r=E("rect",{x:L+x(acc),y:yy,width:Math.max(1,x(v)-1),height:bh,fill:cats[j].c,opacity:.9},s);
+      bindTip(r,"<b>"+cats[j].k+" · "+d.y+"</b><br>"+fmt(v,1)+" M€ ("+fmt(v/d.t*100,0)+"% del total)");
+      if(x(v)>(narrow?46:40)){lbl(s,L+x(acc)+5,yy+bh/2+5,fmt(v,1),{fs:12.5,c:(j===1||j===3)?"#1B2233":"#fff",fw:600});}
+      acc+=v;});
+    lbl(s,L+x(acc)+6,yy+bh/2+5,fmt(d.t,1),{fs:14,c:"var(--ink)",fw:600});
+  });
+  /* etiquetas directas sobre la barra 23/24 */
+  var acc=0,d0=data[0];var names=["TV LaLiga","UEFA","Grupo dueño","Otros patroc.","Abonos","Com."];
+  d0.v.forEach(function(v,j){if(j<4||!narrow){var cx=L+x(acc)+x(v)/2;if(x(v)>34)lbl(s,cx,T-8,names[j],{a:"middle",fs:12});}acc+=v;});
+  /* etiqueta del grupo del dueño en 24/25 */
+  var gy=T+bh+gap,gx=L+x(58.263+1.587)+x(13.761)/2;
+  lbl(s,gx,gy-8,"Grupo del dueño",{a:"middle",fs:12,c:"var(--ochre)",fw:600});
+  /* anotación UEFA en 24/25 */
+  var y2=T+bh+gap,ux=L+x(58.263)+x(1.587)/2;
+  E("path",{d:"M"+ux+" "+(y2+bh+4)+" L"+ux+" "+(y2+bh+18),stroke:"var(--loss)",fill:"none"},s);
+  lbl(s,ux,y2+bh+32,"UEFA: de 20,4 a 1,6",{a:ux>w/2?"end":"start",fs:12.5,c:"var(--loss)",fw:600});
+}
+
+/* 4. caja waterfall */
+function chCaja(){var el=document.getElementById("ch-caja");var narrow=el.clientWidth<520;var g=svgFor(el,narrow?290:270),s=g.s,w=g.w;
+  var steps=[{l:"Caja 30/06/24",v:47.6,t:"base"},{l:"Día a día",v:-45.2,t:"d"},{l:"Compraventa jugadores",v:18.1,t:"d"},{l:"Préstamo LaLiga",v:-2.9,t:"d"},{l:"Caja 30/06/25",v:17.6,t:"base"}];
+  var tips=["Efectivo al cierre de 23/24 (balance)","Por diferencia; contraste: −45,6","Cobrado ≈59,2 − pagado ≈41,1","Devolución del préstamo (nota 9)","Efectivo al cierre de 24/25 (balance)"];
+  var L=40,R=10,T=24,B=narrow?56:44,ch=g.h-T-B,cw=w-L-R,max=50,y=function(v){return T+ch-(v/max)*ch;};
+  [0,25,50].forEach(function(v){E("line",{x1:L,x2:w-R,y1:y(v),y2:y(v),stroke:"var(--rule)"},s);lbl(s,L-6,y(v)+4,v,{a:"end",fs:12});});
+  var run=0,bw=Math.min(70,cw/5*.62);
+  steps.forEach(function(st,i){var cx=L+cw*(i+.5)/5,top,bot,col;
+    if(st.t==="base"){top=st.v;bot=0;col="var(--ink-2)";run=st.v;}else{var nr=run+st.v;top=Math.max(run,nr);bot=Math.min(run,nr);col=st.v<0?"var(--loss)":"var(--gain)";
+      E("line",{x1:cx-cw/5/2,x2:cx-bw/2,y1:y(run),y2:y(run),stroke:"var(--ink-2)","stroke-dasharray":"2 3"},s);run=nr;}
+    var r=E("rect",{x:cx-bw/2,y:y(top),width:bw,height:Math.max(1,y(bot)-y(top)),fill:col,opacity:.85},s);
+    bindTip(r,"<b>"+st.l+"</b><br>"+(st.t==="base"?"":(st.v>0?"+":""))+fmt(st.v,1)+" M€<br>"+tips[i]);
+    lbl(s,cx,y(top)-7,(st.t==="base"?"":(st.v>0?"+":"−"))+fmt(Math.abs(st.v),1),{a:"middle",fs:13.5,c:"var(--ink)",fw:600});
+    var words=st.l.split(" ");if(narrow&&words.length>1){lbl(s,cx,g.h-B+18,words[0],{a:"middle",fs:12});lbl(s,cx,g.h-B+33,words.slice(1).join(" "),{a:"middle",fs:12});}
+    else lbl(s,cx,g.h-B+18,st.l,{a:"middle",fs:12.5});
+  });
+}
+
+/* 5. libros vs mercado */
+function chLibros(){var el=document.getElementById("ch-libros");var g=svgFor(el,140),s=g.s,w=g.w;var L=12,R=60,cw=w-L-R,x=function(v){return cw*v/380;};
+  var rows=[{l:"Valor en libros (nota 7, 30/06/2025)",v:67.4,c:"var(--azul)"},{l:"Valor de mercado (Transfermarkt, oct-2026)",v:368.1,c:"var(--ochre)"}];
+  rows.forEach(function(r,i){var yy=20+i*58;lbl(s,L,yy,r.l,{fs:13,c:"var(--ink)"});
+    var rect=E("rect",{x:L,y:yy+8,width:x(r.v),height:24,fill:r.c,opacity:.88},s);lbl(s,L+x(r.v)+6,yy+26,fmt(r.v,1),{fs:14,c:"var(--ink)",fw:600});
+    bindTip(rect,"<b>"+r.l+"</b><br>"+fmt(r.v,1)+" M€");});
+  lbl(s,L+x(67.4)+70,20+8+18,"≈5,5 veces",{fs:12.5,c:"var(--ink-2)"});
+}
+
+/* 6. cantera */
+function chCantera(){var el=document.getElementById("ch-cantera");var data=[["Álex Baena","Atlético · 2025",42],["Nicolas Jackson*","Chelsea · 2023",37],["Pau Torres","Aston Villa · 2023",33],["Yéremy Pino","Crystal Palace · 2025",30],["Filip Jørgensen*","Chelsea · 2024",24.5],["Samuel Chukwueze","AC Milan · 2023",21.1],["Rodri","Atlético · 2018",20],["Otros 8 (netos)","incluye recompra de Morlanes",16.1]];
+  var narrow=el.clientWidth<520,rh=narrow?40:30,g=svgFor(el,data.length*rh+24),s=g.s,w=g.w;var L=narrow?12:150,R=44,cw=w-L-R,x=function(v){return cw*v/45;};
+  data.forEach(function(d,i){var yy=8+i*rh,by=narrow?yy+16:yy+4,bh=narrow?14:18;
+    lbl(s,narrow?L:L-10,narrow?yy+12:yy+18,d[0],{a:narrow?"start":"end",fs:13,c:"var(--ink)"});
+    var r=E("rect",{x:L,y:by,width:x(d[2]),height:bh,fill:i<7?"var(--gain)":"var(--ink-2)",opacity:i<7?.8:.5},s);
+    lbl(s,L+x(d[2])+6,by+bh-3,fmt(d[2],1),{fs:13,c:"var(--ink)",fw:600});
+    bindTip(r,"<b>"+d[0].replace("*","")+"</b><br>"+d[1]+"<br>"+fmt(d[2],1)+" M€"+(d[0].indexOf("*")>-1?"<br>Llegó al filial desde otro club":""));});
+  lbl(s,w-R+40,data.length*rh+18,"* llegó al filial desde fuera",{a:"end",fs:12});
+}
+
+/* 7. LCPD */
+function chLCPD(){var el=document.getElementById("ch-lcpd");var narrow=el.clientWidth<520;var g=svgFor(el,narrow?300:320),s=g.s,w=g.w;
+  var yrs=["20/21","21/22","22/23","23/24","24/25","25/26"];
+  var series=[{n:"Villarreal",v:[145.242,159.292,151.206,143.918,135.860,173.084],c:"var(--ochre)",sw:3.2},
+              {n:"Sevilla",v:[185.809,200.399,199.855,168.720,2.499,22.139],c:"var(--ink-2)",sw:1.6},
+              {n:"Valencia",v:[103.390,30.986,75.835,85.528,74.608,91.238],c:"var(--azul)",sw:2}];
+  var L=38,R=narrow?62:80,T=20,B=34,cw=w-L-R,ch=g.h-T-B,max=210,x=function(i){return L+cw*i/5;},y=function(v){return T+ch-(v/max)*ch;};
+  [0,50,100,150,200].forEach(function(v){E("line",{x1:L,x2:w-R,y1:y(v),y2:y(v),stroke:"var(--rule)"},s);lbl(s,L-6,y(v)+4,v,{a:"end",fs:12});});
+  yrs.forEach(function(t,i){lbl(s,x(i),g.h-B+20,t,{a:"middle",fs:12.5});});
+  series.forEach(function(se){var d=se.v.map(function(v,i){return (i?"L":"M")+x(i)+" "+y(v);}).join(" ");
+    E("path",{d:d,fill:"none",stroke:se.c,"stroke-width":se.sw,"stroke-linejoin":"round"},s);
+    se.v.forEach(function(v,i){var c=E("circle",{cx:x(i),cy:y(v),r:se.n==="Villarreal"?5:4,fill:"var(--paper)",stroke:se.c,"stroke-width":2},s);
+      var hit=E("circle",{cx:x(i),cy:y(v),r:12,fill:"transparent"},s);bindTip(hit,"<b>"+se.n+" · "+yrs[i]+"</b><br>Límite verano: "+fmt(v,1)+" M€");});
+    var lv=se.v[5],ly=y(lv)+(se.n==="Sevilla"?14:se.n==="Valencia"?4:4);
+    lbl(s,x(5)+10,ly,se.n,{fs:13,c:se.c,fw:600});});
+  /* coste real */
+  var cr=E("rect",{x:x(4)-5,y:y(135.593)-5,width:10,height:10,fill:"var(--ink)",transform:"rotate(45 "+x(4)+" "+y(135.593)+")"},s);
+  bindTip(cr,"<b>Coste real de plantilla Villarreal 24/25</b><br>135,6 M€ (nota 13.2) frente a 135,9 de límite");
+  lbl(s,x(4)-10,y(135.593)+22,"coste real 135,6",{a:"end",fs:12,c:"var(--ink)"});
+  lbl(s,x(4)+8,y(2.5)-8,"Sevilla 2,5",{fs:12,c:"var(--ink-2)"});
+  lbl(s,x(1)+8,y(31)+16,"Valencia 31,0",{fs:12,c:"var(--azul)"});
+  lbl(s,x(5)-8,y(173.084)-12,"173,1",{a:"end",fs:13,c:"var(--ochre)",fw:600});
+}
+
+/* 8. matchday */
+function chMatchday(){var el=document.getElementById("ch-matchday");var narrow=el.clientWidth<560;var g=svgFor(el,narrow?300:180),s=g.s,w=g.w;
+  var panels=[{t:"€ por espectador",max:60,u:"€",rows:[{l:"Villarreal 24/25",v:19.7,c:"var(--ochre)",tip:"6,85 M€ ÷ 347.057 espectadores de Liga"},{l:"Media LaLiga (40 clubes)",v:51.8,c:"var(--azul)",tip:"902,1 M€ ÷ 17,4 millones; incluye Madrid y Barça"}]},
+              {t:"Matchday / ingresos",max:25,u:"%",rows:[{l:"Villarreal 24/25",v:7.1,c:"var(--ochre)",tip:"6,85 ÷ 96,9 M€"},{l:"18 clubes sin los dos mayores",v:18.2,c:"var(--azul)",tip:"354,9 ÷ 1.947,3 M€ (LaLiga, p. 33)"}]}];
+  var pw=narrow?w:(w-30)/2;
+  panels.forEach(function(p,pi){var ox=narrow?0:pi*(pw+30),oy=narrow?pi*150:0;var L=ox,cw=pw-56,x=function(v){return cw*v/p.max;};
+    lbl(s,L,oy+16,p.t,{fs:14,c:"var(--ink)",fw:600});
+    p.rows.forEach(function(r,i){var yy=oy+34+i*52;lbl(s,L,yy+4,r.l,{fs:13});
+      var rect=E("rect",{x:L,y:yy+12,width:x(r.v),height:20,fill:r.c,opacity:.85},s);
+      lbl(s,L+x(r.v)+6,yy+27,fmt(r.v,1)+" "+p.u,{fs:14,c:"var(--ink)",fw:600});
+      bindTip(rect,"<b>"+r.l+"</b><br>"+r.tip);});});
+}
+
+/* 9. asistencia */
+function chAsist(){var el=document.getElementById("ch-asist");var narrow=el.clientWidth<520;var g=svgFor(el,narrow?250:260),s=g.s,w=g.w;
+  var d=[["04/05",17974],["05/06",18684],["06/07",21368],["07/08",19162],["08/09",18195],["09/10",17089],["10/11",19158],["11/12",17368],["12/13",null],["13/14",17394],["14/15",15906],["15/16",17146],["16/17",17806],["17/18",16752],["18/19",16732],["19/20",null],["20/21",null],["21/22",14293],["22/23",16403],["23/24",17957],["24/25",18266],["25/26",17989]];
+  var L=46,R=14,T=24,B=36,cw=w-L-R,ch=g.h-T-B,mn=12000,mx=22500,x=function(i){return L+cw*i/(d.length-1);},y=function(v){return T+ch-((v-mn)/(mx-mn))*ch;};
+  [12000,15000,18000,21000].forEach(function(v){E("line",{x1:L,x2:w-R,y1:y(v),y2:y(v),stroke:"var(--rule)"},s);lbl(s,L-6,y(v)+4,(v/1000)+" mil",{a:"end",fs:12});});
+  E("line",{x1:L,x2:w-R,y1:y(21332),y2:y(21332),stroke:"var(--ink-2)","stroke-dasharray":"4 4"},s);
+  lbl(s,w-R,y(21332)-6,"aforo oficial actual 21.332",{a:"end",fs:12});
+  var path="",pen=false;d.forEach(function(p,i){if(p[1]===null){pen=false;return;}path+=(pen?"L":"M")+x(i)+" "+y(p[1])+" ";pen=true;});
+  E("path",{d:path,fill:"none",stroke:"var(--ochre)","stroke-width":2.4,"stroke-linejoin":"round"},s);
+  d.forEach(function(p,i){if(p[1]===null)return;var c=E("circle",{cx:x(i),cy:y(p[1]),r:3.2,fill:"var(--ochre)"},s);
+    var hit=E("circle",{cx:x(i),cy:y(p[1]),r:10,fill:"transparent"},s);bindTip(hit,"<b>"+p[0]+"</b><br>"+p[1].toLocaleString("es-ES")+" de media"+(p[0]==="22/23"?"<br>Parte en otro estadio por obras":"")+(p[0]==="21/22"?"<br>Posibles restricciones post-COVID":""));});
+  var step=narrow?5:3;d.forEach(function(p,i){if(i%step===0||i===d.length-1)lbl(s,x(i),g.h-B+20,p[0],{a:"middle",fs:11.5});});
+  lbl(s,x(2)+8,y(21368)+4,"récord 21.368",{fs:12,c:"var(--ink)",fw:600});
+  lbl(s,x(8),y(13200),"Segunda",{a:"middle",fs:11.5});
+  lbl(s,(x(15)+x(16))/2,y(13200),"COVID",{a:"middle",fs:11.5});
+  lbl(s,x(20),y(18266)+20,"24/25: 18.266",{a:"middle",fs:12,c:"var(--ink)",fw:600});
+}
+
+var charts=[chAmort,chSueldos,chIngresos,chCaja,chLibros,chCantera,chLCPD,chMatchday,chAsist];
+function drawAll(){charts.forEach(function(f){try{f();}catch(err){console.error(err);}});}
+drawAll();
+var rt,lastW=window.innerWidth;window.addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(function(){if(Math.abs(window.innerWidth-lastW)>20){lastW=window.innerWidth;drawAll();}},150);});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawAll);
+})();
+</script>
+
+</body></html>
