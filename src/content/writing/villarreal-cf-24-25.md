@@ -39,3 +39,13 @@ Next I want to learn financial fair play properly (LaLiga and UEFA) and look at 
 </div>
 
 <object class="not-prose mt-8 hidden h-[75vh] w-full rounded-lg border border-stone-200 md:block dark:border-stone-800" data="/writing/villarreal-24-25/villarreal-cf-24-25-notes.pdf#view=FitH" type="application/pdf" aria-label="Villarreal CF 24/25 notes (PDF)"><p class="p-4 text-sm">Your browser can't show the PDF here. <a href="/writing/villarreal-24-25/villarreal-cf-24-25-notes.pdf">Download it instead</a>.</p></object>
+
+## Behind the analysis
+
+Being fully transparent: here are the conversations, the artifact and the spreadsheets I used. Go dig in. (All in Spanish.)
+
+- [Claude conversation](https://claude.ai/share/de9f147f-ff9f-433b-89b0-1d0cd357bdec)
+- [Grok conversation (images)](https://grok.com/share/c2hhcmQtMw_d7dbb081-b1e6-42e8-905a-acc84bb88633)
+- [Claude artifact](https://claude.ai/artifact/2gXB4xAj24XxvEeBoyh1CF)
+- [Spreadsheet: Villarreal CF 24/25 annual accounts (.xlsx)](/writing/villarreal-24-25/villarreal-24-25-cuentas-anuales.xlsx)
+- [Spreadsheet: club comparison: debt, CVC cost, squad cost limit, matchday (.xlsx)](/writing/villarreal-24-25/villarreal-24-25-comparativa-clubes.xlsx)
