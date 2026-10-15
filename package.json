@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "photos": "node scripts/import-disposables.mjs",
-    "movies": "node scripts/import-movies.mjs"
+    "movies": "node scripts/import-movies.mjs",
+    "resources": "node scripts/import-obsidian.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

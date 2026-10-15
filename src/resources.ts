@@ -6,13 +6,17 @@
 
 import { TRIPS } from './trips';
 import moviePosters from './data/movies.json';
+import bookList from './data/books.json';
+import podcastList from './data/podcasts.json';
+import museumList from './data/museums.json';
 
 type Tone = [string, string];
 
 export type Movie = { title: string; year?: string; img?: string; tone?: Tone; rating?: number; series?: boolean; doc?: boolean; sample?: boolean };
-export type Book = { title: string; author: string; sample?: boolean };
-export type Podcast = { name: string; hosts?: string; img?: string; tone?: Tone; comment: string; sample?: boolean };
-export type MuseumPiece = { museum: string; city: string; year?: string; title: string; note: string; img?: string; tone?: Tone; size?: 's' | 'm' | 'l'; sample?: boolean };
+export type Book = { title: string; author?: string; status: 'reading' | 'read' | 'paused' | 'next'; note?: string; sample?: boolean };
+export type Episode = { title: string; url?: string; note?: string };
+export type Podcast = { name: string; hosts?: string; img?: string; tone?: Tone; comment?: string; episodes: Episode[]; sample?: boolean };
+export type MuseumPiece = { museum: string; city: string; year?: string; title?: string; note?: string; img?: string; tone?: Tone; size?: 's' | 'm' | 'l'; sample?: boolean };
 
 const sampleTones: Tone[] = [['#2f5d8a', '#13253a'], ['#c8553d', '#5b2117'], ['#2e6b4f', '#123224'], ['#e0a83e', '#7a4a10'], ['#6b4f8a', '#2a1d3b'], ['#1f1f22', '#55555c'], ['#b7413e', '#3b0f0e'], ['#3d7c8c', '#13323a'], ['#8a6e4f', '#33281b'], ['#d9734e', '#5c2a17'], ['#4a5a3a', '#1b2216'], ['#a3485f', '#3a1420']];
 const tone = (i: number) => sampleTones[i % sampleTones.length];
@@ -92,31 +96,25 @@ export const MOVIES: Movie[] = moviePosters
   .sort((a, b) => b.rating - a.rating || a.key.localeCompare(b.key, 'en', { numeric: true }))
   .map((p) => ({ title: MOVIE_INFO[p.id]?.title ?? p.name, series: MOVIE_INFO[p.id]?.series, doc: MOVIE_INFO[p.id]?.doc, rating: p.rating, img: p.img }));
 
-// From the old portfolio's reading list. TODO(Emilio): the rest of the shelf.
-export const BOOKS: Book[] = [
-  { title: 'Goal: The Ball Doesn’t Go In By Chance', author: 'Ferran Soriano' },
-  { title: 'Excellent Advice for Living', author: 'Kevin Kelly' },
-  { title: 'The Dip', author: 'Seth Godin' },
-  ...Array.from({ length: 9 }, (_, i) => ({ title: `Book ${String(i + 1).padStart(2, '0')}`, author: 'Author', sample: true })),
-];
+// From the vault (`npm run resources`, see scripts/import-obsidian.mjs): src/data/books.json.
+export const BOOK_STATUS = [['reading', 'Reading'], ['read', 'Read'], ['paused', 'Paused'], ['next', 'Next']] as const;
+export const BOOKS: Book[] = bookList as Book[];
 
-export const PODCASTS: Podcast[] = [
-  { name: 'Acquired', hosts: 'Ben Gilbert & David Rosenthal', tone: ['#1d1d1f', '#3a3a3e'], comment: 'Their Microsoft episode is the reason this site is called Mansfield: I liked how they named things and wanted a name like that.' },
-  ...Array.from({ length: 5 }, (_, i) => ({ name: `Podcast ${String(i + 1).padStart(2, '0')}`, hosts: 'Hosts', tone: tone(i + 3), comment: 'Your comment about this podcast goes here.', sample: true })),
-];
+// Episodes from the vault (src/data/podcasts.json), one tile per show; a show with no note of its own has none.
+const PODCAST_INFO: Record<string, { hosts?: string; comment?: string }> = {
+  Acquired: { hosts: 'Ben Gilbert & David Rosenthal', comment: 'Their Microsoft episode is the reason this site is called Mansfield: I liked how they named things and wanted a name like that.' },
+};
+const shows = [...new Set(podcastList.map((p) => p.show))];
+export const PODCASTS: Podcast[] = shows
+  .map((name, i) => ({ name, ...PODCAST_INFO[name], tone: tone(i), episodes: podcastList.filter((p) => p.show === name).map(({ title, url, note }) => ({ title, url, note })) }))
+  .sort((a, b) => b.episodes.length - a.episodes.length || a.name.localeCompare(b.name));
 
 // Photos are per trip, from the disposable cameras: see src/trips.ts and `npm run photos`.
 export const PHOTOS = TRIPS.flatMap((t) => t.photos);
 
-// TODO(Emilio): one entry per photo: what caught your eye, and where.
-export const MUSEUMS: MuseumPiece[] = [
-  { museum: 'Museum name', city: 'City', year: '2025', title: 'What caught my eye', note: 'Why it was curious, in a line or two.', tone: tone(1), size: 'l', sample: true },
-  { museum: 'Museum name', city: 'City', year: '2025', title: 'A detail', note: 'Why it was curious.', tone: tone(4), size: 's', sample: true },
-  { museum: 'Museum name', city: 'City', year: '2024', title: 'Another one', note: 'Why it was curious.', tone: tone(7), size: 'm', sample: true },
-  { museum: 'Museum name', city: 'City', year: '2024', title: 'A strange object', note: 'Why it was curious.', tone: tone(2), size: 'm', sample: true },
-  { museum: 'Museum name', city: 'City', year: '2023', title: 'A room', note: 'Why it was curious.', tone: tone(9), size: 'l', sample: true },
-  { museum: 'Museum name', city: 'City', year: '2023', title: 'Small thing', note: 'Why it was curious.', tone: tone(5), size: 's', sample: true },
-];
+// Visits from the vault (src/data/museums.json). Photos of what caught my eye can be added per visit later.
+const fmtMonth = (d: string) => new Date(`${d.slice(0, 7)}-01T12:00:00`).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+export const MUSEUMS: MuseumPiece[] = museumList.map((m, i) => ({ museum: m.name, city: m.city, year: m.date ? fmtMonth(m.date) : undefined, note: m.note, tone: tone(i + 1), size: 'l' as const }));
 
 export const COLLECTIONS = [
   { slug: 'museums', label: 'Museums', kind: 'museum', note: 'Curious things, one photo each', color: '#ffe680', list: MUSEUMS },

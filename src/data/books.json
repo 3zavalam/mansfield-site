@@ -1,0 +1,271 @@
+[
+  {
+    "title": "$100M Leads",
+    "author": "Alex Hormozi",
+    "status": "read"
+  },
+  {
+    "title": "$100M Money Models",
+    "author": "Alex Hormozi",
+    "status": "read"
+  },
+  {
+    "title": "$100M Offers",
+    "author": "Alex Hormozi",
+    "status": "read",
+    "note": "Sell on value, not on price."
+  },
+  {
+    "title": "16 Rules for Living With Less",
+    "author": "Joshua Fields Millburn",
+    "status": "read"
+  },
+  {
+    "title": "7 Powers - The Foundations of Business Strategy",
+    "author": "Hamilton Helmer",
+    "status": "next"
+  },
+  {
+    "title": "Against the Odds An Autobiography",
+    "author": "James Dyson",
+    "status": "read",
+    "note": "Dyson refuses to accept that everyday things can't be improved; stubbornness is a trait he keeps seeing in great founders."
+  },
+  {
+    "title": "Berkshire Hathaway Letters to Shareholders",
+    "author": "Warren Buffett",
+    "status": "paused",
+    "note": "Watch your costs"
+  },
+  {
+    "title": "Damn Right!",
+    "author": "Janet Lowe",
+    "status": "read",
+    "note": "Lessons from Munger: aim for great, do business with people you trust, and be fair and honest."
+  },
+  {
+    "title": "Deep Learning",
+    "author": "John D. Kelleher",
+    "status": "read"
+  },
+  {
+    "title": "El Banquete",
+    "author": "Platón",
+    "status": "read"
+  },
+  {
+    "title": "El Poder De La Disciplina",
+    "author": "Raimon Samsó",
+    "status": "read"
+  },
+  {
+    "title": "Esencialismo",
+    "author": "Greg McKeown",
+    "status": "read",
+    "note": "You can always choose; useful questions to ask before saying yes to a request."
+  },
+  {
+    "title": "Excellent Advice for Living",
+    "author": "Kevin Kelly",
+    "status": "read"
+  },
+  {
+    "title": "Financial Intelligence",
+    "author": "Karen Berman",
+    "status": "paused"
+  },
+  {
+    "title": "FirstHundredMillion",
+    "author": "E. Haldeman Julius",
+    "status": "read",
+    "note": "Titles matter, and so does knowing who you're talking to."
+  },
+  {
+    "title": "Goal - The Ball Doesn't Go In By Chance",
+    "author": "Ferran Soriano",
+    "status": "read",
+    "note": "Inside the business of a football club: broadcasting deals, costs, and the first moves at FC Barcelona."
+  },
+  {
+    "title": "Hábitos Atómicos",
+    "author": "James Clear",
+    "status": "read"
+  },
+  {
+    "title": "How to Lie With Statistics",
+    "author": "Darrell Huff",
+    "status": "read"
+  },
+  {
+    "title": "Hyperfocus",
+    "author": "Chris Bailey",
+    "status": "paused"
+  },
+  {
+    "title": "Las Meditaciones",
+    "author": "Marco Aurelio",
+    "status": "read",
+    "note": "Stop chasing fame and other people's opinions; a case for minimalism."
+  },
+  {
+    "title": "Lean Analytics",
+    "author": "Alistair Croll and Benjamin Yoskovitz",
+    "status": "paused",
+    "note": "Choose the rigth metric"
+  },
+  {
+    "title": "Million Dollar Weekend",
+    "author": "Noah Kagan",
+    "status": "read"
+  },
+  {
+    "title": "Política Para Amador",
+    "author": "Fernando Savater",
+    "status": "read"
+  },
+  {
+    "title": "Running Down a Dream",
+    "author": "Bill Gurley",
+    "status": "read"
+  },
+  {
+    "title": "Sapiens. De Animales a Dioses",
+    "author": "Yuval Noah Harari",
+    "status": "paused"
+  },
+  {
+    "title": "Seeking Wisdom - From Darwin to Munger",
+    "author": "Peter Bevelin",
+    "status": "read",
+    "note": "Building a latticework of mental models."
+  },
+  {
+    "title": "Soccermatics",
+    "author": "David Sumpter",
+    "status": "read"
+  },
+  {
+    "title": "Soccernomics",
+    "author": "Simon Kuper & Stefan Szymanski",
+    "status": "read"
+  },
+  {
+    "title": "The 4-Hour Workweek",
+    "author": "Tim Ferriss",
+    "status": "next"
+  },
+  {
+    "title": "The Barcelona Complex",
+    "author": "Simon Kuper",
+    "status": "next"
+  },
+  {
+    "title": "The Big Nine",
+    "author": "Amy Webb",
+    "status": "read",
+    "note": "Diversity among the people building AI matters."
+  },
+  {
+    "title": "The Book of Elon",
+    "author": "Eric Jorgenson",
+    "status": "next"
+  },
+  {
+    "title": "The Club",
+    "author": "Jonathan Clegg & Joshua Robinson",
+    "status": "read",
+    "note": "You can find inspiration and solutions anywhere; trust your own ideas."
+  },
+  {
+    "title": "The Data Detective",
+    "author": "Tim Harford",
+    "status": "read"
+  },
+  {
+    "title": "The Forgotten Highlander",
+    "author": "Alistair Urquhart",
+    "status": "reading"
+  },
+  {
+    "title": "The Great Mental Models, Volume 1",
+    "author": "Shane Parrish and Rhiannon Beaubien",
+    "status": "read",
+    "note": "Action produces information."
+  },
+  {
+    "title": "The Great Mental Models, Volume 2",
+    "status": "next"
+  },
+  {
+    "title": "The Little Book of Common Sense Investing",
+    "author": "John C. Bogle",
+    "status": "read",
+    "note": "Compound interest and index funds over active managers."
+  },
+  {
+    "title": "The Logic of Sports Betting",
+    "status": "paused"
+  },
+  {
+    "title": "The Master - Roger Federer",
+    "author": "Christopher Clarey",
+    "status": "read"
+  },
+  {
+    "title": "The Personal MBA",
+    "author": "Josh Kaufman",
+    "status": "reading",
+    "note": "Your marketing is about your customer, not your product."
+  },
+  {
+    "title": "The Power Law",
+    "author": "Sebastian Mallaby",
+    "status": "next"
+  },
+  {
+    "title": "The Psychology of Money",
+    "author": "Morgan Housel",
+    "status": "read"
+  },
+  {
+    "title": "The Subtle Art of Not Giving a Fuck",
+    "author": "Mark Manson",
+    "status": "read"
+  },
+  {
+    "title": "The Ultimate Hybrid Athlete",
+    "author": "Alex Viada",
+    "status": "paused"
+  },
+  {
+    "title": "Thinking, Fast and Slow",
+    "author": "Daniel Kahneman",
+    "status": "read"
+  },
+  {
+    "title": "Transitions",
+    "author": "William Bridges & Susan Bridges",
+    "status": "next"
+  },
+  {
+    "title": "Véndele a La Mente, No a La Gente",
+    "author": "Jürgen Klaric",
+    "status": "read"
+  },
+  {
+    "title": "Very, Very Simple",
+    "author": "Joshua Fields Millburn",
+    "status": "read"
+  },
+  {
+    "title": "Walden",
+    "author": "Henry David Thoreau",
+    "status": "paused"
+  },
+  {
+    "title": "Zero to One",
+    "author": "Peter Thiel, Blake Masters",
+    "status": "read",
+    "note": "Small sales lead to bigger ones; build trust."
+  }
+]

@@ -5,7 +5,7 @@ import Base from '../../layouts/Base.astro';
 import ResourceTitle from '../../components/ResourceTitle.astro';
 import SampleNote from '../../components/SampleNote.astro';
 import ResourceEnter from '../../components/ResourceEnter.astro';
-import { BOOKS, hasSamples } from '../../resources';
+import { BOOKS, BOOK_STATUS, hasSamples } from '../../resources';
 // Spine colours: [background, text]. Picked from the title so a book always gets the same one.
 const SPINES = [['#1f3a5f', '#e9dfc6'], ['#7a1f2b', '#f1e3c8'], ['#2f4f3a', '#e9dfc6'], ['#c9a227', '#1d1a14'], ['#e8e2d0', '#2b2620'], ['#3b2f2f', '#d8b86a'], ['#b04a2f', '#fbeee0'], ['#1d1d1f', '#d8b86a'], ['#5b6b8c', '#f4efe4'], ['#d8cfc0', '#3b2f2f']];
 const hash = (s: string) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
@@ -19,21 +19,30 @@ const spine = (title: string) => {
   <ResourceEnter slot="head" slug="books" />
   <ResourceTitle label="Books" count={BOOKS.length} />
   <SampleNote show={hasSamples(BOOKS)} />
-  <p class="caption min-h-[3rem] text-[17px] leading-snug" aria-live="polite"><span class="text-stone-500 dark:text-stone-400">Pick a book.</span></p>
-  <ul class="shelf mt-2">
-    {BOOKS.map((b, i) => {
-      const s = spine(b.title);
-      return (
-        <li>
-          <button type="button" class:list={['spine', b.title.length > 20 && 'long']} data-title={b.title} data-author={b.author} aria-label={`${b.title}, by ${b.author}`}
-            style={`--bg:${s.color[0]};--fg:${s.color[1]};--i:${i};height:${s.height}%;width:${s.width}px`}>
-            <span class="t">{b.title}</span>
-            <span class="a">{b.author}</span>
-          </button>
-        </li>
-      );
-    })}
-  </ul>
+  <p class="caption min-h-[4.5rem] text-[17px] leading-snug" aria-live="polite"><span class="text-stone-500 dark:text-stone-400">Pick a book.</span></p>
+  {BOOK_STATUS.map(([status, label]) => {
+    const list = BOOKS.filter((b) => b.status === status);
+    return list.length > 0 && (
+      <section class="mt-4">
+        <h2 class="eyebrow mb-3">{label} <span class="mono text-[12px] text-stone-400">{list.length}</span></h2>
+        <ul class="shelf">
+          {list.map((b) => {
+            const s = spine(b.title);
+            const i = BOOKS.indexOf(b);
+            return (
+              <li>
+                <button type="button" class:list={['spine', b.title.length > 20 && 'long']} data-title={b.title} data-author={b.author ?? ''} data-note={b.note ?? ''} aria-label={b.author ? `${b.title}, by ${b.author}` : b.title}
+                  style={`--bg:${s.color[0]};--fg:${s.color[1]};--i:${i};height:${s.height}%;width:${s.width}px`}>
+                  <span class="t">{b.title}</span>
+                  {b.author && <span class="a">{b.author}</span>}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    );
+  })}
 </Base>
 
 <style>
@@ -71,7 +80,8 @@ const spine = (title: string) => {
     s.classList.add('out');
     caption.innerHTML = '';
     const t = document.createElement('strong'); t.className = 'font-semibold'; t.textContent = s.dataset.title!;
-    const a = document.createElement('span'); a.className = 'text-stone-500 dark:text-stone-400'; a.textContent = ` · ${s.dataset.author}`;
-    caption.append(t, a);
+    caption.append(t);
+    if (s.dataset.author) { const a = document.createElement('span'); a.className = 'text-stone-500 dark:text-stone-400'; a.textContent = ` · ${s.dataset.author}`; caption.append(a); }
+    if (s.dataset.note) { const n = document.createElement('span'); n.className = 'mt-1 block text-[15px] italic text-stone-600 dark:text-stone-300'; n.textContent = s.dataset.note; caption.append(n); }
   }));
 </script>
