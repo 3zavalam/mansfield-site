@@ -1,0 +1,61 @@
+---
+// /resources/museums/<slug>: one museum. Every photo hangs on the wall as a poster (click for the full-screen
+// zoom/pan viewer), then the curiosities: what caught my eye in each piece. Pages come from src/data/museums.json.
+import Base from '../../../layouts/Base.astro';
+import { MUSEUM_VISITS, bg } from '../../../resources';
+export const getStaticPaths = () => MUSEUM_VISITS.map((v) => ({ params: { slug: v.slug }, props: { v } }));
+const { v } = Astro.props as { v: (typeof MUSEUM_VISITS)[number] };
+const tilt = [-1.6, 1.1, -0.6, 1.8, -1.2, 0.7, -2, 1.4, -0.4];
+const width = [96, 88, 100, 84, 92, 100, 86, 94, 90];
+const text = (n?: string) => (n ?? '').split('\n').filter((l) => !l.startsWith('>')).join(' ');
+const quote = (n?: string) => (n ?? '').split('\n').filter((l) => l.startsWith('>')).map((l) => l.replace(/^>\s*/, ''));
+---
+<Base title={v.name}>
+  <p class="mono text-[12px] uppercase tracking-wider text-stone-500"><a href="/resources/museums/" class="hover:text-accent dark:hover:text-accent-dark">← Museums</a></p>
+  <h1 class="mt-2 text-3xl font-semibold tracking-tight">{v.name}</h1>
+  <p class="mt-1 text-stone-500">{v.city}{v.year && ` · ${v.year}`}</p>
+  {v.note && <p class="mt-4 max-w-2xl text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">{v.note}</p>}
+
+  <div class="wall relative left-1/2 mt-8 w-screen -translate-x-1/2 px-4 py-12 sm:px-8 sm:py-16">
+    <ul class="rise mx-auto grid max-w-7xl grid-cols-2 items-start gap-x-5 gap-y-12 sm:grid-cols-3 sm:gap-x-10 lg:grid-cols-4">
+      {v.pieces.filter((p) => p.img).map((m, i) => (
+        <li class="piece" style={`--i:${i};--t:${tilt[i % tilt.length]}deg;--w:${width[i % width.length]}%`}>
+          <a href={m.img} data-lightbox={m.img} data-alt={m.title ?? v.name} class="poster-btn block" aria-label={`${m.title ?? v.name}: full screen`}>
+            <span class="pin" aria-hidden="true"></span>
+            <span class="art block" style={m.w && m.h ? `aspect-ratio:${m.w}/${m.h}` : `background:${bg(m.tone)}`}>
+              <img src={m.sm ?? m.img} alt={m.title ?? v.name} loading="lazy" width={m.w} height={m.h} class="h-full w-full object-cover" />
+            </span>
+          </a>
+          {m.title && <p class="mt-3 text-center text-[13px] font-semibold leading-snug">{m.title}</p>}
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <section class="mx-auto mt-12 max-w-2xl">
+    <h2 class="eyebrow mb-4">Curiosities</h2>
+    <ol class="space-y-5 text-[16px] leading-relaxed">
+      {v.pieces.map((m) => (
+        <li>
+          {m.section && <p class="mono text-[11px] uppercase tracking-wider text-stone-400">{m.section}</p>}
+          {m.title && <p class="font-semibold">{m.title}</p>}
+          {text(m.note) && <p class="text-stone-700 dark:text-stone-300">{text(m.note)}</p>}
+          {quote(m.note).map((q) => <p class="mt-1 border-l-2 border-stone-300 pl-3 text-[14px] italic text-stone-600 dark:text-stone-400">{q}</p>)}
+        </li>
+      ))}
+    </ol>
+  </section>
+  <script src="/writing/villarreal-24-25/lightbox.js" defer></script>
+</Base>
+
+<style>
+  .wall { background: linear-gradient(#ece5d9, #e4dccd); }
+  :global(.dark) .wall { background: linear-gradient(#2b2621, #231f1b); }
+  .piece { display: flex; flex-direction: column; align-items: center; }
+  .poster-btn { position: relative; width: var(--w); rotate: var(--t); transform-origin: 50% 0; cursor: zoom-in; transition: rotate .3s ease, translate .3s ease; }
+  .poster-btn:hover, .poster-btn:focus-visible { rotate: 0deg; translate: 0 -3px; outline: none; }
+  .art { overflow: hidden; background: #fbf9f4; padding: 6px; box-shadow: 0 1px 0 rgb(255 255 255 / .3) inset, 0 16px 22px -12px rgb(0 0 0 / .45); }
+  .art img { display: block; }
+  .pin { position: absolute; left: 50%; top: -5px; z-index: 1; width: 10px; height: 10px; translate: -50% 0; border-radius: 50%; background: #8a6c2f; box-shadow: 0 2px 3px rgb(0 0 0 / .35); }
+  @media (prefers-reduced-motion: reduce) { .poster-btn { transition: none; } }
+</style>

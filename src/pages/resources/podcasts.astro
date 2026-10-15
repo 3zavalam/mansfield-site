@@ -1,53 +1,41 @@
 ---
-// /resources/podcasts: a grid of the hosts' group photos (or the show's colours until there's a photo).
-// Click one for what I think of it.
+// /resources/podcasts: one card per episode, the show as a small label. Click one for my notes.
 import Base from '../../layouts/Base.astro';
 import ResourceTitle from '../../components/ResourceTitle.astro';
 import SampleNote from '../../components/SampleNote.astro';
 import ResourceEnter from '../../components/ResourceEnter.astro';
-import { PODCASTS, hasSamples, bg } from '../../resources';
-const initials = (s: string) => s.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+import { EPISODES, hasSamples, bg } from '../../resources';
 ---
 <Base title="Podcasts">
   <ResourceEnter slot="head" slug="podcasts" />
-  <ResourceTitle label="Podcasts" count={PODCASTS.length} />
-  <SampleNote show={hasSamples(PODCASTS)} />
+  <ResourceTitle label="Podcasts" count={EPISODES.length} />
+  <SampleNote show={hasSamples(EPISODES)} />
   <ul class="rise grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-    {PODCASTS.map((p, i) => (
+    {EPISODES.map((e, i) => (
       <li style={`--i:${i}`}>
-        <button type="button" class="tile" data-i={i} aria-label={`${p.name}: episodes`} style={p.img ? '' : `background:${bg(p.tone)}`}>
-          {p.img ? <img src={p.img} alt={p.hosts ?? ''} loading="lazy" class="absolute inset-0 h-full w-full object-cover" /> : <span class="mark">{initials(p.name)}</span>}
-          <span class="chip">{p.name}</span><span class="eps">{p.episodes.length} {p.episodes.length === 1 ? 'episode' : 'episodes'} · my notes</span>
+        <button type="button" class="tile" data-i={i} aria-label={`${e.title} (${e.show}): my notes`} style={e.img ? '' : `background:${bg(e.tone)}`}>
+          {e.img && <img src={e.img} alt="" loading="lazy" class="absolute inset-0 h-full w-full object-cover" />}
+          <span class="chip">{e.show}</span>
+          <span class="ttl">{e.title}</span>
         </button>
       </li>
     ))}
   </ul>
 
-  {/* One comment card per podcast; the picked one is shown. */}
+  {/* One notes card per episode; the picked one is shown. */}
   <dialog class="say">
-    {PODCASTS.map((p, i) => (
+    {EPISODES.map((e, i) => (
       <article data-i={i} hidden>
-        <div class="say-photo" style={p.img ? '' : `background:${bg(p.tone)}`}>
-          {p.img ? <img src={p.img} alt={p.hosts ?? ''} class="h-full w-full object-cover" /> : <span class="mark">{initials(p.name)}</span>}
-        </div>
         <div class="p-6 sm:p-7">
-          {p.hosts && <p class="mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">{p.hosts}</p>}
-          <h2 class="mt-1 text-2xl font-semibold">{p.name}</h2>
-          {p.comment && <p class="mt-3 text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">{p.comment}</p>}
-          <ol class="eplist mt-5 space-y-5">
-            {p.episodes.map((e) => (
-              <li>
-                <h3 class="text-[16px] font-semibold leading-snug">{e.url ? <a href={e.url} target="_blank" rel="noopener" class="hover:text-accent dark:hover:text-accent-dark">{e.title} <span aria-hidden="true" class="text-stone-400">↗</span></a> : e.title}</h3>
-                {e.ideas && (
-                  <ul class="mt-1.5 space-y-1 text-[15px] leading-snug text-stone-700 dark:text-stone-300">
-                    {e.ideas.map((l) => /^\*\*(.+)\*\*$/.test(l)
-                      ? <li class="pt-1 text-[12px] font-semibold uppercase tracking-wider text-stone-500">{l.replace(/\*\*/g, '')}</li>
-                      : <li class:list={[l.startsWith('- ') && 'idea']}>{l.replace(/^- /, '')}</li>)}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ol>
+          <p class="mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">{e.show}{e.hosts && ` · ${e.hosts}`}</p>
+          <h2 class="mt-1 text-2xl font-semibold">{e.url ? <a href={e.url} target="_blank" rel="noopener" class="hover:text-accent dark:hover:text-accent-dark">{e.title} <span aria-hidden="true" class="text-stone-400">↗</span></a> : e.title}</h2>
+          {e.ideas && (
+            <ul class="mt-4 space-y-1 text-[15px] leading-snug text-stone-700 dark:text-stone-300">
+              {e.ideas.map((l) => /\*\*$/.test(l)
+                ? <li class="pt-2 text-[12px] font-semibold uppercase tracking-wider text-stone-500">{l.replace(/\*\*/g, '').replace(/^- /, '')}</li>
+                : <li class:list={[l.startsWith('- ') && 'idea']}>{l.replace(/^- /, '')}</li>)}
+            </ul>
+          )}
         </div>
       </article>
     ))}
@@ -59,17 +47,18 @@ const initials = (s: string) => s.split(/\s+/).map((w) => w[0]).join('').slice(0
   .tile { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 6px; cursor: pointer; transition: transform .25s ease, box-shadow .25s ease; }
   .tile:hover, .tile:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 28px -16px rgb(0 0 0 / .5); outline: none; }
   .mark { position: absolute; inset: 0; display: grid; place-items: center; color: rgb(255 255 255 / .9); font-size: clamp(34px, 6vw, 56px); font-weight: 700; letter-spacing: -.02em; }
-  .chip { position: absolute; right: 8px; top: 8px; max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 8px; border-radius: 4px; background: rgb(255 255 255 / .16); border: 1px solid rgb(255 255 255 / .25); color: #fff; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .chip { position: absolute; left: 10px; top: 10px; max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 8px; border-radius: 4px; background: rgb(255 255 255 / .16); border: 1px solid rgb(255 255 255 / .25); color: #fff; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
   .say { margin: auto; width: min(92vw, 520px); padding: 0; border: 1px solid #e7e5e4; border-radius: 16px; overflow: hidden; background: var(--color-paper); color: var(--color-ink); }
   :global(.dark) .say { background: var(--color-night); color: #f5f5f4; border-color: #292524; }
   .say::backdrop { background: rgb(12 12 12 / .55); backdrop-filter: blur(4px); }
   .say[open] { animation: up .25s ease; }
   .idea { position: relative; padding-left: 14px; }
   .idea::before { content: '–'; position: absolute; left: 0; color: #a8a29e; }
+  .ttl { position: absolute; left: 12px; right: 12px; bottom: 10px; color: #fff; font-size: clamp(16px, 2vw, 21px); font-weight: 600; line-height: 1.15; text-align: left; }
   .eps { position: absolute; left: 10px; bottom: 8px; color: rgb(255 255 255 / .8); font-size: 11px; letter-spacing: .06em; }
   .say > article { max-height: 85vh; overflow-y: auto; }
   .say-photo { position: relative; aspect-ratio: 16 / 9; }
-  .say-close { position: absolute; right: 12px; top: 12px; width: 34px; height: 34px; border-radius: 50%; background: rgb(255 255 255 / .9); color: #1a1917; font-size: 20px; line-height: 1; }
+  .say-close { position: absolute; right: 12px; top: 12px; width: 34px; height: 34px; border-radius: 50%; background: rgb(255 255 255 / .9); color: #1a1917; font-size: 20px; line-height: 1; border: 1px solid #e7e5e4; }
   @keyframes up { from { opacity: 0; transform: translateY(12px) scale(.97); } }
   @media (prefers-reduced-motion: reduce) { .tile, .say[open] { transition: none; animation: none; } }
 </style>

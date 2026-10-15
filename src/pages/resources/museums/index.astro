@@ -1,0 +1,31 @@
+---
+// /resources/museums: one entrance poster per museum visit (from src/data/museums.json). Each opens its own wall.
+import Base from '../../../layouts/Base.astro';
+import ResourceTitle from '../../../components/ResourceTitle.astro';
+import ResourceEnter from '../../../components/ResourceEnter.astro';
+import { MUSEUM_VISITS, bg } from '../../../resources';
+---
+<Base title="Museums">
+  <ResourceEnter slot="head" slug="museums" />
+  <ResourceTitle label="Museums" count={MUSEUM_VISITS.length} />
+  <ul class="rise grid grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-8">
+    {MUSEUM_VISITS.map((v, i) => (
+      <li style={`--i:${i}`}>
+        <a href={`/resources/museums/${v.slug}/`} class="entrance group block" aria-label={`${v.name}, ${v.city}: enter`}>
+          <span class="poster block" style={v.cover?.img ? '' : `background:${bg(v.cover?.tone)}`}>
+            {v.cover?.img && <img src={v.cover.sm ?? v.cover.img} alt={v.cover.title ?? v.name} loading="lazy" class="h-full w-full object-cover" />}
+          </span>
+          <span class="mt-3 block font-semibold leading-snug">{v.name}</span>
+          <span class="block text-[14px] text-stone-500">{v.city}{v.year && ` · ${v.year}`} · {v.pieces.length} {v.pieces.length === 1 ? 'piece' : 'pieces'}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Base>
+
+<style>
+  .poster { aspect-ratio: 3 / 4; overflow: hidden; border-radius: 4px; box-shadow: 0 14px 24px -14px rgb(0 0 0 / .45); transition: transform .25s ease, box-shadow .25s ease; }
+  .entrance:hover .poster, .entrance:focus-visible .poster { transform: translateY(-4px) rotate(-1deg); box-shadow: 0 20px 30px -16px rgb(0 0 0 / .55); }
+  .entrance:focus-visible { outline: none; }
+  @media (prefers-reduced-motion: reduce) { .poster { transition: none; } }
+</style>

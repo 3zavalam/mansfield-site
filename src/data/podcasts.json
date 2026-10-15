@@ -1,5 +1,6 @@
 [
   {
+    "show": "Acquired",
     "title": "Formula 1",
     "url": "https://www.acquired.fm/episodes/formula-1",
     "date": "2026-09-30",
@@ -8,10 +9,10 @@
       "- do not avoid taxes",
       "- embrace new technologies/marketing spots (tracks, cars, social media)",
       "- bet on you (Toto Wolff asked to own 1/3 of Mercedes when he accepted the job, from $150M -> $6B valuation)"
-    ],
-    "show": "Acquired"
+    ]
   },
   {
+    "show": "Acquired",
     "title": "Home Depot",
     "url": "https://www.acquired.fm/episodes/home-depot",
     "date": "2026-09-30",
@@ -20,10 +21,10 @@
       "- Make a great team",
       "- Align incentives",
       "- Slogan = Value Proposition"
-    ],
-    "show": "Acquired"
+    ]
   },
   {
+    "show": "Acquired",
     "title": "New York Times",
     "url": "https://www.acquired.fm/episodes/the-new-york-times-company",
     "date": "2026-09-30",
@@ -31,10 +32,10 @@
       "- Paga por que te hagan tus slogans y logos (Nike, NYT)",
       "- No tienes que hacer tú la empresa: puedes llegar a una y hacerla la más grande",
       "- Be greedy when others are fearful, and vice versa"
-    ],
-    "show": "Acquired"
+    ]
   },
   {
+    "show": "Acquired",
     "title": "Nintendo Series",
     "url": "https://www.acquired.fm/episodes/nintendo",
     "date": "2026-09-30",
@@ -45,16 +46,15 @@
       "- Nintendo: The Console Wars**",
       "- Market your new things/technology (even if it's not game changing)",
       "- Find a target, people will compare you with them (Sega–Nintendo, Oracle–Microsoft)"
-    ],
-    "show": "Acquired"
+    ]
   },
   {
+    "show": "Acquired",
     "title": "Not Boring (with Packy McCormick)",
     "url": "https://www.acquired.fm/episodes/not-boring-with-packy-mccormick",
     "date": "2026-09-30",
     "ideas": [
       "Strategy Matters (Books about business strategy)"
-    ],
-    "show": "Acquired"
+    ]
   }
 ]

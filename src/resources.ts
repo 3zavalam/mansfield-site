@@ -15,6 +15,7 @@ type Tone = [string, string];
 export type Movie = { title: string; year?: string; img?: string; tone?: Tone; rating?: number; series?: boolean; doc?: boolean; sample?: boolean };
 export type Book = { title: string; author?: string; status: 'reading' | 'read' | 'paused' | 'next'; note?: string; sample?: boolean };
 export type Episode = { title: string; url?: string; date?: string; ideas?: string[] };
+export type PodcastEpisode = Episode & { show: string; hosts?: string; img?: string; tone?: Tone; sample?: boolean };
 export type Podcast = { name: string; hosts?: string; img?: string; tone?: Tone; comment?: string; episodes: Episode[]; sample?: boolean };
 export type MuseumPiece = { museum: string; city: string; year?: string; title?: string; note?: string; section?: string; img?: string; sm?: string; w?: number; h?: number; tone?: Tone; size?: 's' | 'm' | 'l'; sample?: boolean };
 
@@ -110,10 +111,11 @@ const FAVORITES: { title: string; author?: string }[] = [
 ];
 export const FAVORITE_BOOKS: Book[] = FAVORITES.map((f) => BOOKS.find((b) => b.title === f.title) ?? { title: f.title, author: f.author, status: 'read' });
 
-// His podcast ideas from the vault (Main/Ideas, `tipo: podcast`; see scripts/import-obsidian.mjs), one tile per show.
+// His podcast ideas from the vault (Main/Ideas, `tipo: podcast`; see scripts/import-obsidian.mjs), one card per episode.
 const PODCAST_INFO: Record<string, { hosts?: string; comment?: string }> = {
   Acquired: { hosts: 'Ben Gilbert & David Rosenthal', comment: 'Their Microsoft episode is the reason this site is called Mansfield: I liked how they named things and wanted a name like that.' },
 };
+export const EPISODES: PodcastEpisode[] = podcastList.map((p, i) => ({ title: p.title, url: p.url, date: p.date, ideas: p.ideas, show: p.show ?? 'Other', hosts: PODCAST_INFO[p.show ?? '']?.hosts, tone: tone(i) }));
 const shows = [...new Set(podcastList.map((p) => p.show ?? 'Other'))];
 export const PODCASTS: Podcast[] = shows
   .map((name, i) => ({ name, ...PODCAST_INFO[name], tone: tone(i), episodes: podcastList.filter((p) => (p.show ?? 'Other') === name).map(({ title, url, date, ideas }) => ({ title, url, date, ideas })) }))
@@ -129,10 +131,18 @@ export const MUSEUMS: MuseumPiece[] = museumList.flatMap((m, v) => (m.pieces ?? 
   img: p.img, sm: p.sm, w: p.w, h: p.h, tone: tone(v + i), size: p.w && p.h && p.h > p.w ? ('l' as const) : ('m' as const),
 })));
 
+// One entrance per museum visit; each gets its own page at /resources/museums/<slug>/.
+const slugify = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+export type MuseumVisit = { slug: string; name: string; city: string; year?: string; note?: string; cover?: MuseumPiece; pieces: MuseumPiece[] };
+export const MUSEUM_VISITS: MuseumVisit[] = museumList.map((m: { name: string; city: string; date?: string; slug?: string; note?: string }) => {
+  const pieces = MUSEUMS.filter((p) => p.museum === m.name && p.city === m.city);
+  return { slug: m.slug ?? slugify(m.name.match(/\(([^)]+)\)\s*$/)?.[1] ?? m.name), name: m.name, city: m.city, year: m.date ? fmtMonth(m.date) : undefined, note: m.note, cover: pieces.find((p) => p.img), pieces };
+});
+
 export const COLLECTIONS = [
   { slug: 'museums', label: 'Museums', kind: 'museum', note: 'Curious things, one photo each', color: '#ffe680', list: MUSEUMS },
   { slug: 'photos', label: 'Photos', kind: 'camera', note: 'Disposable camera', color: '#ffb8c6', list: PHOTOS },
-  { slug: 'podcasts', label: 'Podcasts', kind: 'mic', note: 'What I think of them', color: '#b6e3f4', list: PODCASTS },
+  { slug: 'podcasts', label: 'Podcasts', kind: 'mic', note: 'What I think of them', color: '#b6e3f4', list: EPISODES },
   { slug: 'books', label: 'Books', kind: 'cover', note: 'The shelf', color: '#c6f0b8', list: BOOKS },
   { slug: 'movies', label: 'Movies', kind: 'reel', note: 'Films, series and documentaries', color: '#ffcf9e', list: MOVIES },
 ] as const;

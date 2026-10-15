@@ -4,7 +4,7 @@
 // comes on). Clicking plays it once more and carries straight into the collection (see the script).
 import Base from '../../layouts/Base.astro';
 import DisposableCamera from '../../components/DisposableCamera.astro';
-import { MOVIES, BOOKS, PODCASTS, MUSEUMS } from '../../resources';
+import { MOVIES, BOOKS, EPISODES, MUSEUMS } from '../../resources';
 import { TRIPS, PHOTO_COUNT, PLAIN_LOOK } from '../../trips';
 import { COUNTRIES } from '../../places';
 // Popcorn on top of the bucket: [x, y, r].
@@ -90,7 +90,7 @@ const href = (slug: string) => `/resources/${slug}`;
             <path d="M200 200c26 0 30 -30 46 -30" fill="none" stroke="#26262a" stroke-width="4" stroke-linecap="round" />
           </svg>
         </span>
-        <span class="name">Podcasts</span><span class="sub">{PODCASTS.length} {PODCASTS.length === 1 ? "show" : "shows"}</span>
+        <span class="name">Podcasts</span><span class="sub">{EPISODES.length} {EPISODES.length === 1 ? "episode" : "episodes"}</span>
       </a>
     </li>
 

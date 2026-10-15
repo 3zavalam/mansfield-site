@@ -69,11 +69,12 @@ for (const f of md(path.join(VAULT, 'Main/Ideas'))) {
   const date = get('fecha');
   const body = txt.slice(txt.indexOf('---', 3) + 3).split('\n').filter((l) => l.trim() && !/^!\[/.test(l.trim()))
     .map((l) => l.replace(/^\s*[-*⁠\u2060]+\s*/, (m) => (m.trim() ? '- ' : '')).replace(/[\u2060]/g, '').trim());
-  const item = clean({ show: get('show'), title, url, date, ideas: body });
+  const item = clean({ show: get('show') || 'Other', title, url, date, ideas: body });
   const old = ideas.get(title);
   if (!old || (item.date ?? '') > (old.date ?? '') || (!old.show && item.show)) ideas.set(title, { ...old, ...item });
 }
-const podcasts = [...ideas.values()].sort((x, y) => x.title.localeCompare(y.title));
+// Flat list, one entry per episode (the site shows one card each, with the show as a label).
+const podcasts = [...ideas.values()].sort((x, y) => (y.date ?? '').localeCompare(x.date ?? '') || x.title.localeCompare(y.title));
 write('podcasts.json', podcasts);
 
 // Museums

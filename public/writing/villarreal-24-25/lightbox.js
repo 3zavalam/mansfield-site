@@ -1,7 +1,7 @@
 (() => {
-  const trigger = document.querySelector('[data-lightbox]');
-  if (!trigger) return;
-  const src = trigger.getAttribute('data-lightbox');
+  const triggers = document.querySelectorAll('[data-lightbox]');
+  if (!triggers.length) return;
+  let src = '';
   const box = document.createElement('div');
   box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', 'Notes, full size');
   box.style.cssText = 'position:fixed;inset:0;z-index:100;background:rgba(10,10,9,.92);display:none;overflow:hidden;touch-action:none;cursor:grab';
@@ -14,9 +14,9 @@
   const apply = () => { img.style.transform = `translate(${x}px,${y}px) scale(${s})`; };
   const doFit = () => { const W = innerWidth, H = innerHeight, w = img.naturalWidth, h = img.naturalHeight; fit = Math.min((W - 24) / w, (H - 80) / h); s = fit; x = (W - w * s) / 2; y = 64 + (H - 64 - h * s) / 2; apply(); };
   const zoomAt = (k, cx, cy) => { const ns = Math.min(Math.max(s * k, fit * 0.8), 4); x = cx - (cx - x) * (ns / s); y = cy - (cy - y) * (ns / s); s = ns; apply(); };
-  const open = (e) => { e.preventDefault(); box.style.display = 'block'; document.body.style.overflow = 'hidden'; if (!loaded) { img.onload = doFit; img.src = src; loaded = true; } else doFit(); };
+  const open = (e) => { e.preventDefault(); const t = e.currentTarget; const next = t.getAttribute('data-lightbox'); const alt = t.getAttribute('data-alt'); if (alt) { img.alt = alt; box.setAttribute('aria-label', alt); } box.style.display = 'block'; document.body.style.overflow = 'hidden'; if (next !== src) { src = next; loaded = false; } if (!loaded) { img.onload = doFit; img.src = src; loaded = true; if (img.complete && img.naturalWidth) doFit(); } else doFit(); };
   const close = () => { box.style.display = 'none'; document.body.style.overflow = ''; };
-  trigger.addEventListener('click', open);
+  triggers.forEach(t => t.addEventListener('click', open));
   addEventListener('keydown', e => { if (box.style.display === 'block') { if (e.key === 'Escape') close(); if (e.key === '+' || e.key === '=') zoomAt(1.4, innerWidth / 2, innerHeight / 2); if (e.key === '-') zoomAt(1 / 1.4, innerWidth / 2, innerHeight / 2); } });
   addEventListener('resize', () => box.style.display === 'block' && doFit());
   box.querySelectorAll('button').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); const a = b.dataset.a, c = [innerWidth / 2, innerHeight / 2]; if (a === 'close') close(); if (a === 'in') zoomAt(1.5, ...c); if (a === 'out') zoomAt(1 / 1.5, ...c); if (a === 'fit') doFit(); }));
