@@ -1,6 +1,7 @@
 ---
-// /resources/museums/<slug>: one museum. Every photo hangs on the wall as a poster (click for the full-screen
-// zoom/pan viewer), then the curiosities: what caught my eye in each piece. Pages come from src/data/museums.json.
+// /resources/museums/<slug>: one museum. Every photo hangs on the wall as a poster; clicking one opens it in a
+// pop-up with what caught my eye about it alongside (arrows go through the rest). Pages come from
+// src/data/museums.json.
 import Base from '../../../layouts/Base.astro';
 import { MUSEUM_VISITS, bg } from '../../../resources';
 export const getStaticPaths = () => MUSEUM_VISITS.map((v) => ({ params: { slug: v.slug }, props: { v } }));
@@ -9,6 +10,9 @@ const tilt = [-1.6, 1.1, -0.6, 1.8, -1.2, 0.7, -2, 1.4, -0.4];
 const width = [96, 88, 100, 84, 92, 100, 86, 94, 90];
 const text = (n?: string) => (n ?? '').split('\n').filter((l) => !l.startsWith('>')).join(' ');
 const quote = (n?: string) => (n ?? '').split('\n').filter((l) => l.startsWith('>')).map((l) => l.replace(/^>\s*/, ''));
+const hung = v.pieces.filter((p) => p.img);
+// What the pop-up shows for each photo.
+const viewer = hung.map((m) => ({ img: m.img, w: m.w, h: m.h, title: m.title ?? v.name, section: m.section ?? '', text: text(m.note), quotes: quote(m.note) }));
 ---
 <Base title={v.name}>
   <p class="mono text-[12px] uppercase tracking-wider text-stone-500"><a href="/resources/museums/" class="hover:text-accent dark:hover:text-accent-dark">← Museums</a></p>
@@ -18,9 +22,9 @@ const quote = (n?: string) => (n ?? '').split('\n').filter((l) => l.startsWith('
 
   <div class="wall relative left-1/2 mt-8 w-screen -translate-x-1/2 px-4 py-12 sm:px-8 sm:py-16">
     <ul class="rise mx-auto grid max-w-7xl grid-cols-2 items-start gap-x-5 gap-y-12 sm:grid-cols-3 sm:gap-x-10 lg:grid-cols-4">
-      {v.pieces.filter((p) => p.img).map((m, i) => (
+      {hung.map((m, i) => (
         <li class="piece" style={`--i:${i};--t:${tilt[i % tilt.length]}deg;--w:${width[i % width.length]}%`}>
-          <a href={m.img} data-lightbox={m.img} data-alt={m.title ?? v.name} class="poster-btn block" aria-label={`${m.title ?? v.name}: full screen`}>
+          <a href={m.img} data-piece={i} class="poster-btn block" aria-label={`${m.title ?? v.name}: open with my note`}>
             <span class="pin" aria-hidden="true"></span>
             <span class="art block" style={m.w && m.h ? `aspect-ratio:${m.w}/${m.h}` : `background:${bg(m.tone)}`}>
               <img src={m.sm ?? m.img} alt={m.title ?? v.name} loading="lazy" width={m.w} height={m.h} class="h-full w-full object-cover" />
@@ -32,20 +36,39 @@ const quote = (n?: string) => (n ?? '').split('\n').filter((l) => l.startsWith('
     </ul>
   </div>
 
-  <section class="mx-auto mt-12 max-w-2xl">
-    <h2 class="eyebrow mb-4">Curiosities</h2>
-    <ol class="space-y-5 text-[16px] leading-relaxed">
-      {v.pieces.map((m) => (
-        <li>
-          {m.section && <p class="mono text-[11px] uppercase tracking-wider text-stone-400">{m.section}</p>}
-          {m.title && <p class="font-semibold">{m.title}</p>}
-          {text(m.note) && <p class="text-stone-700 dark:text-stone-300">{text(m.note)}</p>}
-          {quote(m.note).map((q) => <p class="mt-1 border-l-2 border-stone-300 pl-3 text-[14px] italic text-stone-600 dark:text-stone-400">{q}</p>)}
-        </li>
-      ))}
-    </ol>
-  </section>
-  <script src="/writing/villarreal-24-25/lightbox.js" defer></script>
+  {/* Curiosities that came without a photo stay listed under the wall. */}
+  {v.pieces.some((p) => !p.img && p.note) && (
+    <section class="mx-auto mt-12 max-w-2xl">
+      <h2 class="eyebrow mb-4">Curiosities</h2>
+      <ol class="space-y-5 text-[16px] leading-relaxed">
+        {v.pieces.filter((p) => !p.img && p.note).map((m) => (
+          <li>
+            {m.section && <p class="mono text-[11px] uppercase tracking-wider text-stone-400">{m.section}</p>}
+            {m.title && <p class="font-semibold">{m.title}</p>}
+            {text(m.note) && <p class="text-stone-700 dark:text-stone-300">{text(m.note)}</p>}
+            {quote(m.note).map((q) => <p class="mt-1 border-l-2 border-stone-300 pl-3 text-[14px] italic text-stone-600 dark:text-stone-400">{q}</p>)}
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  <dialog class="piece-viewer" aria-label="Piece">
+    <div class="pv-grid">
+      <div class="pv-art"><img alt="" /></div>
+      <div class="pv-text">
+        <p class="pv-section mono"></p>
+        <h2 class="pv-title"></h2>
+        <p class="pv-note"></p>
+        <div class="pv-quotes"></div>
+        <p class="pv-count mono"></p>
+      </div>
+    </div>
+    <button type="button" class="pv-btn pv-prev" aria-label="Previous">←</button>
+    <button type="button" class="pv-btn pv-next" aria-label="Next">→</button>
+    <form method="dialog"><button class="pv-close" aria-label="Close">×</button></form>
+  </dialog>
+  <script type="application/json" id="pieces" set:html={JSON.stringify(viewer)} />
 </Base>
 
 <style>
@@ -58,4 +81,72 @@ const quote = (n?: string) => (n ?? '').split('\n').filter((l) => l.startsWith('
   .art img { display: block; }
   .pin { position: absolute; left: 50%; top: -5px; z-index: 1; width: 10px; height: 10px; translate: -50% 0; border-radius: 50%; background: #8a6c2f; box-shadow: 0 2px 3px rgb(0 0 0 / .35); }
   @media (prefers-reduced-motion: reduce) { .poster-btn { transition: none; } }
+
+  /* The pop-up: the photo, and my note beside it (below it on a phone). */
+  .piece-viewer { width: min(1100px, 94vw); max-height: 92svh; margin: auto; padding: 0; border: 0; border-radius: 14px; background: #fbf9f4; color: #1a1917; overflow: visible; box-shadow: 0 40px 80px -24px rgb(0 0 0 / .6); }
+  :global(.dark) .piece-viewer { background: #1c1b19; color: #e7e5e4; }
+  .piece-viewer::backdrop { background: rgb(18 16 14 / .78); backdrop-filter: blur(4px); }
+  .piece-viewer[open] { animation: pv-in .25s ease; }
+  @keyframes pv-in { from { opacity: 0; transform: translateY(10px) scale(.98); } }
+  .pv-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; max-height: 92svh; }
+  .pv-art { display: grid; place-items: center; padding: 18px; background: #ece5d9; border-radius: 14px 0 0 14px; min-height: 0; }
+  :global(.dark) .pv-art { background: #26221e; }
+  .pv-art img { max-width: 100%; max-height: calc(92svh - 36px); object-fit: contain; box-shadow: 0 14px 28px -14px rgb(0 0 0 / .5); }
+  .pv-text { display: flex; flex-direction: column; padding: 30px 26px 22px; overflow-y: auto; }
+  .pv-section { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .5; }
+  .pv-title { margin-top: 6px; font-size: 22px; font-weight: 600; line-height: 1.2; }
+  .pv-note { margin-top: 14px; font-size: 16px; line-height: 1.65; }
+  .pv-quotes :global(p) { margin-top: 12px; padding-left: 12px; border-left: 2px solid rgb(120 113 108 / .4); font-size: 14px; font-style: italic; line-height: 1.6; opacity: .75; }
+  .pv-count { margin-top: auto; padding-top: 18px; font-size: 12px; opacity: .45; }
+  .pv-close { position: absolute; right: -14px; top: -14px; width: 36px; height: 36px; border-radius: 50%; background: #fff; color: #1a1917; font-size: 20px; line-height: 1; box-shadow: 0 4px 10px rgb(0 0 0 / .25); }
+  .pv-btn { position: absolute; top: 50%; width: 40px; height: 40px; translate: 0 -50%; border-radius: 50%; background: rgb(255 255 255 / .9); color: #1a1917; font-size: 18px; box-shadow: 0 4px 12px rgb(0 0 0 / .25); }
+  .pv-prev { left: -56px; }
+  .pv-next { right: -56px; }
+  @media (max-width: 1220px) { .pv-prev { left: 10px; } .pv-next { right: 330px; } }
+  @media (max-width: 760px) {
+    .pv-grid { grid-template-columns: 1fr; overflow-y: auto; }
+    .pv-art { border-radius: 14px 14px 0 0; padding: 12px; }
+    .pv-art img { max-height: 55svh; }
+    .pv-text { overflow: visible; padding: 20px 20px 18px; }
+    .pv-btn { top: calc(12px + 27svh); }
+    .pv-next { right: 10px; }
+    .pv-close { right: 8px; top: 8px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .piece-viewer[open] { animation: none; } }
 </style>
+
+<script>
+  // Clicking a photo opens the pop-up on it; arrows (on screen or the keyboard) go to the next or previous one.
+  type Piece = { img: string; title: string; section: string; text: string; quotes: string[] };
+  const pieces: Piece[] = JSON.parse(document.getElementById('pieces')!.textContent!);
+  const dlg = document.querySelector<HTMLDialogElement>('.piece-viewer')!;
+  const $ = <T extends HTMLElement>(s: string) => dlg.querySelector<T>(s)!;
+  let at = 0;
+  const show = (i: number) => {
+    at = (i + pieces.length) % pieces.length;
+    const p = pieces[at];
+    $<HTMLImageElement>('.pv-art img').src = p.img;
+    $<HTMLImageElement>('.pv-art img').alt = p.title;
+    $('.pv-section').textContent = p.section;
+    $('.pv-title').textContent = p.title;
+    $('.pv-note').textContent = p.text;
+    $('.pv-quotes').replaceChildren(...p.quotes.map((q) => Object.assign(document.createElement('p'), { textContent: q })));
+    $('.pv-count').textContent = `${at + 1} / ${pieces.length}`;
+    $('.pv-text').scrollTop = 0;
+  };
+  document.querySelectorAll<HTMLAnchorElement>('[data-piece]').forEach((a) => a.addEventListener('click', (e) => {
+    e.preventDefault();
+    show(+a.dataset.piece!);
+    dlg.showModal();
+  }));
+  $('.pv-prev').addEventListener('click', () => show(at - 1));
+  $('.pv-next').addEventListener('click', () => show(at + 1));
+  dlg.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(at - 1); if (e.key === 'ArrowRight') show(at + 1); });
+  // A click on the backdrop (outside the box) closes it.
+  dlg.addEventListener('click', (e) => {
+    if (e.target !== dlg) return; // the arrows sit outside the box but aren't the backdrop
+    const r = dlg.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dlg.close();
+  });
+  if (pieces.length < 2) dlg.querySelectorAll<HTMLElement>('.pv-btn').forEach((b) => (b.hidden = true));
+</script>

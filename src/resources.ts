@@ -131,12 +131,20 @@ export const MUSEUMS: MuseumPiece[] = museumList.flatMap((m, v) => (m.pieces ?? 
   img: p.img, sm: p.sm, w: p.w, h: p.h, tone: tone(v + i), size: p.w && p.h && p.h > p.w ? ('l' as const) : ('m' as const),
 })));
 
-// One entrance per museum visit; each gets its own page at /resources/museums/<slug>/.
+// One entrance per museum visit; each gets its own page at /resources/museums/<slug>/. The entrance poster is
+// the visit's cover from MUSEUM_COVERS (by slug; images in public/img/resources/museums/covers/, which
+// `npm run resources` leaves alone), or else its first photo.
+const MUSEUM_COVERS: Record<string, string> = {
+  rom: '/img/resources/museums/covers/rom',
+};
 const slugify = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 export type MuseumVisit = { slug: string; name: string; city: string; year?: string; note?: string; cover?: MuseumPiece; pieces: MuseumPiece[] };
 export const MUSEUM_VISITS: MuseumVisit[] = museumList.map((m: { name: string; city: string; date?: string; slug?: string; note?: string }) => {
   const pieces = MUSEUMS.filter((p) => p.museum === m.name && p.city === m.city);
-  return { slug: m.slug ?? slugify(m.name.match(/\(([^)]+)\)\s*$/)?.[1] ?? m.name), name: m.name, city: m.city, year: m.date ? fmtMonth(m.date) : undefined, note: m.note, cover: pieces.find((p) => p.img), pieces };
+  const slug = m.slug ?? slugify(m.name.match(/\(([^)]+)\)\s*$/)?.[1] ?? m.name);
+  const own = MUSEUM_COVERS[slug];
+  const cover = own ? { museum: m.name, city: m.city, title: m.name, img: `${own}.webp`, sm: `${own}-sm.webp` } : pieces.find((p) => p.img);
+  return { slug, name: m.name, city: m.city, year: m.date ? fmtMonth(m.date) : undefined, note: m.note, cover, pieces };
 });
 
 export const COLLECTIONS = [
