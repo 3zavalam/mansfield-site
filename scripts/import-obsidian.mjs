@@ -5,13 +5,19 @@
 //                                   "Leyendo" → reading, "Leído" → read, "Pausado" → paused, `next: true` → next.
 //                                   Bought-only, people (tipo: Persona) and EXCLUDE are left out.
 //   Readwise/Books/*.md             the author (**Autor:**) and the first "**Mi nota:**" as a fallback note.
-//   Readwise/Podcasts/*.md          one note per episode; **Autor:** is the show, source_url the link.
-//   Main/Resources/Museos/*.md      "<Museum> - <City> (<mon> <year>).md"; the visit date is read from the text.
+//   Main/Ideas/*.md                 podcast ideas: notes with `tipo: podcast` (titulo, show, link, fecha); the body,
+//                                   his own bullet points, is kept word for word. Duplicates ("X 2.md") keep the newest;
+//                                   "Prueba" (a test note) is skipped.
+//   Main/Resources/Museos/*.md      "<Museum> - <City> (<mon> <year>).md"; the visit date is read from the text. Each
+//                                   embedded photo (![[...]] in Attachments/) and the text under it becomes one piece,
+//                                   grouped by the note's ## sections. Photos go to public/img/resources/museums/<visit>/
+//                                   as 1600px WebP + 600px thumbs; sharp drops all EXIF/GPS metadata.
 // Personal/ is never read. Writes src/data/books.json, podcasts.json and museums.json (read by src/resources.ts).
 // Notes in those files are edited by hand and kept as they are (even when empty); only a new entry gets its
 // first "Mi nota" as a starting note. Re-running adds and removes entries.
 import fs from 'node:fs';
 import path from 'node:path';
+import sharp from 'sharp';
 
 const VAULT = process.env.VAULT ?? '/workspace/obsidian/obsidian-vault';
 const OUT = 'src/data';
@@ -49,19 +55,25 @@ for (const f of md(path.join(VAULT, 'Main/Resources/Leer/Lista'))) {
 }
 write('books.json', books);
 
-// Podcasts
-const oldPods = prev('podcasts.json', (p) => `${p.show}|${p.title}`);
-const podcasts = [];
-for (const f of md(path.join(VAULT, 'Readwise/Podcasts'))) {
-  const txt = read(path.join(VAULT, 'Readwise/Podcasts', f));
-  const show = field(txt, 'Autor');
-  if (!show) continue;
-  const title = f.replace(/\.md$/, '');
-  const url = txt.match(/^source_url:\s*(\S+)/m)?.[1];
-  const key = `${show}|${title}`;
-  const note = oldPods.has(key) ? oldPods.get(key).note : field(txt, 'Mi nota');
-  podcasts.push(clean({ show, title, url, note }));
+// Podcasts: his ideas, one note per episode
+const SKIP_PODCASTS = ['Prueba'];
+const ideas = new Map();
+for (const f of md(path.join(VAULT, 'Main/Ideas'))) {
+  const txt = read(path.join(VAULT, 'Main/Ideas', f));
+  if (!/^tipo:\s*podcast\s*$/m.test(txt)) continue;
+  const head = txt.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
+  const get = (k) => head.match(new RegExp(`^${k}:[ \\t]*(.*)$`, "m"))?.[1].replace(/^['"]|['"]$/g, '').trim();
+  const title = get('titulo') || f.replace(/( \d+)?\.md$/, '');
+  if (SKIP_PODCASTS.includes(title)) continue;
+  const url = get('link') || head.match(/^link:\s*\n\s*-\s*(\S+)/m)?.[1];
+  const date = get('fecha');
+  const body = txt.slice(txt.indexOf('---', 3) + 3).split('\n').filter((l) => l.trim() && !/^!\[/.test(l.trim()))
+    .map((l) => l.replace(/^\s*[-*⁠\u2060]+\s*/, (m) => (m.trim() ? '- ' : '')).replace(/[\u2060]/g, '').trim());
+  const item = clean({ show: get('show'), title, url, date, ideas: body });
+  const old = ideas.get(title);
+  if (!old || (item.date ?? '') > (old.date ?? '') || (!old.show && item.show)) ideas.set(title, { ...old, ...item });
 }
+const podcasts = [...ideas.values()].sort((x, y) => x.title.localeCompare(y.title));
 write('podcasts.json', podcasts);
 
 // Museums
@@ -81,6 +93,34 @@ for (const f of md(path.join(VAULT, 'Main/Resources/Museos'))) {
     ? `${day[3]}-${String(MESES.indexOf(day[2].toLowerCase()) + 1).padStart(2, '0')}-${day[1].padStart(2, '0')}`
     : `${year}-${month}`;
   const old = oldMuseums.get(`${city}|${date.slice(0, 7)}`);
-  museums.push(clean({ name: old?.name ?? (full ? `${full} (${short})` : short), city, date, note: old?.note }));
+  const id = `${short}-${city}-${date.slice(0, 7)}`.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const imgDir = path.join('public/img/resources/museums', id);
+  fs.rmSync(imgDir, { recursive: true, force: true });
+  fs.mkdirSync(imgDir, { recursive: true });
+  const pieces = [];
+  let section;
+  let cur;
+  for (const line of txt.split('\n')) {
+    const h = line.match(/^##\s+(.+)/);
+    if (h) { section = h[1].trim(); cur = undefined; continue; }
+    const e = line.match(/^!\[\[([^\]|]+\.(?:jpe?g|png|webp|heic))(?:\|[^\]]*)?\]\]/i);
+    if (e) {
+      const src = path.join(VAULT, 'Attachments', e[1]);
+      if (!fs.existsSync(src)) { cur = undefined; continue; }
+      const slug = e[1].replace(/\.[^.]+$/, '').replace(/^.*? - /, '');
+      const name = slug.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-');
+      const big = await sharp(src).rotate().resize({ width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true }).webp({ quality: 80 }).toFile(path.join(imgDir, `${name}.webp`));
+      await sharp(src).rotate().resize({ width: 600, height: 600, fit: 'inside', withoutEnlargement: true }).webp({ quality: 78 }).toFile(path.join(imgDir, `${name}-sm.webp`));
+      cur = { section, title: slug.charAt(0).toUpperCase() + slug.slice(1), text: [], img: `/img/resources/museums/${id}/${name}.webp`, sm: `/img/resources/museums/${id}/${name}-sm.webp`, w: big.width, h: big.height };
+      pieces.push(cur);
+      continue;
+    }
+    if (!line.trim() || /^\[\[.*\]\]$/.test(line.trim())) continue;
+    if (!section) continue; // the intro line
+    if (!cur) { cur = { section, text: [] }; pieces.push(cur); }
+    cur.text.push(line.trim());
+  }
+  const out = pieces.map(({ text, ...p }) => clean({ ...p, note: text.join('\n') }));
+  museums.push(clean({ name: old?.name ?? (full ? `${full} (${short})` : short), city, date, note: old?.note, pieces: out }));
 }
 write('museums.json', museums);

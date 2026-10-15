@@ -3,6 +3,89 @@
     "name": "Royal Ontario Museum (ROM)",
     "city": "Toronto",
     "date": "2026-10-02",
-    "note": "Came away inspired by Chinese prints, celadon-green ceramics and mineral color palettes, plus the idea of Han and Tang epitaphs as short life biographies."
+    "note": "Came away inspired by Chinese prints, celadon-green ceramics and mineral color palettes, plus the idea of Han and Tang epitaphs as short life biographies.",
+    "pieces": [
+      {
+        "section": "Inspiración",
+        "title": "Grabados chinos",
+        "img": "/img/resources/museums/rom-toronto-2026-10/grabados-chinos.webp",
+        "sm": "/img/resources/museums/rom-toronto-2026-10/grabados-chinos-sm.webp",
+        "w": 1600,
+        "h": 1200,
+        "note": "Grabados chinos en blanco y negro. Me gustó el diseño, capaz para hacer algo o usarlo de inspiración."
+      },
+      {
+        "section": "Inspiración",
+        "title": "King of Hell",
+        "img": "/img/resources/museums/rom-toronto-2026-10/king-of-hell.webp",
+        "sm": "/img/resources/museums/rom-toronto-2026-10/king-of-hell-sm.webp",
+        "w": 1200,
+        "h": 1600,
+        "note": "Figura de cerámica del King of Hell. Me gustó el diseño y el concepto del King of Hell, capaz hasta usarlo de inspiración para un nombre de algo."
+      },
+      {
+        "section": "Inspiración",
+        "title": "Minerales verde y azul",
+        "img": "/img/resources/museums/rom-toronto-2026-10/minerales-verde-y-azul.webp",
+        "sm": "/img/resources/museums/rom-toronto-2026-10/minerales-verde-y-azul-sm.webp",
+        "w": 1600,
+        "h": 1200,
+        "note": "Me gustó mucho esa paleta de color, ese verde en general. Guardarlo para inspiración."
+      },
+      {
+        "section": "Inspiración",
+        "title": "Cubo blanco",
+        "img": "/img/resources/museums/rom-toronto-2026-10/cubo-blanco.webp",
+        "sm": "/img/resources/museums/rom-toronto-2026-10/cubo-blanco-sm.webp",
+        "w": 1600,
+        "h": 1200,
+        "note": "Me gustó ese cubo, sobre todo el blanco, es un blanco muy raro."
+      },
+      {
+        "section": "Inspiración",
+        "title": "Mascaras",
+        "img": "/img/resources/museums/rom-toronto-2026-10/mascaras.webp",
+        "sm": "/img/resources/museums/rom-toronto-2026-10/mascaras-sm.webp",
+        "w": 1200,
+        "h": 1600,
+        "note": "Idea: usar este estilo para perfiles/profile pictures (como los avatares de cada bot en Grok Bot o los de Xbox) si algún día hago algo que ocupe logos o perfiles. Cada máscara puede ser uno."
+      },
+      {
+        "section": "Para la casa",
+        "title": "Platos celadon",
+        "img": "/img/resources/museums/rom-toronto-2026-10/platos-celadon.webp",
+        "sm": "/img/resources/museums/rom-toronto-2026-10/platos-celadon-sm.webp",
+        "w": 1600,
+        "h": 1200,
+        "note": "Me gustaron cómo se ven estos platos/tazones verde celadón. Para la casa."
+      },
+      {
+        "section": "Para la casa",
+        "title": "Mesa tallada",
+        "img": "/img/resources/museums/rom-toronto-2026-10/mesa-tallada.webp",
+        "sm": "/img/resources/museums/rom-toronto-2026-10/mesa-tallada-sm.webp",
+        "w": 1600,
+        "h": 1200,
+        "note": "Me gustó la mesa, el color y el grosor. No me gustaron las patas con esculturas. Para la casa."
+      },
+      {
+        "section": "La muerte y los epitafios",
+        "title": "Tombs of Han and Tang",
+        "img": "/img/resources/museums/rom-toronto-2026-10/tombs-of-han-and-tang.webp",
+        "sm": "/img/resources/museums/rom-toronto-2026-10/tombs-of-han-and-tang-sm.webp",
+        "w": 1200,
+        "h": 1600,
+        "note": "El concepto de la muerte:\n> \"Tombs of the wealthy were subterranean residences.\"\n> \"Tombs were meant to last, and to be visited by relatives over time with offerings. Stone tablets bearing the occupant's name, dates and a short biography were also deposited in the tomb. These would survive beyond the family lineage.\"\nIdea de cómo poner tu propio epitafio."
+      },
+      {
+        "section": "La muerte y los epitafios",
+        "title": "Epitafio Sir Duo y Lady Zhao",
+        "img": "/img/resources/museums/rom-toronto-2026-10/epitafio-sir-duo-y-lady-zhao.webp",
+        "sm": "/img/resources/museums/rom-toronto-2026-10/epitafio-sir-duo-y-lady-zhao-sm.webp",
+        "w": 1200,
+        "h": 1600,
+        "note": "Lo mismo: cómo hacer un epitafio según ellos.\n> \"Chinese epitaphs consist of short biographies of the deceased, followed by a lament in verse.\""
+      }
+    ]
   }
 ]

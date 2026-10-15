@@ -14,9 +14,9 @@ type Tone = [string, string];
 
 export type Movie = { title: string; year?: string; img?: string; tone?: Tone; rating?: number; series?: boolean; doc?: boolean; sample?: boolean };
 export type Book = { title: string; author?: string; status: 'reading' | 'read' | 'paused' | 'next'; note?: string; sample?: boolean };
-export type Episode = { title: string; url?: string; note?: string };
+export type Episode = { title: string; url?: string; date?: string; ideas?: string[] };
 export type Podcast = { name: string; hosts?: string; img?: string; tone?: Tone; comment?: string; episodes: Episode[]; sample?: boolean };
-export type MuseumPiece = { museum: string; city: string; year?: string; title?: string; note?: string; img?: string; tone?: Tone; size?: 's' | 'm' | 'l'; sample?: boolean };
+export type MuseumPiece = { museum: string; city: string; year?: string; title?: string; note?: string; section?: string; img?: string; sm?: string; w?: number; h?: number; tone?: Tone; size?: 's' | 'm' | 'l'; sample?: boolean };
 
 const sampleTones: Tone[] = [['#2f5d8a', '#13253a'], ['#c8553d', '#5b2117'], ['#2e6b4f', '#123224'], ['#e0a83e', '#7a4a10'], ['#6b4f8a', '#2a1d3b'], ['#1f1f22', '#55555c'], ['#b7413e', '#3b0f0e'], ['#3d7c8c', '#13323a'], ['#8a6e4f', '#33281b'], ['#d9734e', '#5c2a17'], ['#4a5a3a', '#1b2216'], ['#a3485f', '#3a1420']];
 const tone = (i: number) => sampleTones[i % sampleTones.length];
@@ -100,21 +100,24 @@ export const MOVIES: Movie[] = moviePosters
 export const BOOK_STATUS = [['reading', 'Reading'], ['read', 'Read'], ['paused', 'Paused'], ['next', 'Next']] as const;
 export const BOOKS: Book[] = bookList as Book[];
 
-// Episodes from the vault (src/data/podcasts.json), one tile per show; a show with no note of its own has none.
+// His podcast ideas from the vault (Main/Ideas, `tipo: podcast`; see scripts/import-obsidian.mjs), one tile per show.
 const PODCAST_INFO: Record<string, { hosts?: string; comment?: string }> = {
   Acquired: { hosts: 'Ben Gilbert & David Rosenthal', comment: 'Their Microsoft episode is the reason this site is called Mansfield: I liked how they named things and wanted a name like that.' },
 };
-const shows = [...new Set(podcastList.map((p) => p.show))];
+const shows = [...new Set(podcastList.map((p) => p.show ?? 'Other'))];
 export const PODCASTS: Podcast[] = shows
-  .map((name, i) => ({ name, ...PODCAST_INFO[name], tone: tone(i), episodes: podcastList.filter((p) => p.show === name).map(({ title, url, note }) => ({ title, url, note })) }))
+  .map((name, i) => ({ name, ...PODCAST_INFO[name], tone: tone(i), episodes: podcastList.filter((p) => (p.show ?? 'Other') === name).map(({ title, url, date, ideas }) => ({ title, url, date, ideas })) }))
   .sort((a, b) => b.episodes.length - a.episodes.length || a.name.localeCompare(b.name));
 
 // Photos are per trip, from the disposable cameras: see src/trips.ts and `npm run photos`.
 export const PHOTOS = TRIPS.flatMap((t) => t.photos);
 
-// Visits from the vault (src/data/museums.json). Photos of what caught my eye can be added per visit later.
+// Visits from the vault (src/data/museums.json): every photo and curiosity in the museum's note.
 const fmtMonth = (d: string) => new Date(`${d.slice(0, 7)}-01T12:00:00`).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-export const MUSEUMS: MuseumPiece[] = museumList.map((m, i) => ({ museum: m.name, city: m.city, year: m.date ? fmtMonth(m.date) : undefined, note: m.note, tone: tone(i + 1), size: 'l' as const }));
+export const MUSEUMS: MuseumPiece[] = museumList.flatMap((m, v) => (m.pieces ?? []).map((p, i) => ({
+  museum: m.name, city: m.city, year: m.date ? fmtMonth(m.date) : undefined, title: p.title, note: p.note, section: p.section,
+  img: p.img, sm: p.sm, w: p.w, h: p.h, tone: tone(v + i), size: p.w && p.h && p.h > p.w ? ('l' as const) : ('m' as const),
+})));
 
 export const COLLECTIONS = [
   { slug: 'museums', label: 'Museums', kind: 'museum', note: 'Curious things, one photo each', color: '#ffe680', list: MUSEUMS },

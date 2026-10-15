@@ -90,7 +90,7 @@ const href = (slug: string) => `/resources/${slug}`;
             <path d="M200 200c26 0 30 -30 46 -30" fill="none" stroke="#26262a" stroke-width="4" stroke-linecap="round" />
           </svg>
         </span>
-        <span class="name">Podcasts</span><span class="sub">{PODCASTS.length} shows</span>
+        <span class="name">Podcasts</span><span class="sub">{PODCASTS.length} {PODCASTS.length === 1 ? "show" : "shows"}</span>
       </a>
     </li>
 
@@ -111,7 +111,7 @@ const href = (slug: string) => `/resources/${slug}`;
             <rect x="110" y="198" width="40" height="12" fill="#fff" stroke="#e7e5e4" />
           </svg>
         </span>
-        <span class="name">Museums</span><span class="sub">{MUSEUMS.length} {MUSEUMS.length === 1 ? "visit" : "visits"}</span>
+        <span class="name">Museums</span><span class="sub">{MUSEUMS.length} curious things</span>
       </a>
     </li>
 
