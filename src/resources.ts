@@ -113,9 +113,10 @@ export const FAVORITE_BOOKS: Book[] = FAVORITES.map((f) => BOOKS.find((b) => b.t
 
 // His podcast ideas from the vault (Main/Ideas, `tipo: podcast`; see scripts/import-obsidian.mjs), one card per episode.
 const PODCAST_INFO: Record<string, { hosts?: string; comment?: string }> = {
+  'The Tim Ferriss Show': { hosts: 'Tim Ferriss' },
   Acquired: { hosts: 'Ben Gilbert & David Rosenthal', comment: 'Their Microsoft episode is the reason this site is called Mansfield: I liked how they named things and wanted a name like that.' },
 };
-export const EPISODES: PodcastEpisode[] = podcastList.map((p, i) => ({ title: p.title, url: p.url, date: p.date, ideas: p.ideas, show: p.show ?? 'Other', hosts: PODCAST_INFO[p.show ?? '']?.hosts, tone: tone(i) }));
+export const EPISODES: PodcastEpisode[] = podcastList.map((p, i) => ({ title: p.title, url: p.url, date: p.date, ideas: p.ideas, img: (p as { img?: string }).img, show: p.show ?? 'Other', hosts: PODCAST_INFO[p.show ?? '']?.hosts, tone: tone(i) }));
 const shows = [...new Set(podcastList.map((p) => p.show ?? 'Other'))];
 export const PODCASTS: Podcast[] = shows
   .map((name, i) => ({ name, ...PODCAST_INFO[name], tone: tone(i), episodes: podcastList.filter((p) => (p.show ?? 'Other') === name).map(({ title, url, date, ideas }) => ({ title, url, date, ideas })) }))

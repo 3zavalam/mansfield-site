@@ -1,5 +1,59 @@
 [
   {
+    "show": "The Tim Ferriss Show",
+    "title": "#485 Jerry Seinfeld — A Comedy Legend's Systems, Routines, and Methods for Success",
+    "url": "https://tim.blog/2020/12/08/jerry-seinfeld/",
+    "date": "2026-10-14",
+    "ideas": [
+      "- Find systems",
+      "- Transitional meditation"
+    ],
+    "img": "/img/resources/podcasts/jerry-seinfeld.webp"
+  },
+  {
+    "show": "The Tim Ferriss Show",
+    "title": "#577 Hugh Jackman on Best Decisions, Daily Routines, The 85% Rule, Favorite Exercises, Mind Training, and Much More",
+    "url": "https://tim.blog/2020/06/26/hugh-jackman/",
+    "date": "2026-10-14",
+    "ideas": [
+      "- Sudoku coco",
+      "- Find the art of living"
+    ],
+    "img": "/img/resources/podcasts/hugh-jackman.webp"
+  },
+  {
+    "show": "The Tim Ferriss Show",
+    "title": "#695 Shane Parrish on Wisdom from Warren Buffett, Rules for Better Thinking, How to Reduce Blind Spots, The Dangers of Mental Models, and More",
+    "url": "https://tim.blog/2023/09/28/shane-parrish-farnam-street/",
+    "date": "2026-10-14",
+    "ideas": [
+      "- 85 rule",
+      "- (no terminado, lo tengo que volver a escuchar)"
+    ],
+    "img": "/img/resources/podcasts/shane-parrish.webp"
+  },
+  {
+    "show": "The Tim Ferriss Show",
+    "title": "#722 Cal Newport — How to Embrace Slow Productivity, Build a Deep Life, Achieve Mastery, and Defend Your Time",
+    "url": "https://tim.blog/2024/02/21/cal-newport-slow-productivity/",
+    "date": "2026-10-14",
+    "ideas": [
+      "- slow productive",
+      "- no hustle culture",
+      "- choose trade offs",
+      "- manage your workload",
+      "- pull and push work",
+      "- focus on 1 thing in a decade",
+      "- take your time",
+      "- focus on craft",
+      "- slow productivity attention economies",
+      "- they are hard but worth",
+      "- intentional productivity",
+      "- relentlessly focus"
+    ],
+    "img": "/img/resources/podcasts/cal-newport.webp"
+  },
+  {
     "show": "Acquired",
     "title": "Formula 1",
     "url": "https://www.acquired.fm/episodes/formula-1",
@@ -9,7 +63,8 @@
       "- do not avoid taxes",
       "- embrace new technologies/marketing spots (tracks, cars, social media)",
       "- bet on you (Toto Wolff asked to own 1/3 of Mercedes when he accepted the job, from $150M -> $6B valuation)"
-    ]
+    ],
+    "img": "/img/resources/podcasts/formula-1.webp"
   },
   {
     "show": "Acquired",
@@ -21,7 +76,8 @@
       "- Make a great team",
       "- Align incentives",
       "- Slogan = Value Proposition"
-    ]
+    ],
+    "img": "/img/resources/podcasts/home-depot.webp"
   },
   {
     "show": "Acquired",
@@ -32,7 +88,8 @@
       "- Paga por que te hagan tus slogans y logos (Nike, NYT)",
       "- No tienes que hacer tú la empresa: puedes llegar a una y hacerla la más grande",
       "- Be greedy when others are fearful, and vice versa"
-    ]
+    ],
+    "img": "/img/resources/podcasts/new-york-times.webp"
   },
   {
     "show": "Acquired",
@@ -46,7 +103,8 @@
       "- Nintendo: The Console Wars**",
       "- Market your new things/technology (even if it's not game changing)",
       "- Find a target, people will compare you with them (Sega–Nintendo, Oracle–Microsoft)"
-    ]
+    ],
+    "img": "/img/resources/podcasts/nintendo-series.webp"
   },
   {
     "show": "Acquired",
@@ -55,6 +113,7 @@
     "date": "2026-09-30",
     "ideas": [
       "Strategy Matters (Books about business strategy)"
-    ]
+    ],
+    "img": "/img/resources/podcasts/not-boring-with-packy-mccormick.webp"
   }
 ]

@@ -12,12 +12,13 @@ import { EPISODES, hasSamples, bg } from '../../resources';
   <SampleNote show={hasSamples(EPISODES)} />
   <ul class="rise grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
     {EPISODES.map((e, i) => (
-      <li style={`--i:${i}`}>
+      <li class="relative" style={`--i:${i}`}>
         <button type="button" class="tile" data-i={i} aria-label={`${e.title} (${e.show}): my notes`} style={e.img ? '' : `background:${bg(e.tone)}`}>
-          {e.img && <img src={e.img} alt="" loading="lazy" class="absolute inset-0 h-full w-full object-cover" />}
+          {e.img && <><img src={e.img} alt="" loading="lazy" class="absolute inset-0 h-full w-full object-cover" /><span class="shade" aria-hidden="true"></span></>}
           <span class="chip">{e.show}</span>
           <span class="ttl">{e.title}</span>
         </button>
+        {e.url && <a href={e.url} target="_blank" rel="noopener" class="listen" aria-label={`Listen to ${e.title} (opens in a new tab)`}>Listen ↗</a>}
       </li>
     ))}
   </ul>
@@ -26,6 +27,7 @@ import { EPISODES, hasSamples, bg } from '../../resources';
   <dialog class="say">
     {EPISODES.map((e, i) => (
       <article data-i={i} hidden>
+        {e.img && <div class="say-photo"><img src={e.img} alt="" loading="lazy" class="h-full w-full object-cover" /></div>}
         <div class="p-6 sm:p-7">
           <p class="mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">{e.show}{e.hosts && ` · ${e.hosts}`}</p>
           <h2 class="mt-1 text-2xl font-semibold">{e.url ? <a href={e.url} target="_blank" rel="noopener" class="hover:text-accent dark:hover:text-accent-dark">{e.title} <span aria-hidden="true" class="text-stone-400">↗</span></a> : e.title}</h2>
@@ -47,14 +49,17 @@ import { EPISODES, hasSamples, bg } from '../../resources';
   .tile { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 6px; cursor: pointer; transition: transform .25s ease, box-shadow .25s ease; }
   .tile:hover, .tile:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 28px -16px rgb(0 0 0 / .5); outline: none; }
   .mark { position: absolute; inset: 0; display: grid; place-items: center; color: rgb(255 255 255 / .9); font-size: clamp(34px, 6vw, 56px); font-weight: 700; letter-spacing: -.02em; }
-  .chip { position: absolute; left: 10px; top: 10px; max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 8px; border-radius: 4px; background: rgb(255 255 255 / .16); border: 1px solid rgb(255 255 255 / .25); color: #fff; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .chip { position: absolute; left: 10px; top: 10px; max-width: calc(100% - 96px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 8px; border-radius: 4px; background: rgb(255 255 255 / .16); border: 1px solid rgb(255 255 255 / .25); color: #fff; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
   .say { margin: auto; width: min(92vw, 520px); padding: 0; border: 1px solid #e7e5e4; border-radius: 16px; overflow: hidden; background: var(--color-paper); color: var(--color-ink); }
   :global(.dark) .say { background: var(--color-night); color: #f5f5f4; border-color: #292524; }
   .say::backdrop { background: rgb(12 12 12 / .55); backdrop-filter: blur(4px); }
   .say[open] { animation: up .25s ease; }
   .idea { position: relative; padding-left: 14px; }
   .idea::before { content: '–'; position: absolute; left: 0; color: #a8a29e; }
-  .ttl { position: absolute; left: 12px; right: 12px; bottom: 10px; color: #fff; font-size: clamp(16px, 2vw, 21px); font-weight: 600; line-height: 1.15; text-align: left; }
+  .shade { position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / .75), rgb(0 0 0 / .1) 55%, rgb(0 0 0 / .25)); }
+  .listen { position: absolute; right: 10px; top: 10px; padding: 4px 8px; border-radius: 4px; background: rgb(0 0 0 / .45); color: #fff; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .listen:hover, .listen:focus-visible { background: #fff; color: #1a1917; outline: none; }
+  .ttl { position: absolute; left: 12px; right: 12px; bottom: 10px; color: #fff; font-size: clamp(16px, 2vw, 21px); font-weight: 600; line-height: 1.15; text-align: left; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .eps { position: absolute; left: 10px; bottom: 8px; color: rgb(255 255 255 / .8); font-size: 11px; letter-spacing: .06em; }
   .say > article { max-height: 85vh; overflow-y: auto; }
   .say-photo { position: relative; aspect-ratio: 16 / 9; }

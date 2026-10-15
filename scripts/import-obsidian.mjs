@@ -58,23 +58,42 @@ write('books.json', books);
 // Podcasts: his ideas, one note per episode
 const SKIP_PODCASTS = ['Prueba'];
 const ideas = new Map();
-for (const f of md(path.join(VAULT, 'Main/Ideas'))) {
-  const txt = read(path.join(VAULT, 'Main/Ideas', f));
+const POD_DIRS = ['Main/Ideas', 'Main/Ideas/Podcasts'];
+for (const f of POD_DIRS.flatMap((d) => md(path.join(VAULT, d)).map((n) => path.join(d, n)))) {
+  const txt = read(path.join(VAULT, f));
   if (!/^tipo:\s*podcast\s*$/m.test(txt)) continue;
   const head = txt.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
-  const get = (k) => head.match(new RegExp(`^${k}:[ \\t]*(.*)$`, "m"))?.[1].replace(/^['"]|['"]$/g, '').trim();
-  const title = get('titulo') || f.replace(/( \d+)?\.md$/, '');
+  const get = (k) => head.match(new RegExp(`^${k}:[ \\t]*(.*)$`, "m"))?.[1].trim().replace(/^'(.*)'$/, (_, v) => v.replace(/''/g, "'")).replace(/^"(.*)"$/, '$1').trim();
+  const title = get('titulo') || path.basename(f).replace(/( \d+)?\.md$/, '');
   if (SKIP_PODCASTS.includes(title)) continue;
   const url = get('link') || head.match(/^link:\s*\n\s*-\s*(\S+)/m)?.[1];
   const date = get('fecha');
+  const cover = get('portada') || head.match(/^portada:\s*\n\s*-\s*(\S+)/m)?.[1];
   const body = txt.slice(txt.indexOf('---', 3) + 3).split('\n').filter((l) => l.trim() && !/^!\[/.test(l.trim()))
     .map((l) => l.replace(/^\s*[-*⁠\u2060]+\s*/, (m) => (m.trim() ? '- ' : '')).replace(/[\u2060]/g, '').trim());
-  const item = clean({ show: get('show') || 'Other', title, url, date, ideas: body });
+  const item = clean({ file: path.basename(f, '.md'), show: get('show') || 'Other', title, url, date, cover, ideas: body });
   const old = ideas.get(title);
   if (!old || (item.date ?? '') > (old.date ?? '') || (!old.show && item.show)) ideas.set(title, { ...old, ...item });
 }
 // Flat list, one entry per episode (the site shows one card each, with the show as a label).
 const podcasts = [...ideas.values()].sort((x, y) => (y.date ?? '').localeCompare(x.date ?? '') || x.title.localeCompare(y.title));
+// Covers (`portada`): downloaded once into public/img/resources/podcasts/<slug>.webp so the site never hotlinks.
+// A failed download keeps any earlier copy; no copy means the card falls back to the show's colours.
+const POD_IMG = path.resolve('public/img/resources/podcasts');
+fs.mkdirSync(POD_IMG, { recursive: true });
+const pslug = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+for (const p of podcasts) {
+  const src = p.cover, name = pslug(p.file ?? p.title); delete p.cover; delete p.file;
+  const file = path.join(POD_IMG, `${name}.webp`);
+  if (src && !fs.existsSync(file)) {
+    try {
+      const r = await fetch(src, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(20000) });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      await sharp(Buffer.from(await r.arrayBuffer())).resize({ width: 800, height: 800, fit: 'inside', withoutEnlargement: true }).webp({ quality: 80 }).toFile(file);
+    } catch (e) { console.warn(`podcast cover failed: ${p.title}: ${e.message}`); }
+  }
+  if (fs.existsSync(file)) p.img = `/img/resources/podcasts/${path.basename(file)}`;
+}
 write('podcasts.json', podcasts);
 
 // Museums
