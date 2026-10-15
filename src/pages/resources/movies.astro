@@ -1,0 +1,114 @@
+---
+// /resources/movies: a wall of posters, like Acquired's episode grid, favourites first and dislikes last. A poster is the film's image if there
+// is one, otherwise it's drawn from the title on the entry's colours. Click one to see it large.
+import Base from '../../layouts/Base.astro';
+import ResourceTitle from '../../components/ResourceTitle.astro';
+import SampleNote from '../../components/SampleNote.astro';
+import ResourceEnter from '../../components/ResourceEnter.astro';
+import { MOVIES, hasSamples, bg } from '../../resources';
+
+// Each entry is one kind: a documentary (film or series) counts as a documentary, not as a movie or series.
+const kind = (m: (typeof MOVIES)[number]) => (m.doc ? 'doc' : m.series ? 'series' : 'movie');
+const filters = [
+  { key: 'all', label: 'All', n: MOVIES.length },
+  { key: 'movie', label: 'Movies', n: MOVIES.filter((m) => kind(m) === 'movie').length },
+  { key: 'series', label: 'Series', n: MOVIES.filter((m) => kind(m) === 'series').length },
+  { key: 'doc', label: 'Documentaries', n: MOVIES.filter((m) => kind(m) === 'doc').length },
+];
+// The rating badge: [label, class], or nothing for an unrated film.
+const RATINGS: Record<number, [string, string]> = { 2: ['★ Ultra fav', 'fav ultra'], 1: ['★ Fav', 'fav'], [-1]: ['Dislike', 'dislike'], [-2]: ['Ultra dislike', 'dislike ultra-dislike'] };
+const tag = (m: (typeof MOVIES)[number]) => (m.doc ? (m.series ? 'Docuseries' : 'Documentary') : m.series ? 'Series' : '');
+---
+<Base title="Movies">
+  <ResourceEnter slot="head" slug="movies" />
+  <ResourceTitle label="Movies" count={MOVIES.length} />
+  <SampleNote show={hasSamples(MOVIES)} />
+  {MOVIES.some((m) => m.series || m.doc) && (
+    <div class="filters" role="group" aria-label="Show">
+      {filters.map((f) => (
+        <button type="button" class="filter" data-filter={f.key} aria-pressed={f.key === 'all' ? 'true' : 'false'}>
+          {f.label}<span class="filter-n">{f.n}</span>
+        </button>
+      ))}
+    </div>
+  )}
+  <ul class="rise grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+    {MOVIES.map((m, i) => (
+      <li style={`--i:${i}`} data-kind={kind(m)}>
+        <button type="button" class="poster group" data-i={i} aria-label={`${m.title}${m.year ? ` (${m.year})` : ''}`} data-note={[tag(m), RATINGS[m.rating ?? 0]?.[0]].filter(Boolean).join(' · ')} style={m.img ? '' : `background:${bg(m.tone)}`}>
+          {m.img
+            ? <img src={m.img} alt="" loading="lazy" class="absolute inset-0 h-full w-full object-cover" />
+            : <span class="drawn"><span class="drawn-title">{m.title}</span>{m.year && <span class="drawn-year">{m.year}</span>}</span>}
+          {(RATINGS[m.rating ?? 0] || tag(m)) && (
+            <span class="badges">
+              {RATINGS[m.rating ?? 0] && <span class={`chip ${RATINGS[m.rating ?? 0][1]}`}>{RATINGS[m.rating ?? 0][0]}</span>}
+              {tag(m) && <span class="chip">{tag(m)}</span>}
+            </span>
+          )}
+        </button>
+      </li>
+    ))}
+  </ul>
+
+  <dialog class="viewer">
+    <div class="viewer-poster"></div>
+    <p class="viewer-title"></p>
+    <p class="viewer-note"></p>
+    <form method="dialog"><button class="viewer-close" aria-label="Close">×</button></form>
+  </dialog>
+</Base>
+
+<style>
+  .filters { display: flex; flex-wrap: wrap; gap: 6px; margin: -4px 0 20px; }
+  .filter { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgb(120 113 108 / .35); font-size: 13px; color: inherit; opacity: .7; transition: opacity .15s, background .15s, color .15s; }
+  .filter:hover { opacity: 1; }
+  .filter[aria-pressed='true'] { opacity: 1; background: #1c1917; border-color: #1c1917; color: #fafaf9; }
+  :global(html.dark) .filter[aria-pressed='true'] { background: #f5f5f4; border-color: #f5f5f4; color: #1c1917; }
+  .filter-n { font: 500 11px ui-monospace, Menlo, monospace; opacity: .6; }
+  li[hidden] { display: none; }
+  .poster { position: relative; display: block; width: 100%; aspect-ratio: 2 / 3; overflow: hidden; border-radius: 6px; cursor: zoom-in; transition: transform .25s ease, box-shadow .25s ease; }
+  .poster:hover, .poster:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 28px -16px rgb(0 0 0 / .5); outline: none; }
+  .drawn { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 14% 10%; color: #fff; text-align: left; }
+  .drawn-title { font-size: clamp(22px, 3.2vw, 34px); font-weight: 700; line-height: .95; letter-spacing: -.02em; }
+  .drawn-year { margin-top: .4rem; font: 500 12px ui-monospace, Menlo, monospace; opacity: .7; }
+  .badges { position: absolute; right: 8px; top: 8px; left: 8px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+  .chip { padding: 4px 8px; border-radius: 4px; background: rgb(20 20 20 / .55); border: 1px solid rgb(255 255 255 / .25); color: #fff; font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .chip.fav { background: #ffcf4a; border-color: #ffcf4a; color: #2a1d00; }
+  .chip.ultra { background: linear-gradient(135deg, #ffe27a, #ff9f43 60%, #ff6b6b); border-color: #ffb347; box-shadow: 0 0 12px rgb(255 170 60 / .6); }
+  .chip.dislike { background: #5b5b60; border-color: #5b5b60; color: #f4f4f5; }
+  .chip.ultra-dislike { background: #b42318; border-color: #b42318; color: #fff; }
+  .viewer { margin: auto; padding: 0; border: 0; background: transparent; overflow: visible; }
+  .viewer::backdrop { background: rgb(12 12 12 / .75); backdrop-filter: blur(4px); }
+  .viewer[open] { animation: up .25s ease; }
+  .viewer-poster { position: relative; width: min(78vw, 46svh * 1.2, 420px); aspect-ratio: 2 / 3; border-radius: 8px; overflow: hidden; box-shadow: 0 30px 60px -20px rgb(0 0 0 / .6); }
+  .viewer-poster :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .viewer-poster :global(.drawn-title) { font-size: 44px; }
+  .viewer-title { margin-top: 14px; text-align: center; color: #f5f5f4; font-weight: 600; }
+  .viewer-note { margin-top: 2px; text-align: center; color: #d6d3d1; font-size: 13px; }
+  .viewer-close { position: absolute; right: -14px; top: -14px; width: 36px; height: 36px; border-radius: 50%; background: #fff; color: #1a1917; font-size: 20px; line-height: 1; }
+  @keyframes up { from { opacity: 0; transform: translateY(12px) scale(.97); } }
+  @media (prefers-reduced-motion: reduce) { .poster, .viewer[open] { transition: none; animation: none; } }
+</style>
+
+<script>
+  // The filter shows all, or only films, series or documentaries.
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter');
+  filterBtns.forEach((b) => b.addEventListener('click', () => {
+    filterBtns.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+    document.querySelectorAll<HTMLElement>('li[data-kind]').forEach((li) => { li.hidden = b.dataset.filter !== 'all' && li.dataset.kind !== b.dataset.filter; });
+  }));
+
+  // Opening a poster copies it into the viewer, larger.
+  const viewer = document.querySelector<HTMLDialogElement>('.viewer')!;
+  const slot = viewer.querySelector<HTMLElement>('.viewer-poster')!, title = viewer.querySelector<HTMLElement>('.viewer-title')!;
+  const note = viewer.querySelector<HTMLElement>('.viewer-note')!;
+  document.querySelectorAll<HTMLButtonElement>('.poster').forEach((b) => b.addEventListener('click', () => {
+    slot.innerHTML = '';
+    slot.setAttribute('style', b.getAttribute('style') ?? '');
+    for (const el of b.querySelectorAll('img, .drawn')) slot.appendChild(el.cloneNode(true));
+    title.textContent = b.getAttribute('aria-label');
+    note.textContent = b.dataset.note ?? '';
+    viewer.showModal();
+  }));
+  viewer.addEventListener('click', (e) => { if (e.target === viewer) viewer.close(); });
+</script>

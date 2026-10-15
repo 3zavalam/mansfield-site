@@ -1,0 +1,482 @@
+---
+// /projects: a jigsaw that builds a small city seen from above. Each piece is a block
+// for a job or a project (campus, factory, pool, stadium, tennis courts…). The board shows it as a blueprint; a placed piece is in colour. Drag a piece
+// onto the board (it snaps when close) or just tap it and it finds its spot. Tap a placed piece to read about it.
+//
+// The street is drawn once (#street). The blueprint and every piece are use-copies of it; the copies differ
+// only in CSS variables (colours inherit into a use), and each piece is clipped to its jigsaw shape.
+import Base from '../../layouts/Base.astro';
+import ProjectSheet from '../../components/ProjectSheet.astro';
+import { items } from '../../projects';
+
+const C = 300, COLS = 4, ROWS = 3;
+// Which building sits in which cell, row by row. 'home' is the starting piece, already in place.
+const grid = [['udlap', 'riansa', 'piquero', 'mitacs'], ['leon', 'winner-way', 'home', 'xg'], ['match', 'web', 'reservas', 'superstore']];
+const byId = Object.fromEntries(items.map((i) => [i.id, i]));
+
+// Jigsaw edges. h[r][c]: the edge above row r in column c; v[r][c]: the edge left of column c in row r.
+// ±1 is which way the knob points; 0 is the board's straight border.
+const h = Array.from({ length: ROWS + 1 }, (_, r) => Array.from({ length: COLS }, (_, c) => (r === 0 || r === ROWS ? 0 : (r + c) % 2 ? 1 : -1)));
+const v = Array.from({ length: ROWS }, (_, r) => Array.from({ length: COLS + 1 }, (_, c) => (c === 0 || c === COLS ? 0 : (r * 3 + c) % 2 ? 1 : -1)));
+const K = 0.82; // knob size
+const knob = [[.36, 0], [.40, 0, .42, .04, .40, .10], [.36, .20, .42, .26, .50, .26], [.58, .26, .64, .20, .60, .10], [.58, .04, .60, 0, .64, 0]];
+const edge = (ax: number, ay: number, bx: number, by: number, nx: number, ny: number, k: number) => {
+  if (!k) return `L${bx} ${by}`;
+  const P = (u: number, w: number) => `${(ax + (bx - ax) * u + nx * w * C * K * k).toFixed(1)} ${(ay + (by - ay) * u + ny * w * C * K * k).toFixed(1)}`;
+  const [l, ...cs] = knob;
+  return `L${P(l[0], l[1])}` + cs.map((q) => `C${P(q[0], q[1])} ${P(q[2], q[3])} ${P(q[4], q[5])}`).join('') + `L${bx} ${by}`;
+};
+const piecePath = (r: number, c: number) => {
+  const x = c * C, y = r * C;
+  return `M${x} ${y}` + edge(x, y, x + C, y, 0, 1, h[r][c]) + edge(x + C, y, x + C, y + C, 1, 0, v[r][c + 1]) + edge(x + C, y + C, x, y + C, 0, 1, h[r + 1][c]) + edge(x, y + C, x, y, 1, 0, v[r][c]) + 'Z';
+};
+const pieces = grid.flatMap((row, r) => row.map((id, c) => ({ id, r, c, d: piecePath(r, c) })));
+
+// The back of each piece (shown when it's flipped): word-wrapped lines for SVG text.
+const wrap = (text: string, max: number) => {
+  const lines: string[] = [''];
+  for (const w of text.split(' ')) {
+    const cur = lines[lines.length - 1];
+    if (cur && (cur + ' ' + w).length > max) lines.push(w);
+    else lines[lines.length - 1] = cur ? cur + ' ' + w : w;
+  }
+  return lines;
+};
+const back = (id: string) => {
+  const it = byId[id];
+  if (!it) return { kind: 'EST. 2024', title: wrap('Mansfield St.', 14), sub: wrap('The street behind my internship in Montreal, and where this site got its name.', 22).slice(0, 4), more: false };
+  return { kind: `${it.kind === 'Club' ? 'EXPERIENCE' : 'PROJECT'} · ${it.when.toUpperCase()}`, title: wrap(it.t, 14).slice(0, 2), sub: wrap(it.s, 22).slice(0, 3), more: true };
+};
+
+// Inline styles (not classes) so colours resolve inside each use copy.
+const S = (fill: string, w = 2) => `fill:var(--${fill});stroke:var(--ln);stroke-width:${w}`;
+const L = (w = 2, col = 'ln') => `fill:none;stroke:var(--${col});stroke-width:${w}`;
+const T = (fill: string, size: number, extra = '') => `fill:var(--${fill});font-size:${size}px;font-weight:700;${extra}`;
+// A scalloped awning edge: n bumps from x1 back to x0.
+const scallop = (x0: number, x1: number, y: number, n: number) => {
+  const w = (x1 - x0) / n;
+  const bumps = Array.from({ length: n }, () => `q${-w / 2} 10 ${-w} 0`).join('');
+  return `M${x0} ${y - 12}H${x1}V${y}${bumps}Z`;
+};
+---
+<Base title="Projects">
+  {/* Header in the site's text column; the puzzle below gets the full window width. */}
+  <div class="flex items-center justify-between gap-4">
+    <p class="eyebrow">Projects <span class="mono hidden normal-case tracking-normal text-stone-400 sm:inline dark:text-stone-500">· a city of things I've done</span></p>
+    <button type="button" class="mode">Try it out</button>
+  </div>
+  <div class="puzzle-page relative left-1/2 flex w-screen -translate-x-1/2 flex-col items-center px-3 sm:px-6">
+    <div class="stage mt-3">
+      <svg class="done h-full w-full touch-none select-none overflow-visible" viewBox="-20 -20 1240 940" aria-label="A jigsaw of a small city; each block is a job or a project">
+        <defs>
+          <g id="street">
+            {/* A small city from above. Roads run along every cell edge; each cell is one block. */}
+            <rect x="0" y="0" width="1200" height="900" style="fill:var(--road)" />
+            <path d="M300 0V900M600 0V900M900 0V900M0 300H1200M0 600H1200" style="fill:none;stroke:var(--paint);stroke-width:2.5;stroke-dasharray:16 14" />
+            {[300, 600, 900].flatMap((x) => [300, 600].map((y) => (
+              <path d={`M${x - 20} ${y - 30}h40M${x - 20} ${y - 35}h40M${x - 20} ${y + 30}h40M${x - 20} ${y + 35}h40M${x - 30} ${y - 20}v40M${x - 35} ${y - 20}v40M${x + 30} ${y - 20}v40M${x + 35} ${y - 20}v40`} style="fill:none;stroke:var(--paint);stroke-width:2.5" />
+            )))}
+            {[0, 1, 2].flatMap((r) => [0, 1, 2, 3].map((c) => <rect x={c * C + 22} y={r * C + 22} width="256" height="256" rx="12" style={S('walk', 1.5)} />))}
+
+            {/* UDLAP: campus around a quad */}
+            <g transform="translate(0 0)">
+              <rect x="32" y="32" width="236" height="236" rx="6" style="fill:var(--green)" />
+              <path d="M150 92V262M92 178H208" style="fill:none;stroke:var(--walk);stroke-width:10" />
+              <rect x="40" y="40" width="220" height="52" style={S('w2')} /><path d="M40 66H260" style={L(1)} />
+              <rect x="40" y="92" width="52" height="128" style={S('w2')} /><path d="M66 92V220" style={L(1)} />
+              <rect x="208" y="92" width="52" height="128" style={S('w2')} /><path d="M234 92V220" style={L(1)} />
+              <circle cx="150" cy="178" r="17" style={S('win')} /><circle cx="150" cy="178" r="5" style={S('paper', 1)} />
+              {[[118, 128], [182, 128], [118, 232], [182, 232], [250, 250]].map(([x, y]) => <circle cx={x} cy={y} r="12" style={S('tree', 1.5)} />)}
+              <text x="150" y="60" text-anchor="middle" style={T('ln', 13, 'letter-spacing:4px')}>UDLAP</text>
+            </g>
+            {/* RIANSA: factory, tanks, trucks */}
+            <g transform="translate(300 0)">
+              <rect x="40" y="40" width="150" height="118" style={S('w3')} />
+              {[0, 1, 2, 3, 4, 5, 6].map((i) => <rect x="40" y={46 + i * 16} width="150" height="7" style="fill:var(--roof)" />)}
+              <rect x="70" y="88" width="90" height="20" style={S('green', 1.5)} /><text x="115" y="102" text-anchor="middle" style={T('paper', 11, 'letter-spacing:1.5px')}>RIANSA</text>
+              {[62, 124].map((y) => <><circle cx="232" cy={y} r="24" style={S('w2')} /><circle cx="232" cy={y} r="12" style={L(1.2)} /></>)}
+              <rect x="40" y="176" width="220" height="84" style={S('road', 1.5)} />
+              <path d={[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `M${62 + i * 27} 176V200M${62 + i * 27} 236V260`).join('')} style={L(1.4, 'paint')} />
+              {[[46, 'accent'], [100, 'dark'], [181, 'w2']].map(([x, f]) => <rect x={x} y="180" width="18" height="38" rx="3" style={S(f as string, 1.4)} />)}
+            </g>
+            {/* Piquero: the pool */}
+            <g transform="translate(600 0)">
+              <rect x="34" y="34" width="232" height="232" rx="6" style="fill:var(--w2)" />
+              <rect x="56" y="58" width="188" height="128" rx="4" style={S('win')} />
+              <path d={[1, 2, 3, 4, 5, 6, 7].map((i) => `M60 ${58 + i * 16}H240`).join('')} style="fill:none;stroke:var(--paper);stroke-width:1.6;stroke-dasharray:3 4" />
+              <rect x="244" y="112" width="18" height="8" style={S('paper', 1.2)} />
+              <rect x="56" y="206" width="120" height="48" style={S('w1')} /><path d="M56 230H176" style={L(1)} />
+              <text x="116" y="235" text-anchor="middle" style={T('ln', 10, 'letter-spacing:1.5px')}>PIQUERO</text>
+              {[[208, 222], [240, 222], [224, 250]].map(([x, y]) => <><circle cx={x} cy={y} r="11" style={S('accent', 1.4)} /><path d={`M${x - 11} ${y}h22M${x} ${y - 11}v22`} style={L(1, 'paper')} /></>)}
+            </g>
+            {/* INRS, Montreal: row houses, an alley, the lab */}
+            <g transform="translate(900 0)">
+              <rect x="32" y="32" width="236" height="236" rx="6" style="fill:var(--green)" />
+              {[0, 1, 2, 3, 4, 5].map((i) => <><rect x={40 + i * 37} y="40" width="35" height="74" style={S(['brick', 'roof', 'w3'][i % 3])} /><path d={`M${57.5 + i * 37} 40V114`} style={L(1)} /><rect x={44 + i * 37} y="48" width="7" height="7" style={S('dark', 1)} /></>)}
+              <rect x="40" y="118" width="220" height="14" style="fill:var(--walk)" />
+              <rect x="40" y="140" width="138" height="120" style={S('dark')} />
+              {[[52, 154], [92, 154], [52, 220], [140, 220]].map(([x, y]) => <rect x={x} y={y} width="24" height="16" style={S('w2', 1.2)} />)}
+              <text x="109" y="198" text-anchor="middle" style={T('paper', 16, 'letter-spacing:3px')}>INRS</text>
+              {[[208, 166], [240, 196], [210, 236]].map(([x, y]) => <circle cx={x} cy={y} r="14" style={S('tree', 1.5)} />)}
+            </g>
+
+            {/* León: the stadium */}
+            <g transform="translate(0 300)">
+              <rect x="32" y="40" width="236" height="220" rx="70" style={S('green')} />
+              <rect x="44" y="52" width="212" height="196" rx="60" style="fill:none;stroke:var(--paper);stroke-width:5;stroke-dasharray:4 5" />
+              <rect x="74" y="84" width="152" height="132" style={S('tree', 1.5)} />
+              <path d="M150 84V216M74 120h26v60h-26M226 120h-26v60h26" style={L(1.5, 'paper')} /><circle cx="150" cy="150" r="18" style={L(1.5, 'paper')} />
+              {[[40, 48], [260, 48], [40, 252], [260, 252]].map(([x, y]) => <rect x={x - 7} y={y - 7} width="14" height="14" style={S('lamp', 1.4)} />)}
+              <text x="150" y="70" text-anchor="middle" style={T('paper', 12, 'letter-spacing:3px')}>LEÓN</text>
+            </g>
+            {/* Winner Way: tennis courts */}
+            <g transform="translate(300 300)">
+              <rect x="32" y="32" width="236" height="236" rx="6" style="fill:var(--green)" />
+              {[[44, 'court'], [158, 'clay']].map(([x, f]) => <>
+                <rect x={x} y="44" width="98" height="212" style={S(f as string, 1.5)} />
+                <path d={`M${+x! + 12} 60h74v180h-74z M${+x! + 22} 60v180 M${+x! + 76} 60v180 M${+x! + 22} 106h54 M${+x! + 22} 194h54 M${+x! + 49} 106v88`} style={L(1.4, 'paper')} />
+                <path d={`M${+x! + 6} 150h86`} style={L(3, 'ln')} />
+              </>)}
+              <circle cx="120" cy="96" r="4.5" style={S('ball', 1.2)} />
+            </g>
+            {/* Home: the house on Mansfield St */}
+            <g transform="translate(600 300)">
+              <rect x="32" y="32" width="236" height="236" rx="6" style="fill:var(--green)" />
+              <rect x="74" y="64" width="150" height="104" style={S('roof')} /><rect x="74" y="64" width="150" height="52" style={S('w3')} /><path d="M74 116H224" style={L(2)} />
+              <rect x="190" y="74" width="14" height="14" style={S('brick', 1.4)} />
+              <rect x="186" y="168" width="40" height="92" style="fill:var(--walk)" />
+              <g transform="translate(193 196)"><rect width="26" height="44" rx="6" style={S('accent', 1.4)} /><rect x="4" y="10" width="18" height="12" style={S('win', 1)} /></g>
+              {[[70, 210, 24], [128, 236, 16], [250, 60, 14]].map(([x, y, r]) => <circle cx={x} cy={y} r={r} style={S('tree', 1.5)} />)}
+              <rect x="106" y="190" width="40" height="14" rx="2" style={S('w2', 1.2)} />
+              <text x="150" y="290" text-anchor="middle" style={T('paint', 10, 'letter-spacing:3px')}>MANSFIELD ST</text>
+            </g>
+            {/* xG model: a pitch and a shot map */}
+            <g transform="translate(900 300)">
+              <rect x="34" y="34" width="232" height="232" style={S('tree', 1.5)} />
+              <path d="M78 34v62h144v-62 M114 34v22h72v-22 M120 96a30 30 0 0 0 60 0 M34 266H266" style={L(1.5, 'paper')} />
+              <rect x="126" y="28" width="48" height="8" style={S('paper', 1.2)} /><circle cx="150" cy="76" r="2" style="fill:var(--paper)" />
+              {[[140, 60, 7, 1], [162, 70, 6, 1], [128, 82, 5, 0], [176, 92, 4, 0], [150, 104, 6, 1], [104, 90, 3, 0], [196, 84, 3, 0], [118, 120, 3, 0], [170, 128, 3, 0], [140, 140, 2.5, 0], [90, 130, 2.5, 0], [210, 120, 2.5, 0], [150, 170, 2, 0], [120, 186, 2, 0], [184, 176, 2, 0], [230, 150, 2, 0]].map(([x, y, r, g]) => <circle cx={x} cy={y} r={r} style={S(g ? 'accent' : 'paper', 1)} />)}
+              <text x="150" y="246" text-anchor="middle" style={T('paper', 13, 'letter-spacing:2px')}>xG 0.76</text>
+            </g>
+
+            {/* Post-match: café with a big screen */}
+            <g transform="translate(0 600)">
+              <rect x="34" y="34" width="232" height="232" rx="6" style="fill:var(--w2)" />
+              <rect x="40" y="40" width="140" height="96" style={S('w3')} /><path d="M40 88H180" style={L(1)} />
+              <text x="110" y="70" text-anchor="middle" style={T('ln', 12, 'letter-spacing:3px')}>CAFÉ</text>
+              <rect x="40" y="136" width="140" height="14" style={S('accent', 1.4)} />
+              {Array.from({ length: 7 }, (_, i) => <rect x={40 + i * 20} y="136" width="10" height="14" style="fill:var(--paper)" />)}
+              {[0, 1, 2].flatMap((rr) => [0, 1, 2, 3].map((cc) => <circle cx={58 + cc * 36} cy={178 + rr * 30} r="10" style={S((rr + cc) % 2 ? 'accent' : 'paper', 1.2)} />))}
+              <rect x="196" y="46" width="62" height="40" rx="3" style={S('dark')} /><text x="227" y="72" text-anchor="middle" style={T('paper', 14)}>2–2</text>
+              <path d="M227 86V112" style={L(3)} />
+              {[[222, 160], [238, 222]].map(([x, y]) => <circle cx={x} cy={y} r="16" style={S('tree', 1.5)} />)}
+            </g>
+            {/* Interactive Web: a rooftop with the radar painted on it */}
+            <g transform="translate(300 600)">
+              <rect x="40" y="40" width="220" height="220" style={S('w2')} />
+              <path d="M150 74L200 103V161L150 190L100 161V103Z M150 98L180 115V149L150 166L120 149V115Z" style={L(1.2)} />
+              <path d="M150 82L192 110L184 152L150 178L112 150L120 112Z" style={S('green', 1.6)} />
+              {[[70, 70], [230, 70], [230, 230]].map(([x, y]) => <><circle cx={x} cy={y} r="14" style={S('paper', 1.4)} /><path d={`M${x} ${y}l8 -8`} style={L(1.4)} /></>)}
+              <circle cx="70" cy="230" r="6" style={S('dark', 1.2)} /><path d="M70 230L44 204M70 230L96 204M70 230L44 256" style={L(.8)} />
+              <text x="150" y="226" text-anchor="middle" style={T('ln', 11, 'letter-spacing:2px')}>LIGA MX · MLS</text>
+            </g>
+            {/* Reservaciones: the club with its roof off, tables on the floor plan */}
+            <g transform="translate(600 600)">
+              <rect x="40" y="40" width="220" height="200" style={S('dark')} />
+              <rect x="50" y="50" width="200" height="180" style="fill:var(--floor)" />
+              <rect x="60" y="58" width="96" height="16" style={S('roof', 1.2)} /><text x="108" y="70" text-anchor="middle" style={T('paper', 9, 'letter-spacing:2px')}>BAR</text>
+              {[[80, 104, 'win'], [116, 104, 'win'], [152, 104, 'win'], [188, 104, 'win'], [80, 150, 'accent'], [224, 104, 'green'], [224, 150, 'green'], [80, 196, 'neon'], [116, 196, 'neon'], [224, 196, 'neon']].map(([x, y, f]) => <circle cx={x} cy={y} r="11" style={S(f as string, 1.2)} />)}
+              <path d={[0, 1, 2, 3].map((i) => `M${126 + i * 18} 140h9v9h-9zM${135 + i * 18} 149h9v9h-9zM${126 + i * 18} 158h9v9h-9z`).join('')} style="fill:var(--paint);opacity:.5" />
+              <text x="150" y="258" text-anchor="middle" class="neon" style={T('neon', 15, 'letter-spacing:4px')}>CLUB</text>
+              {[0, 1, 2, 3, 4].map((i) => <circle cx={190 + i * 13} cy="268" r="4" style={S('w3', 1)} />)}
+            </g>
+            {/* Superstore: the roof and the car park */}
+            <g transform="translate(900 600)">
+              <rect x="40" y="40" width="220" height="112" style={S('w2')} />
+              <rect x="40" y="56" width="220" height="22" style={S('green', 1.2)} /><text x="150" y="72" text-anchor="middle" style={T('paper', 12, 'letter-spacing:3px')}>SUPERSTORE</text>
+              {[[60, 96], [100, 96], [60, 124], [190, 100], [226, 126]].map(([x, y]) => <rect x={x} y={y} width="22" height="16" style={S('paper', 1.2)} />)}
+              <rect x="40" y="166" width="220" height="94" style={S('road', 1.5)} />
+              <path d={[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `M${62 + i * 27} 166V196M${62 + i * 27} 230V260`).join('')} style={L(1.4, 'paint')} />
+              {[[46, 'accent'], [73, 'win'], [127, 'dark'], [208, 'w3'], [100, 'green']].map(([x, f], i) => <rect x={x} y={i % 2 ? 234 : 170} width="16" height="24" rx="4" style={S(f as string, 1.2)} />)}
+            </g>
+
+            {/* Traffic */}
+            <rect x="430" y="284" width="34" height="16" rx="5" style={S('accent', 1.4)} />
+            <rect x="904" y="430" width="16" height="34" rx="5" style={S('w2', 1.4)} />
+            <rect x="140" y="604" width="34" height="16" rx="5" style={S('win', 1.4)} />
+            <rect x="282" y="160" width="16" height="34" rx="5" style={S('dark', 1.4)} />
+          </g>
+          {pieces.map((p) => <clipPath id={`clip-${p.id}`}><path d={p.d} /></clipPath>)}
+        </defs>
+
+        {/* Board: the blueprint, with faint piece lines */}
+        <rect x="-14" y="-14" width="1228" height="928" rx="10" class="frame" />
+        <use href="#street" class="bp" />
+        <g class="slots">{pieces.map((p) => <path d={p.d} />)}</g>
+
+        {/* Pieces */}
+        <g class="pieces">
+          {pieces.map((p) => {
+            const it = byId[p.id];
+            return (
+              <g class:list={['piece', p.id === 'home' && 'placed fixed']} data-id={p.id} data-r={p.r} data-c={p.c} role="button" tabindex="0"
+                aria-label={it ? `${it.kind === 'Club' ? 'Experience' : 'Project'}: ${it.t}` : 'Mansfield St.'}>
+                <g class="front">
+                  <g clip-path={`url(#clip-${p.id})`}><use href="#street" class="color" /></g>
+                  <path d={p.d} class="edge" />
+                </g>
+                {/* The back: cardboard, with what this building is. */}
+                {(() => {
+                  const b = back(p.id), x = p.c * C + C / 2, y0 = p.r * C;
+                  let y = y0 + 112;
+                  return (
+                    <g class="back" text-anchor="middle" style="display:none">
+                      <path d={p.d} class="card" />
+                      <g clip-path={`url(#clip-${p.id})`} class="grain">{[0, 1, 2, 3, 4, 5, 6, 7].map((k) => <path d={`M${p.c * C - 40} ${y0 + 30 + k * 34}q90 ${k % 2 ? 8 : -8} 380 ${k % 3 - 1}`} />)}</g>
+                      <text x={x} y={y0 + 88} class="b-kind">{b.kind}</text>
+                      {b.title.map((t) => { const el = <text x={x} y={y} class="b-title">{t}</text>; y += 24; return el; })}
+                      {b.sub.map((t, i) => { const el = <text x={x} y={y + 2 + i * 18} class="b-sub">{t}</text>; return el; })}
+                      {b.more && <g class="flip-more" data-id={p.id} role="button"><rect x={x - 56} y={y0 + 210} width="112" height="26" rx="13" class="b-btn" /><text x={x} y={y0 + 227} class="b-more">Read more →</text></g>}
+                    </g>
+                  );
+                })()}
+              </g>
+            );
+          })}
+        </g>
+      </svg>
+    </div>
+
+    <p class="status mt-2 min-h-[2.75rem] max-w-xl text-center text-[15px] leading-snug text-stone-600 dark:text-stone-300" aria-live="polite">
+      Every block is a job or a project. Tap one to read about it.
+    </p>
+  </div>
+  <ProjectSheet />
+</Base>
+
+<style>
+  /* The one control; styled here so it never depends on utility classes being up to date. */
+  .mode {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 1.4rem;
+    border-radius: 999px; background: var(--color-ink); color: var(--color-paper);
+    font-size: 15px; font-weight: 500; line-height: 1; white-space: nowrap; cursor: pointer; transition: background-color .2s ease, transform .15s ease;
+  }
+  .mode:hover { background: var(--color-accent); }
+  .mode:active { transform: scale(.97); }
+  .mode:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+  :global(.dark) .mode { background: #f5f5f4; color: #121211; }
+  :global(.dark) .mode:hover { background: #fff; }
+  .puzzle-page { min-height: calc(100svh - 13rem); justify-content: center; }
+  /* Built: just the board. Playing: room for the loose pieces (beside it on wide screens, under it on narrow ones). */
+  .stage { width: min(100%, calc((100svh - 17.5rem) * 1240 / 940), 1100px); aspect-ratio: 1240 / 940; }
+  .stage.playing { width: min(100%, calc((100svh - 17.5rem) * 2080 / 980), 1500px); aspect-ratio: 2080 / 980; }
+  @media (max-width: 899px) { .stage.playing { width: min(100%, calc((100svh - 15rem) * 1260 / 1560)); aspect-ratio: 1260 / 1560; } }
+
+  /* Street colours: in colour on the pieces, all blue on the blueprint. */
+  :global(.color) {
+    --sky: #f7ecdd; --walk: #ead2c0; --road: #dcc4b2; --paint: #fbf5ec; --w1: #f3d3c1; --w2: #f6e6c6; --w3: #eab9aa;
+    --brick: #cf8a6c; --roof: #b77a6b; --win: #b4cad9; --green: #93ad91; --dark: #3f4b66; --accent: #e06d4f;
+    --neon: #ff6fae; --paper: #fffaf1; --ball: #e5e26b; --sun: #f2b766; --lamp: #f1e3c0; --ln: #6d5148;
+    --tree: #7f9f7a; --court: #7fa3c4; --clay: #d18a66; --floor: #2a3247;
+  }
+  :global(.done .color) { --lamp: #ffd36b; --green: #a3bf98; }
+  :global(.bp) {
+    --sky: #4d6ca6; --walk: #4d6ca6; --road: #4d6ca6; --paint: #8fa7d1; --w1: #4d6ca6; --w2: #4d6ca6; --w3: #4d6ca6;
+    --brick: #4d6ca6; --roof: #4d6ca6; --win: #5877b2; --green: #4d6ca6; --dark: #4d6ca6; --accent: #4d6ca6;
+    --neon: #c9d7ee; --paper: #5877b2; --ball: #4d6ca6; --sun: #4d6ca6; --lamp: #4d6ca6; --ln: #c9d7ee;
+    --tree: #4d6ca6; --court: #4d6ca6; --clay: #4d6ca6; --floor: #4d6ca6;
+  }
+  .frame { fill: #3e5b93; filter: drop-shadow(0 10px 24px rgb(0 0 0 / .18)); }
+  .slots path { fill: none; stroke: rgb(255 255 255 / .28); stroke-width: 1.5; stroke-dasharray: 6 6; }
+  .piece { cursor: grab; outline: none; }
+  .piece .edge { fill: none; stroke: rgb(60 40 30 / .35); stroke-width: 2; }
+  .piece:not(.placed) { filter: drop-shadow(0 8px 10px rgb(0 0 0 / .22)); }
+  .piece.dragging { cursor: grabbing; filter: drop-shadow(0 18px 20px rgb(0 0 0 / .28)); }
+  .piece.placed { cursor: pointer; }
+  .piece.placed .edge { stroke: rgb(60 40 30 / .12); }
+  .piece.placed:hover .edge, .piece:focus-visible .edge { stroke: var(--color-accent); stroke-width: 4; }
+  :global(.done) .neon { filter: drop-shadow(0 0 6px #ff6fae); }
+  .piece.lifted { filter: drop-shadow(0 22px 26px rgb(0 0 0 / .3)); }
+  .card { fill: #dcc6a6; stroke: #a88b67; stroke-width: 1.5; }
+  .grain path { fill: none; stroke: #cdb490; stroke-width: 1; }
+  .b-kind { font: 600 9.5px ui-monospace, Menlo, monospace; letter-spacing: 1.2px; fill: #7a5f45; }
+  .b-title { font-size: 22px; font-weight: 700; fill: #3b2a1f; }
+  .b-sub { font-size: 14px; fill: #5a4433; }
+  .b-btn { fill: #3b2a1f; transition: fill .2s ease; }
+  .flip-more { cursor: pointer; }
+  .flip-more:hover .b-btn { fill: var(--color-accent); }
+  .b-more { font-size: 12px; font-weight: 600; fill: #fbf5ec; }
+</style>
+
+<script>
+  const svg = document.querySelector<SVGSVGElement>('.stage svg')!;
+  const layer = svg.querySelector<SVGGElement>('.pieces')!;
+  const status = document.querySelector<HTMLElement>('.status')!;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const C = 300;
+  type P = { el: SVGGElement; id: string; cx: number; cy: number; x: number; y: number; s: number; rot: number; fx: number; placed: boolean };
+  const ps: P[] = [...layer.querySelectorAll<SVGGElement>('.piece')].map((el) => ({
+    el, id: el.dataset.id!, cx: +el.dataset.c! * C + C / 2, cy: +el.dataset.r! * C + C / 2, x: 0, y: 0, s: 1, rot: 0, fx: 1, placed: el.classList.contains('placed'),
+  }));
+  const loose = () => ps.filter((p) => !p.placed);
+  const draw = (p: P) => p.el.setAttribute('transform', `translate(${(p.cx + p.x).toFixed(1)} ${(p.cy + p.y).toFixed(1)}) rotate(${p.rot.toFixed(1)}) scale(${(p.s * p.fx).toFixed(3)} ${p.s.toFixed(3)}) translate(${-p.cx} ${-p.cy})`);
+
+  // Where loose pieces wait: either side of the board on wide screens, a tray under it on narrow ones.
+  const wide = () => innerWidth >= 900;
+  const spots = (n: number) => {
+    const out: [number, number][] = [];
+    if (wide()) {
+      const cols = [-330, -150, 1350, 1530];
+      for (let i = 0; i < n; i++) out.push([cols[i % 4], 130 + Math.floor(i / 4) * 310 + (i % 2) * 40]);
+    } else {
+      for (let i = 0; i < n; i++) out.push([150 + (i % 4) * 300, 1060 + Math.floor(i / 4) * 210]);
+    }
+    return out;
+  };
+  const scatterScale = () => (wide() ? .52 : .55);
+  const scatter = (animate: boolean) => {
+    const list = loose(), at = spots(list.length).sort(() => Math.random() - .5);
+    list.forEach((p, i) => tween(p, { x: at[i][0] - p.cx, y: at[i][1] - p.cy, s: scatterScale(), rot: (Math.random() - .5) * 24 }, animate ? 500 : 0));
+  };
+  // Built: the board fills the stage. Playing: the stage widens (or grows a tray) for the loose pieces.
+  const stage = document.querySelector<HTMLElement>('.stage')!;
+  const modeBtn = document.querySelector<HTMLButtonElement>('.mode')!;
+  let playing = false;
+  const fit = () => svg.setAttribute('viewBox', !playing ? '-20 -20 1240 940' : wide() ? '-440 -40 2080 980' : '-30 -30 1260 1560');
+  const setMode = (play: boolean) => {
+    playing = play;
+    stage.classList.toggle('playing', play);
+    modeBtn.textContent = play ? 'Build it for me' : 'Try it out';
+    fit();
+  };
+
+  // Simple tween with a soft landing.
+  const tween = (p: P, to: Partial<P>, ms: number, done?: () => void) => {
+    const from = { x: p.x, y: p.y, s: p.s, rot: p.rot, fx: p.fx }, t0 = performance.now();
+    if (still || !ms) { Object.assign(p, to); draw(p); done?.(); return; }
+    const step = (now: number) => {
+      const t = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - t, 3);
+      for (const k of ['x', 'y', 's', 'rot', 'fx'] as const) if (to[k] !== undefined) p[k] = from[k] + (to[k]! - from[k]) * e;
+      draw(p);
+      if (t < 1) requestAnimationFrame(step); else done?.();
+    };
+    requestAnimationFrame(step);
+  };
+
+  const name = (id: string) => svg.querySelector(`.piece[data-id="${id}"]`)!.getAttribute('aria-label')!.replace(/^\w+: /, '');
+  const say = (html: string) => { status.innerHTML = html; };
+  const progress = () => {
+    const done = ps.filter((p) => p.placed && !p.el.classList.contains('fixed')).length, all = ps.length - 1;
+    return [done, all];
+  };
+  const place = (p: P) => {
+    layer.appendChild(p.el);
+    tween(p, { x: 0, y: 0, s: 1, rot: 0 }, 520, () => {
+      p.placed = true; p.el.classList.add('placed');
+      const [d, all] = progress();
+      if (d === all) {
+        svg.classList.add('done');
+        say('<strong class="font-semibold">The city is built.</strong> The stadium lights are on. Tap any block to read about it.');
+        if (playing) setTimeout(() => setMode(false), still ? 0 : 700);
+      } else {
+        say(`<span class="mono text-[12px] text-stone-400">${String(d).padStart(2, '0')} / ${all}</span> &nbsp;<strong class="font-semibold">${name(p.id)}</strong> is in. Tap it, or <button type="button" class="more font-medium text-accent hover:underline dark:text-accent-dark" data-id="${p.id}">read more</button>.`);
+      }
+    });
+  };
+
+  // Flipping a placed piece: it lifts, grows, and turns over (squash to nothing, swap faces, open up again)
+  // to show its cardboard back. Turning it back reverses that and drops it into its slot.
+  const LIFT = 1.7;
+  let flipped: P | null = null;
+  const faces = (p: P, showBack: boolean) => {
+    p.el.querySelector<SVGGElement>('.front')!.style.display = showBack ? 'none' : '';
+    p.el.querySelector<SVGGElement>('.back')!.style.display = showBack ? '' : 'none';
+  };
+  const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+  const flip = (p: P) => {
+    if (flipped) unflip(flipped);
+    flipped = p;
+    layer.appendChild(p.el); p.el.classList.add('lifted');
+    if (p.id !== 'home') {
+      // A block turns a quarter (edge on, gone) and the pop-up carries on the turn from where it was.
+      const from = p.el.querySelector('.edge')!.getBoundingClientRect();
+      tween(p, { fx: 0, s: 1.12 }, 160, () => document.dispatchEvent(new CustomEvent('sheet:open', { detail: { id: p.id, from } })));
+      return;
+    }
+    const tx = clamp(p.cx, 150 * LIFT, 1200 - 150 * LIFT) - p.cx, ty = clamp(p.cy, 150 * LIFT, 900 - 150 * LIFT) - p.cy;
+    tween(p, { fx: 0, s: (1 + LIFT) / 2, x: tx / 2, y: ty / 2 }, 190, () => { faces(p, true); tween(p, { fx: 1, s: LIFT, x: tx, y: ty }, 240); });
+  };
+  const unflip = (p: P) => {
+    if (flipped === p) flipped = null;
+    const land = () => tween(p, { fx: 1, s: 1, x: 0, y: 0 }, 260, () => p.el.classList.remove('lifted'));
+    if (p.fx < .05) { faces(p, false); land(); return; } // already edge on (it became the pop-up): just turn back
+    tween(p, { fx: 0, s: (1 + LIFT) / 2, x: p.x / 2, y: p.y / 2 }, 170, () => { faces(p, false); land(); });
+  };
+  svg.addEventListener('click', (e) => { if (flipped && !flipped.el.contains(e.target as Node)) unflip(flipped); });
+  document.querySelector('dialog.sheet')!.addEventListener('close', () => { if (flipped) unflip(flipped); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && flipped && !document.querySelector('dialog[open]')) unflip(flipped); });
+
+  // Dragging, in the SVG's own units.
+  const pt = (e: PointerEvent) => { const m = svg.getScreenCTM()!.inverse(); return new DOMPoint(e.clientX, e.clientY).matrixTransform(m); };
+  let drag: { p: P; sx: number; sy: number; ox: number; oy: number; moved: number } | null = null;
+  ps.forEach((p) => {
+    p.el.addEventListener('pointerdown', (e) => {
+      if (p.placed) return;
+      e.preventDefault();
+      layer.appendChild(p.el); // to the front first: moving it in the DOM would drop the pointer capture
+      p.el.setPointerCapture(e.pointerId);
+      const q = pt(e);
+      drag = { p, sx: q.x, sy: q.y, ox: p.x, oy: p.y, moved: 0 };
+      p.el.classList.add('dragging');
+      tween(p, { s: .9, rot: 0 }, 160);
+    });
+    p.el.addEventListener('pointermove', (e) => {
+      if (!drag || drag.p !== p) return;
+      const q = pt(e);
+      p.x = drag.ox + q.x - drag.sx; p.y = drag.oy + q.y - drag.sy;
+      drag.moved = Math.max(drag.moved, Math.hypot(q.x - drag.sx, q.y - drag.sy));
+      draw(p);
+    });
+    const drop = () => {
+      if (!drag || drag.p !== p) return;
+      const moved = drag.moved; drag = null;
+      p.el.classList.remove('dragging');
+      // A tap, or a drop close to home: it goes in. Otherwise it waits where you left it.
+      if (moved < 8 || Math.hypot(p.x, p.y) < 120) place(p);
+      else tween(p, { s: scatterScale() }, 200);
+    };
+    p.el.addEventListener('pointerup', drop);
+    p.el.addEventListener('pointercancel', drop);
+    p.el.addEventListener('click', (e) => {
+      if (!p.placed) return;
+      if ((e.target as Element).closest('.flip-more')) { document.dispatchEvent(new CustomEvent('sheet:open', { detail: p.id })); return; }
+      if (flipped === p) unflip(p); else flip(p);
+    });
+    p.el.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      if (!p.placed) place(p); else if (flipped === p) unflip(p); else flip(p);
+    });
+  });
+  status.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('.more');
+    if (b) document.dispatchEvent(new CustomEvent('sheet:open', { detail: b.dataset.id }));
+  });
+
+  // One button: "Try it out" takes the city apart; while playing it becomes "Build it for me".
+  modeBtn.addEventListener('click', () => {
+    if (playing) { loose().forEach((p, i) => setTimeout(() => place(p), i * (still ? 0 : 260))); return; }
+    if (flipped) unflip(flipped);
+    svg.classList.remove('done');
+    ps.forEach((p) => { if (!p.el.classList.contains('fixed')) { p.placed = false; p.el.classList.remove('placed'); } });
+    setMode(true);
+    scatter(true);
+    say('Drag a piece onto the board, or just tap it.');
+  });
+
+  // Start built: every piece in place.
+  ps.forEach((p) => { p.placed = true; p.el.classList.add('placed'); });
+  setMode(false);
+  let wasWide = wide();
+  addEventListener('resize', () => { if (wide() !== wasWide) { wasWide = wide(); fit(); if (playing) scatter(false); } });
+</script>

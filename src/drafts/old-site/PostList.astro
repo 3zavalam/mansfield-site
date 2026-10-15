@@ -10,7 +10,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
       <a href={`/writing/${p.id}`} class="group block py-5">
         <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
           <h3 class="serif text-xl leading-snug group-hover:text-accent dark:group-hover:text-accent-dark">
-            {p.data.title}
+            <span class="font-semibold">{p.data.title}{p.data.subtitle && ':'}</span>{p.data.subtitle && <span class="font-normal"> {p.data.subtitle}</span>}
             {p.data.draft && <span class="ml-2 align-middle rounded-full border border-amber-500/50 px-2 py-0.5 font-sans text-[11px] font-medium uppercase tracking-wider text-amber-700 dark:text-amber-400">Draft</span>}
           </h3>
           <time class="shrink-0 text-sm tabular-nums text-stone-500 dark:text-stone-400" datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time>

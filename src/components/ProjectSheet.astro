@@ -1,0 +1,55 @@
+---
+// The /projects pop-up: one article per item, the picked one is shown.
+// Open it with document.dispatchEvent(new CustomEvent('sheet:open', { detail: id })), or with
+// detail { id, from: DOMRect } to have it grow out of that rectangle (turning, like a card) instead of popping.
+import { items, src } from '../projects';
+---
+  <dialog class="sheet m-auto w-[min(92vw,640px)] rounded-2xl border border-stone-200 bg-paper p-0 text-ink backdrop:bg-stone-900/40 backdrop:backdrop-blur-sm dark:border-stone-800 dark:bg-night dark:text-stone-100">
+    {items.map((it) => (
+      <article data-item={it.id} hidden>
+        {it.img
+          ? <img src={src(it.img)} alt={`${it.t}: ${it.s}`} loading="lazy" class="aspect-[16/9] w-full border-b border-stone-200 object-cover object-top dark:border-stone-800" />
+          : <span class:list={['grid aspect-[16/7] w-full place-items-center border-b border-stone-200 dark:border-stone-800', it.dark ? 'bg-stone-900' : 'bg-white']}>
+              {it.logo ? <img src={src(it.logo)} alt={it.t} class="h-24 w-24 object-contain" /> : <span class="text-3xl font-bold tracking-wide text-ink">{it.t}</span>}
+            </span>}
+        <div class="p-6 sm:p-8">
+          <p class="mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">{it.kind} · {it.when} · {it.meta}</p>
+          <h2 class="mt-2 text-2xl leading-snug sm:text-[1.7rem]"><span class="font-semibold">{it.t}:</span> {it.s}</h2>
+          <p class="mt-3 text-[17px] leading-relaxed text-stone-600 dark:text-stone-300">{it.d}</p>
+          {it.link && <a href={it.link} class="mt-5 inline-block text-sm font-medium text-accent hover:underline dark:text-accent-dark">See the code on GitHub ↗</a>}
+        </div>
+      </article>
+    ))}
+    <form method="dialog"><button class="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/85 text-lg text-ink shadow-sm backdrop-blur hover:bg-white" aria-label="Close">×</button></form>
+  </dialog>
+
+<style>
+  .sheet[open] { animation: pop .25s cubic-bezier(.2, .9, .3, 1.2); }
+  .sheet.morph[open] { animation: none; }
+  @keyframes pop { from { opacity: 0; transform: scale(.94) translateY(8px); } }
+  @media (prefers-reduced-motion: reduce) { .sheet[open] { animation: none; } }
+</style>
+
+<script>
+  const sheet = document.querySelector<HTMLDialogElement>('.sheet')!;
+  const articles = sheet.querySelectorAll<HTMLElement>('[data-item]');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.addEventListener('sheet:open', (e) => {
+    const d = (e as CustomEvent<string | { id: string; from: DOMRect }>).detail;
+    const id = typeof d === 'string' ? d : d.id, from = typeof d === 'string' ? null : d.from;
+    articles.forEach((a) => (a.hidden = a.dataset.item !== id));
+    sheet.classList.toggle('morph', !!from && !still);
+    sheet.showModal();
+    if (!from || still) return;
+    // Grow from the rectangle it came from, finishing a half turn.
+    const to = sheet.getBoundingClientRect();
+    const dx = from.x + from.width / 2 - (to.x + to.width / 2), dy = from.y + from.height / 2 - (to.y + to.height / 2);
+    const sx = from.width / to.width, sy = from.height / to.height;
+    sheet.animate([
+      { transform: `translate(${dx}px, ${dy}px) perspective(900px) rotateY(90deg) scale(${sx}, ${sy})`, opacity: .4 },
+      { transform: 'none', opacity: 1 },
+    ], { duration: 420, easing: 'cubic-bezier(.2, .8, .2, 1)' });
+    try { sheet.animate({ opacity: [0, 1] }, { duration: 300, pseudoElement: '::backdrop' }); } catch {}
+  });
+  sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.close(); });
+</script>

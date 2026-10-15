@@ -1,0 +1,125 @@
+---
+// /iteratev3/projects/shots (first try), told as a player profile: builds are shots on a pitch (pick one to see it),
+// experience is the transfer history. Images and logos live in public/iteratev3/projects.
+import Base from '../../../layouts/Base.astro';
+import { NAV, HOME } from '../../../iteratev3';
+const I = '/iteratev3/projects/';
+const G = 'https://github.com/3zavalam/';
+// x, y: where the shot is taken from, in pitch metres (105 × 68, attacking the right goal). big: most proud of.
+const shots = [
+  { id: 'winner-way', t: 'Winner Way', s: 'AI tennis coach', x: 88, y: 30, big: true, d: 'Analyzes strokes and movement from video, with court keypoint detection and Dynamic Time Warping. The one I’m most proud of, and the one I’m most disappointed I didn’t continue.', stack: 'React · Flask · OpenCV', img: 'winner-way.webp', link: G + 'frontend' },
+  { id: 'xg', t: 'xG model', s: 'World Cup 2022', x: 99, y: 38, d: 'Logistic regression Expected Goals model on 1,453 StatsBomb shots from 64 matches.', stack: 'Python · scikit-learn', img: 'xg-shots.webp', link: G + 'xG-Model' },
+  { id: 'match', t: 'Post-match dashboard', s: 'SofaScore + FotMob', x: 84, y: 46, d: 'Match recap, momentum, shot maps and Player of the Match from scraped data.', stack: 'Python · Scraping', img: 'match-dashboard.webp', link: G + 'Match-Report-Analysis' },
+  { id: 'web', t: 'Interactive Web', s: 'Liga MX & MLS', x: 78, y: 16, d: 'Streamlit app for radar charts, player shot maps and team stats, updated weekly.', stack: 'Streamlit · BeautifulSoup', img: 'interactive-web.webp', link: G + 'Interactive-Web' },
+  { id: 'reservas', t: 'Reservaciones', s: 'Night club bookings', x: 96, y: 21, d: 'Customer app, admin dashboard and door-staff view on the real floor plan, with no double bookings.', stack: 'FastAPI · React · Supabase', img: 'reservaciones.webp', link: G + 'reservaciones' },
+  { id: 'superstore', t: 'Superstore dashboard', s: 'Freelance demo', x: 70, y: 33, demo: true, d: 'Star schema in Python, DAX measures and a three-page Power BI sales dashboard.', stack: 'Python · Power BI', img: '/img/superstore-1.png' },
+];
+const career = [
+  { season: '26/27', club: 'Club León FC', role: 'Data Analyst & Software Dev Intern', where: 'León, MX', logo: 'logo-club-leon.webp', now: true },
+  { season: 'Sum 26', club: 'INRS × Mitacs', role: 'Research Intern', where: 'Montreal, CA', logo: 'logo-mitacs.webp', dark: true },
+  { season: 'Sum 25', club: 'Piquero', role: 'Software Developer Intern', where: 'Puebla, MX', logo: 'logo-piquero.webp', dark: true },
+  { season: 'Sum 24', club: 'RIANSA', role: 'Data Analyst Intern', where: 'Villahermosa, MX', logo: 'logo-riansa.webp' },
+  { season: 'Academy', club: 'UDLAP', role: 'Computer Systems Engineering, class of 2026', where: 'Puebla, MX' },
+];
+const pct = (v: number, of: number) => `${(v / of) * 100}%`;
+const line = 'stroke-stone-400 dark:stroke-stone-600';
+---
+<Base title="Projects" nav={NAV} home={HOME} cta={false} footer={false} theme="v3">
+  <a href={HOME} class="text-sm text-stone-500 hover:text-accent dark:text-stone-400">← Back</a>
+
+  <header class="mt-6 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+    <div>
+      <p class="eyebrow">Player profile</p>
+      <h1 class="serif mt-2 text-4xl tracking-tight sm:text-5xl">Emilio Zavala</h1>
+    </div>
+    <dl class="mono grid grid-cols-3 gap-x-6 text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">
+      <div><dt>Position</dt><dd class="mt-0.5 text-[13px] text-ink dark:text-stone-100">Data / Dev</dd></div>
+      <div><dt>Nation</dt><dd class="mt-0.5 text-[13px] text-ink dark:text-stone-100">MEX</dd></div>
+      <div><dt>Club</dt><dd class="mt-0.5 text-[13px] text-ink dark:text-stone-100">León</dd></div>
+    </dl>
+  </header>
+
+  <section class="mt-10" aria-labelledby="shots">
+    <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+      <h2 id="shots" class="eyebrow">Shot map · things I’ve built</h2>
+      <p class="mono text-[11px] text-stone-500 dark:text-stone-400">● shipped &nbsp;○ demo &nbsp;bigger = proudest</p>
+    </div>
+
+    <div class="mt-4 grid gap-6 sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] sm:items-start sm:gap-8">
+    {/* Attacking half of a pitch, drawn like the flat objects. */}
+    <div class="pitch relative w-full overflow-hidden rounded-xl border border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900">
+      <svg viewBox="52.5 0 52.5 68" preserveAspectRatio="none" class="absolute inset-0 h-full w-full" fill="none" stroke-width=".25" aria-hidden="true">
+        <g class={line}>
+          <rect x="52.5" y="0" width="52.5" height="68" /><rect x="88.5" y="13.84" width="16.5" height="40.32" /><rect x="99.5" y="24.84" width="5.5" height="18.32" />
+          <path d="M88.5 26.7 A9.15 9.15 0 0 0 88.5 41.3" /><path d="M52.5 24.85 A9.15 9.15 0 0 1 52.5 43.15" />
+        </g>
+        {shots.map((s) => <line x1={s.x} y1={s.y} x2="105" y2={34 + (s.y - 34) * .1} class="stroke-stone-300 dark:stroke-stone-700" stroke-dasharray=".8 .8" />)}
+      </svg>
+      {shots.map((s, i) => (
+        <button type="button" data-shot={s.id} aria-pressed={i === 0 ? 'true' : 'false'} aria-label={`${s.t}: ${s.s}`}
+          class="shot absolute grid -translate-x-1/2 -translate-y-1/2 place-items-center p-2"
+          style={`left:${pct(s.x - 52.5, 52.5)};top:${pct(s.y, 68)}`}>
+          <span class:list={['dot block rounded-full border-[1.5px] border-ink transition dark:border-stone-100', s.big ? 'h-6 w-6' : 'h-3.5 w-3.5', s.demo ? 'bg-white dark:bg-stone-900' : 'bg-ink dark:bg-stone-100']} />
+          <span class="label mono pointer-events-none absolute left-1/2 top-full -mt-1 -translate-x-1/2 whitespace-nowrap rounded bg-white/90 px-1 text-[10px] dark:bg-stone-900/90 text-stone-500 transition-colors dark:text-stone-400">{s.t}</span>
+        </button>
+      ))}
+    </div>
+
+    {/* Shot detail: one panel per shot; the picked one is shown. */}
+    <div>
+    {shots.map((s, i) => (
+      <article data-panel={s.id} hidden={i !== 0} aria-live="polite">
+        <img src={s.img.startsWith('/') ? s.img : I + s.img} alt={`${s.t}: ${s.s}`} loading="lazy" class="aspect-[16/10] w-full rounded-lg border border-stone-200 bg-stone-100 object-cover object-top dark:border-stone-800 dark:bg-stone-900" />
+        <div class="mt-4 flex flex-col">
+          <p class="mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">{s.demo ? 'Demo' : 'Shipped'} · {s.stack}</p>
+          <h3 class="mt-2 text-2xl leading-snug"><span class="font-semibold">{s.t}:</span> {s.s}</h3>
+          <p class="mt-2 leading-relaxed text-stone-600 dark:text-stone-400">{s.d}</p>
+          {s.link && <a href={s.link} class="mt-4 text-sm font-medium text-accent hover:underline dark:text-accent-dark">See the code on GitHub ↗</a>}
+        </div>
+      </article>
+    ))}
+    </div>
+    </div>
+  </section>
+
+  <section class="mt-14" aria-labelledby="career">
+    <h2 id="career" class="eyebrow">Transfer history · where I’ve worked</h2>
+    <ol class="mt-4 border-t border-dotted border-stone-400 dark:border-stone-600">
+      {career.map((c) => (
+        <li class="grid grid-cols-[3.75rem_2.5rem_1fr] items-center gap-3 border-b border-dotted border-stone-400 py-3.5 sm:grid-cols-[5rem_2.75rem_1fr_auto] sm:gap-4 dark:border-stone-600">
+          <span class="mono text-[13px] tabular-nums text-stone-500 dark:text-stone-400">{c.season}</span>
+          <span class:list={['grid h-10 w-10 place-items-center rounded-full border', c.dark ? 'border-stone-800 bg-stone-900 dark:border-stone-700' : 'border-stone-200 bg-white dark:border-stone-700']}>
+            {c.logo ? <img src={I + c.logo} alt="" width="26" height="26" loading="lazy" class="h-[26px] w-[26px] object-contain" /> : <span class="text-[8px] font-bold tracking-wide text-ink">{c.club}</span>}
+          </span>
+          <span class="min-w-0">
+            <span class="block leading-snug"><span class="font-semibold">{c.club}</span>{c.now && <span class="ml-2 rounded-full bg-amber-400 px-2 py-px align-middle text-[10px] font-semibold uppercase tracking-wider text-ink">Current</span>}</span>
+            <span class="block text-sm text-stone-600 dark:text-stone-400">{c.role}<span class="sm:hidden"> · {c.where}</span></span>
+          </span>
+          <span class="mono hidden text-[12px] text-stone-500 sm:block dark:text-stone-400">{c.where}</span>
+        </li>
+      ))}
+    </ol>
+  </section>
+</Base>
+
+<style>
+  .pitch { aspect-ratio: 52.5 / 68; }
+  .shot { --hl: var(--color-accent); }
+  :global(.dark) .shot { --hl: var(--color-accent-dark); }
+  .dot { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+  .shot:hover .dot, .shot[aria-pressed="true"] .dot { transform: scale(1.25); border-color: var(--hl); }
+  .shot[aria-pressed="true"] .dot { box-shadow: 0 0 0 5px color-mix(in srgb, var(--hl) 22%, transparent); }
+  .shot:hover .label, .shot[aria-pressed="true"] .label { color: var(--hl); }
+  .shot:focus-visible { outline: none; }
+  .shot:focus-visible .dot { box-shadow: 0 0 0 2px var(--hl); }
+</style>
+
+<script>
+  // Picking a shot shows its panel.
+  const shots = document.querySelectorAll<HTMLButtonElement>('[data-shot]');
+  const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
+  shots.forEach((b) => b.addEventListener('click', () => {
+    shots.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+    panels.forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.shot));
+  }));
+</script>

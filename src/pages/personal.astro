@@ -1,0 +1,161 @@
+---
+// /personal: two cards up top (analyses published, goals and when), then life in weeks up to 90.
+// The weeks are drawn at build time and redrawn in the browser so the count is always today's.
+import Base from '../layouts/Base.astro';
+import { getPosts } from '../posts';
+import { GOALS, EVENTS, YEARS, WEEKS_PER_YEAR, CELL, BOX, DIP_ME, lifeWeeks, squares, weekOf } from '../personal';
+const posts = await getPosts();
+const latest = posts[0];
+const { total, lived, pct } = lifeWeeks();
+const W = WEEKS_PER_YEAR * CELL, H = YEARS * CELL;
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const n = (x: number) => x.toLocaleString('en-US');
+---
+<Base title="Personal">
+  <h1 class="sr-only">Personal</h1>
+
+  {/* Pulled up under the header (the layout's top padding is cancelled here). */}
+  <div class="-mt-6 grid sm:-mt-10 gap-4 sm:grid-cols-[1fr_1.6fr]">
+    {/* Analyses published */}
+    <a href="/analysis" class="card group flex flex-col">
+      <p class="eyebrow">Analyses published</p>
+      <p class="mt-3 text-6xl font-semibold leading-none tabular-nums">{posts.length}</p>
+      {latest && (
+        <p class="mt-auto pt-6 text-sm leading-snug text-stone-500 dark:text-stone-400">
+          Latest: <span class="font-semibold text-ink transition-colors group-hover:text-accent dark:text-stone-100 dark:group-hover:text-accent-dark">{latest.data.title}</span>
+          <span class="mono block pt-0.5 text-[12px]">{fmt(latest.data.date)}</span>
+        </p>
+      )}
+    </a>
+
+    {/* Goals and when */}
+    <div class="card">
+      <p class="eyebrow">Goals</p>
+      <ul class="mt-3">
+        {GOALS.map((g) => (
+          <li class="flex items-baseline gap-3 border-b border-dotted border-stone-300 py-2 last:border-0 dark:border-stone-700">
+            <span class:list={['grid h-4 w-4 shrink-0 translate-y-0.5 place-items-center rounded-full border text-[10px] leading-none', g.done ? 'border-transparent bg-ink text-paper dark:bg-stone-100 dark:text-night' : 'border-stone-400 dark:border-stone-500']} aria-label={g.done ? 'Done' : 'Not yet'}>{g.done ? '✓' : ''}</span>
+            <span class:list={['min-w-0 flex-1 text-[15px] leading-snug', g.done && 'text-stone-400 line-through decoration-stone-300 dark:text-stone-500 dark:decoration-stone-600']}>{g.goal}</span>
+            <span class="mono shrink-0 text-[12px] text-stone-500 dark:text-stone-400">{g.when}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  {/* The Dip (Seth Godin): the curve from the book, with where I think I am on it. */}
+  <section class="mt-14 grid items-center gap-6 sm:grid-cols-[1fr_1.35fr] sm:gap-10" aria-labelledby="dip">
+    <div>
+      <h2 id="dip" class="eyebrow">The Dip</h2>
+      <p class="mt-3 text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">
+        From Seth Godin’s <span class="italic">The Dip</span> (2007): almost anything worth doing is fun at the start, then gets hard for a long time before it pays off. That long, hard middle is the Dip.
+      </p>
+      <p class="mt-3 text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">
+        His point is to push through the dips that lead somewhere and quit the rest on purpose, early. The dot is where I think I am.
+      </p>
+    </div>
+    <svg viewBox="0 0 600 350" class="dip w-full" role="img" aria-label="The Dip: results rise at first, fall into a long dip as effort goes on, then climb steeply. A dot marks where I am now.">
+      <path class="area" d="M44 300V200C44 150 124 128 174 138C234 150 264 246 334 256C414 266 484 212 584 48V300Z" />
+      <path id="dip-curve" d="M44 200C44 150 124 128 174 138C234 150 264 246 334 256C414 266 484 212 584 48" fill="none" />
+      {/* Axes, as in the book's drawing: the label sits in a gap in each arrow. */}
+      <path class="axis" d="M20 300V176M20 44V16M8 30L20 10L32 30M44 330H222M380 330H570M556 318L580 330L556 342" />
+      <text class="axis-label" transform="translate(26 110) rotate(-90)" text-anchor="middle">RESULTS</text>
+      <text class="axis-label" x="301" y="337" text-anchor="middle">EFFORT</text>
+      <text class="dip-label" x="400" y="160" text-anchor="middle">The Dip</text>
+      <path class="axis thin" d="M390 172L344 238M344 238l2 -14M344 238l12 -7" />
+      <g class="me" data-at={DIP_ME} style="opacity:0">
+        <circle class="dot" r="5" />
+        <text class="me-label" y="-14" text-anchor="middle">Now</text>
+      </g>
+    </svg>
+  </section>
+
+  {/* Life in weeks */}
+  <section class="mt-14" aria-labelledby="weeks">
+    <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+      <div>
+        <h2 id="weeks" class="eyebrow">Life in weeks</h2>
+        <p class="mt-2 text-[15px] text-stone-600 dark:text-stone-400">Every square is a week, every row a year, up to {YEARS}.</p>
+      </div>
+      <p class="text-right">
+        <span class="pct block text-5xl font-semibold leading-none tabular-nums">{pct.toFixed(1)}%</span>
+        <span class="mono count mt-1 block text-[12px] text-stone-500 dark:text-stone-400">{n(lived)} of {n(total)} weeks</span>
+      </p>
+    </div>
+    <div class="mt-4 h-1.5 overflow-hidden rounded-full bg-stone-200 dark:bg-stone-800"><div class="bar h-full rounded-full bg-ink dark:bg-stone-100" style={`width:${pct}%`}></div></div>
+
+    {/* What each colour means, right above the grid */}
+    <ul class="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-[13px] text-stone-600 dark:text-stone-400">
+      <li class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-[2px] bg-ink dark:bg-stone-100"></span>Meanwhile</li>
+      {EVENTS.map((e) => <li class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-[2px]" style={`background:${e.color}`}></span>{e.label}</li>)}
+      <li class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-[2px] border border-stone-300 dark:border-stone-600"></span>Still to come</li>
+    </ul>
+    <div class="mt-4 grid grid-cols-[1.6rem_1fr] gap-x-2">
+      {/* Age every 10 years */}
+      <div class="relative" aria-hidden="true">
+        {Array.from({ length: YEARS / 10 + 1 }, (_, i) => <span class="mono absolute right-0 -translate-y-1/2 text-[10px] text-stone-400 dark:text-stone-500" style={`top:${((i * 10) / YEARS) * 100}%`}>{i * 10}</span>)}
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} class="weeks h-auto w-full" role="img" aria-label={`Life in weeks: ${n(lived)} of ${n(total)} weeks lived, ${pct.toFixed(1)}%`}>
+        <path class="future" d={squares(lived + 1, total)} />
+        <path class="lived" d={squares(0, lived)} />
+        {EVENTS.map((e) => <path class="event" data-from={e.from} data-to={e.to ?? ''} style={`fill:${e.color}`} d={squares(weekOf(e.from), Math.min(lived, weekOf(e.to ?? new Date())) + (e.to ? 1 : 0))} />)}
+        <path class="now" d={squares(lived, lived + 1)} />
+      </svg>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .card { border-radius: 14px; border: 1px solid #e7e5e4; padding: 1.25rem 1.4rem; transition: border-color .2s ease, transform .2s ease; }
+  a.card:hover { border-color: #d6d3d1; transform: translateY(-2px); }
+  :global(.dark) .card { border-color: #292524; }
+  .weeks .lived { fill: var(--color-ink); }
+  .weeks .future { fill: none; stroke: #d6d3d1; stroke-width: .8; }
+  /* This week: same colour as the weeks already lived, blinking. */
+  .weeks .now { fill: var(--color-ink); }
+  :global(.dark) .weeks .now { fill: #f5f5f4; }
+  .weeks .now { animation: beat 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  :global(.dark) .weeks .lived { fill: #f5f5f4; }
+  :global(.dark) .weeks .future { stroke: #44403c; }
+  @keyframes beat { 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .weeks .now { animation: none; } }
+  .dip .area { fill: var(--color-ink); }
+  .dip .axis { fill: none; stroke: var(--color-ink); stroke-width: 7; stroke-linejoin: round; }
+  .dip .axis.thin { stroke-width: 2.5; stroke-linecap: round; }
+  .dip .axis-label { font-size: 17px; letter-spacing: 3px; fill: var(--color-ink); }
+  .dip .dip-label { font-size: 22px; font-weight: 700; fill: var(--color-ink); }
+  .dip .dot { fill: var(--color-accent); stroke: var(--color-paper); stroke-width: 3; }
+  .dip .me-label { font-size: 13px; font-weight: 500; fill: var(--color-accent); paint-order: stroke; stroke: var(--color-paper); stroke-width: 4px; }
+  :global(.dark) .dip .area { fill: #f5f5f4; }
+  :global(.dark) .dip .axis { stroke: #f5f5f4; }
+  :global(.dark) .dip .axis-label, :global(.dark) .dip .dip-label { fill: #f5f5f4; }
+  :global(.dark) .dip .dot, :global(.dark) .dip .me-label { stroke: #121211; }
+
+</style>
+
+<script>
+  // Redraw with today's date (the page itself is only rebuilt when the site is).
+  import { lifeWeeks, squares, weekOf } from '../personal';
+  const { total, lived, pct } = lifeWeeks();
+  const svg = document.querySelector<SVGSVGElement>('.weeks')!;
+  svg.querySelector('.lived')!.setAttribute('d', squares(0, lived));
+  svg.querySelector('.future')!.setAttribute('d', squares(lived + 1, total));
+  svg.querySelector('.now')!.setAttribute('d', squares(lived, lived + 1));
+  svg.querySelectorAll<SVGPathElement>('.event').forEach((p) => {
+    const to = p.dataset.to;
+    p.setAttribute('d', squares(weekOf(p.dataset.from!), Math.min(lived, weekOf(to || new Date())) + (to ? 1 : 0)));
+  });
+  const n = (x: number) => x.toLocaleString('en-US');
+  document.querySelector('.pct')!.textContent = `${pct.toFixed(1)}%`;
+  document.querySelector('.count')!.textContent = `${n(lived)} of ${n(total)} weeks`;
+  document.querySelector<HTMLElement>('.bar')!.style.width = `${pct}%`;
+  // Put "Now" on the Dip curve at its fraction of the way along the effort axis.
+  const curve = document.querySelector<SVGPathElement>('#dip-curve')!, me = document.querySelector<SVGGElement>('.dip .me')!;
+  const x0 = 44, x1 = 584, target = x0 + (x1 - x0) * +me.dataset.at!, len = curve.getTotalLength();
+  let lo = 0, hi = len;
+  for (let i = 0; i < 30; i++) { const mid = (lo + hi) / 2; if (curve.getPointAtLength(mid).x < target) lo = mid; else hi = mid; }
+  const at = curve.getPointAtLength(lo);
+  me.setAttribute('transform', `translate(${at.x.toFixed(1)} ${at.y.toFixed(1)})`);
+  me.style.opacity = '1';
+  svg.setAttribute('aria-label', `Life in weeks: ${n(lived)} of ${n(total)} weeks lived, ${pct.toFixed(1)}%`);
+</script>

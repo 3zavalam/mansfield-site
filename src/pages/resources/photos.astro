@@ -1,0 +1,213 @@
+---
+// /resources/photos: first just the cameras, one per trip, each in its own look (src/trips.ts). Press one: the
+// flash fires, we zoom into its lens and come out in that roll's photos (no camera in sight). A roll is two
+// isometric stacks (seen / still to come) with the current photo floating between them, like every:second;
+// photos advance on their own, click the middle one to open it, a stack to jump to it. "Photos" in the
+// breadcrumb goes back to the cameras. /resources/photos?roll=<slug> opens a roll directly.
+// Photos come from `npm run photos` (one folder per trip in disposables/).
+import Base from '../../layouts/Base.astro';
+import ResourceEnter from '../../components/ResourceEnter.astro';
+import DisposableCamera from '../../components/DisposableCamera.astro';
+import { TRIPS, PHOTO_COUNT } from '../../trips';
+const exp = (n: number) => n || 27;
+---
+<Base title="Photos">
+  <ResourceEnter slot="head" slug="photos" />
+  <div class="-mt-6 mb-4 flex items-baseline justify-between gap-4 sm:-mt-10">
+    <h1 class="eyebrow">
+      <a href="/resources" class="hover:text-accent dark:hover:text-accent-dark">Resources</a>
+      <span class="text-stone-300 dark:text-stone-600">/</span>
+      <button type="button" class="crumb-photos text-ink hover:text-accent dark:text-stone-100 dark:hover:text-accent-dark">PHOTOS</button>
+      <span class="crumb-roll" hidden><span class="text-stone-300 dark:text-stone-600">/</span> <span class="crumb-name text-ink dark:text-stone-100"></span></span>
+    </h1>
+    <p class="mono text-[12px] text-stone-500 dark:text-stone-400">{PHOTO_COUNT}</p>
+  </div>
+
+  {/* First view: the cameras */}
+  <div class="cams">
+    {TRIPS.map((t) => (
+      <button type="button" class="cam" data-roll={t.slug} aria-label={`${t.name}: ${t.photos.length} photos`}>
+        <span class="cam-art"><DisposableCamera look={t.look} exp={exp(t.photos.length)} id={`lens-${t.slug}`} /><span class="pop" aria-hidden="true"></span></span>
+        <span class="cam-name">{t.name}</span>
+        <span class="cam-sub">{t.place && `${t.place} · `}{t.photos.length ? `${t.photos.length} photos` : 'Being developed'}</span>
+      </button>
+    ))}
+  </div>
+
+  {/* Second view: one roll's photos */}
+  <div class="stage relative left-1/2 w-screen -translate-x-1/2 overflow-hidden" hidden>
+    {TRIPS.map((t) => (
+      <div class="gallery" data-roll={t.slug} hidden aria-label={t.name}>
+        {t.photos.length === 0 && <p class="empty">This roll is still being developed.</p>}
+        {t.photos.map((p, i) => (
+          <button type="button" class="photo" data-i={i} data-src={p.src} data-w={p.w} data-h={p.h} aria-label={`${t.name}${t.place ? `, ${t.place}` : ''}, ${i + 1} of ${t.photos.length}`}>
+            <img src={p.sm} alt="" loading="lazy" decoding="async" class="h-full w-full object-cover" />
+          </button>
+        ))}
+        {t.photos.length > 0 && <div class="info"><span class="cap">{t.name}{t.place && <span class="place"> · {t.place}</span>}</span><span class="num mono"></span></div>}
+      </div>
+    ))}
+  </div>
+
+  <span class="shutter" aria-hidden="true"></span>
+
+  <dialog class="lightbox">
+    <img class="lb-photo" alt="" />
+    <p class="lb-cap"></p>
+    <form method="dialog"><button class="lb-close" aria-label="Close">×</button></form>
+  </dialog>
+</Base>
+
+<style>
+  /* The cameras */
+  .cams { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2.5rem 3.5rem; min-height: calc(100svh - 17rem); padding-bottom: 2rem; }
+  .cam { display: flex; flex-direction: column; align-items: center; width: min(320px, 80vw); cursor: pointer; }
+  .cam-art { position: relative; width: 100%; filter: drop-shadow(0 18px 22px rgb(0 0 0 / .22)); transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+  .cam:hover .cam-art, .cam:focus-visible .cam-art { transform: translateY(-6px) rotate(-1.5deg); }
+  .cam:focus-visible { outline: none; }
+  .cam:focus-visible .cam-name { color: var(--color-accent); }
+  .cam-name { margin-top: 14px; font-size: 13px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; }
+  .cam-sub { font-size: 13px; color: #a8a29e; }
+  .pop { position: absolute; left: 40%; top: 18%; width: 26%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(#fff, rgb(255 255 255 / .6) 30%, transparent 70%); opacity: 0; pointer-events: none; }
+  .cam.flash .pop { animation: pop .6s ease-out; }
+  @keyframes pop { 10% { opacity: 1; transform: scale(2.2); } 100% { opacity: 0; transform: scale(3); } }
+  .shutter { position: fixed; inset: 0; z-index: 150; background: #0b0c10; pointer-events: none; visibility: hidden; }
+
+  /* The photos */
+  .stage { height: calc(100svh - 14rem); min-height: 380px; }
+  .gallery { position: absolute; inset: 0; }
+  .gallery.settling .photo { transition: none; }
+  .empty { position: absolute; left: 50%; top: 45%; translate: -50% -50%; text-align: center; font-size: 17px; color: #57534e; }
+  :global(.dark) .empty { color: #a8a29e; }
+  @keyframes fade { from { opacity: 0; } }
+  .photo {
+    --w: min(30vw, 340px);
+    position: absolute; left: 0; top: 0; width: var(--w); aspect-ratio: 3 / 2; overflow: hidden; border-radius: 2px; cursor: pointer; background: #222;
+    box-shadow: 0 1px 1px rgb(0 0 0 / .12), 6px 10px 18px -10px rgb(0 0 0 / .35);
+    transition: transform .9s cubic-bezier(.2, .8, .2, 1), opacity .6s ease;
+  }
+  @media (max-width: 640px) { .photo { --w: 50vw; } }
+  .photo.mid { cursor: zoom-in; box-shadow: 0 30px 50px -24px rgb(0 0 0 / .5); }
+  .photo:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+  .info { position: absolute; left: 50%; bottom: 14px; translate: -50% 0; display: flex; gap: 14px; align-items: baseline; font-size: 14px; color: #57534e; white-space: nowrap; }
+  :global(.dark) .info { color: #a8a29e; }
+  .info .num { font-size: 12px; color: #a8a29e; }
+  .info .place { color: #a8a29e; }
+
+  .lightbox { margin: auto; padding: 0; border: 0; background: transparent; overflow: visible; }
+  .lightbox::backdrop { background: rgb(10 10 10 / .85); backdrop-filter: blur(4px); }
+  .lightbox[open] { animation: fade .25s ease; }
+  .lb-photo { display: block; max-width: min(92vw, 1400px); max-height: calc(100svh - 8rem); width: auto; height: auto; border-radius: 3px; }
+  .lb-cap { margin-top: 12px; text-align: center; color: #e7e5e4; font-size: 14px; }
+  .lb-close { position: absolute; right: -14px; top: -14px; width: 36px; height: 36px; border-radius: 50%; background: #fff; color: #1a1917; font-size: 20px; line-height: 1; }
+  @media (prefers-reduced-motion: reduce) { .photo, .cam-art { transition: none; } .lightbox[open], .cam.flash .pop { animation: none; } }
+</style>
+
+<script>
+  const cams = document.querySelector<HTMLElement>('.cams')!;
+  const stage = document.querySelector<HTMLElement>('.stage')!;
+  const shutter = document.querySelector<HTMLElement>('.shutter')!;
+  const crumbRoll = document.querySelector<HTMLElement>('.crumb-roll')!, crumbName = document.querySelector<HTMLElement>('.crumb-name')!;
+  const galleries = [...stage.querySelectorAll<HTMLElement>('.gallery')];
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let gallery: HTMLElement | null = null, photos: HTMLButtonElement[] = [], cur = 0, timer = 0, paused = false;
+
+  // Where each photo goes, by how far it is from the current one: the current one floats in the middle;
+  // the ones still to come stack up towards the top right, the ones seen towards the bottom left.
+  const layout = () => {
+    if (!gallery || !photos.length) return;
+    const W = stage.clientWidth, H = stage.clientHeight, pw = photos[0].offsetWidth, ph = photos[0].offsetHeight;
+    const step = Math.max(5, Math.min(9, W / 160));
+    photos.forEach((p, i) => {
+      const k = i - cur;
+      let x: number, y: number, t: string, z: number, o = 1;
+      if (k === 0) { x = W / 2; y = H * .46; t = 'skewY(-6deg) scale(1.05)'; z = 1000; }
+      else {
+        const slot = Math.abs(k) - 1, dir = k > 0 ? 1 : -1;
+        x = (k > 0 ? W * .78 : W * .22) + dir * slot * step;
+        y = (k > 0 ? H * .26 : H * .72) - dir * slot * step * .55;
+        t = 'skewY(-28deg) scaleX(.55) scale(.72)';
+        z = 500 - slot;
+        if (slot > 40) o = 0;
+      }
+      p.style.transform = `translate(${(x - pw / 2).toFixed(1)}px, ${(y - ph / 2).toFixed(1)}px) ${t}`;
+      p.style.zIndex = String(z);
+      p.style.opacity = String(o);
+      p.classList.toggle('mid', k === 0);
+      p.tabIndex = k === 0 ? 0 : -1;
+    });
+    gallery.querySelector('.num')!.textContent = `${String(cur + 1).padStart(2, '0')} / ${String(photos.length).padStart(2, '0')}`;
+  };
+  const go = (i: number) => { cur = (i + photos.length) % photos.length; layout(); };
+  const tick = () => { if (!paused && !document.querySelector('dialog[open]') && photos.length) go(cur + 1); };
+  const play = () => { clearInterval(timer); if (!still) timer = window.setInterval(tick, 2600); };
+
+  // Switch between the two views.
+  const openRoll = (slug: string) => {
+    gallery = galleries.find((g) => g.dataset.roll === slug) ?? null;
+    if (!gallery) return showCams();
+    cams.hidden = true; stage.hidden = false;
+    galleries.forEach((g) => (g.hidden = g !== gallery));
+    crumbRoll.hidden = false; crumbName.textContent = gallery.getAttribute('aria-label');
+    photos = [...gallery.querySelectorAll<HTMLButtonElement>('.photo')];
+    photos.forEach((p, i) => { if (i < 8) p.querySelector('img')!.loading = 'eager'; });
+    cur = 0;
+    gallery.classList.add('settling');
+    layout();
+    requestAnimationFrame(() => requestAnimationFrame(() => gallery?.classList.remove('settling')));
+    play();
+  };
+  function showCams() {
+    clearInterval(timer); gallery = null; photos = [];
+    stage.hidden = true; cams.hidden = false; crumbRoll.hidden = true;
+  }
+  const setUrl = (slug: string | null) => {
+    const u = new URL(location.href);
+    if (slug) u.searchParams.set('roll', slug); else u.searchParams.delete('roll');
+    history.pushState({ roll: slug }, '', u);
+  };
+
+  // Press a camera: flash, zoom into its lens while its black closes in, then open on the photos like a shutter.
+  document.querySelectorAll<HTMLButtonElement>('.cam').forEach((c) => c.addEventListener('click', async () => {
+    const slug = c.dataset.roll!;
+    if (still) { openRoll(slug); setUrl(slug); return; }
+    c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash');
+    const art = c.querySelector<HTMLElement>('.cam-art')!, svg = art.querySelector('svg')!.getBoundingClientRect(), box = art.getBoundingClientRect();
+    const x = svg.left + (svg.width * 350) / 520, y = svg.top + (svg.height * 160) / 300;
+    art.style.transformOrigin = `${x - box.left}px ${y - box.top}px`;
+    const zoom = art.animate([{ transform: 'none' }, { transform: 'scale(16)' }], { duration: 640, delay: 150, easing: 'cubic-bezier(.7, 0, .9, .5)', fill: 'forwards' });
+    const R = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    shutter.style.visibility = 'visible'; shutter.style.mask = 'none';
+    await shutter.animate([{ clipPath: `circle(0px at ${x}px ${y}px)` }, { clipPath: `circle(${R}px at ${x}px ${y}px)` }], { duration: 520, delay: 300, easing: 'cubic-bezier(.6, 0, .4, 1)', fill: 'both' }).finished;
+    zoom.cancel();
+    openRoll(slug); setUrl(slug); scrollTo(0, 0);
+    // The shutter opens from the middle.
+    shutter.getAnimations().forEach((a) => a.cancel());
+    shutter.style.clipPath = 'none';
+    shutter.style.mask = 'radial-gradient(circle at 50% 50%, transparent var(--iris), #000 calc(var(--iris) + 1px))';
+    await shutter.animate([{ '--iris': '0px' }, { '--iris': '150vmax' }] as Keyframe[], { duration: 850, easing: 'cubic-bezier(.55, 0, .2, 1)', fill: 'forwards' }).finished;
+    shutter.getAnimations().forEach((a) => a.cancel());
+    shutter.style.visibility = 'hidden';
+  }));
+  document.querySelector('.crumb-photos')!.addEventListener('click', () => { if (gallery) { showCams(); setUrl(null); } });
+  addEventListener('popstate', () => { const r = new URLSearchParams(location.search).get('roll'); if (r) openRoll(r); else showCams(); });
+  const asked = new URLSearchParams(location.search).get('roll');
+  if (asked) openRoll(asked);
+
+  stage.addEventListener('pointerenter', () => (paused = true));
+  stage.addEventListener('pointerleave', () => (paused = false));
+  addEventListener('resize', layout);
+
+  // The middle photo opens on its own, full size; any other jumps to the middle.
+  const lb = document.querySelector<HTMLDialogElement>('.lightbox')!;
+  const lbImg = lb.querySelector<HTMLImageElement>('.lb-photo')!, lbCap = lb.querySelector<HTMLElement>('.lb-cap')!;
+  galleries.forEach((g) => g.querySelectorAll<HTMLButtonElement>('.photo').forEach((p, i) => p.addEventListener('click', () => {
+    if (i !== cur) { go(i); return; }
+    lbImg.src = p.querySelector('img')!.src; // the thumbnail shows at once…
+    lbImg.width = +p.dataset.w!; lbImg.height = +p.dataset.h!;
+    const full = new Image(); full.onload = () => { if (lb.open) lbImg.src = full.src; }; full.src = p.dataset.src!; // …then the full size
+    lbCap.textContent = p.getAttribute('aria-label');
+    lb.showModal();
+  })));
+  lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
+</script>

@@ -1,0 +1,178 @@
+---
+// Flat line-drawn versions of the /iteratev2 3D objects, in the main site's palette.
+interface Props { kind: 'pitch' | 'book' | 'postcard' | 'circuit' | 'clipboard' | 'museum' | 'camera' | 'mic' | 'cover' | 'reel' | 'goals' | 'weeks'; class?: string }
+const { kind, class: cls = '' } = Astro.props;
+// Fill tones shared by all drawings (paper-like faces, slightly darker facets).
+const face = 'fill-white dark:fill-stone-900';
+const facet = 'fill-stone-100 dark:fill-stone-800';
+---
+<svg viewBox="0 0 120 80" class:list={['text-stone-600 dark:text-stone-300', cls]} fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+  {kind === 'pitch' && (
+    <g>
+      {/* Irregular crystal slab with a few facets */}
+      <path class={face} d="M14 16 L22 13 L33 15 L44 12 L56 14 L68 12 L80 15 L92 12 L104 15 L107 24 L105 34 L108 44 L105 55 L107 64 L98 67 L86 65 L74 68 L62 66 L50 68 L38 66 L26 68 L15 65 L13 55 L15 45 L12 35 L14 25 Z" />
+      <path class={facet} stroke-opacity=".25" d="M22 13 L33 15 L28 26 Z M68 12 L80 15 L72 24 Z M104 15 L107 24 L98 22 Z M15 65 L26 68 L22 58 Z M86 65 L98 67 L92 58 Z M50 68 L62 66 L56 60 Z" />
+      {/* Pitch markings */}
+      <g stroke-width=".8">
+        <rect x="22" y="21" width="76" height="38" />
+        <line x1="60" y1="21" x2="60" y2="59" />
+        <circle cx="60" cy="40" r="7" />
+        <rect x="22" y="31" width="10" height="18" />
+        <rect x="88" y="31" width="10" height="18" />
+        <rect x="22" y="36" width="4" height="8" />
+        <rect x="94" y="36" width="4" height="8" />
+      </g>
+      {/* Goals */}
+      <path d="M22 37 h-3 v6 h3 M98 37 h3 v6 h-3" stroke-width="1.2" />
+      {/* Ball */}
+      <circle class={face} cx="40" cy="44" r="3.4" />
+      <path d="M40 41.6 l1.6 1.2 -.6 1.9 h-2 l-.6 -1.9 z" stroke-width=".6" />
+    </g>
+  )}
+  {kind === 'book' && (
+    <g>
+      {/* Page block (right edge) */}
+      <path class={face} d="M30 16 H98 V66 H30 Z" />
+      <path d="M98 19 H100 V68 H32 M100 22 H102 V70 H34" stroke-width=".7" />
+      {/* Faceted cover */}
+      <path class={face} d="M26 12 H96 V64 H26 Z" />
+      <path class={facet} stroke-opacity=".3" d="M34 12 L58 30 L44 64 Z M58 30 L96 22 L80 64 Z M58 12 L96 12 L58 30 Z" />
+      {/* Spine */}
+      <path class={face} d="M26 12 Q19 12 19 19 V57 Q19 64 26 64 Z" />
+      <line x1="34" y1="12" x2="34" y2="64" stroke-opacity=".5" />
+    </g>
+  )}
+  {kind === 'postcard' && (
+    <g>
+      <rect class={face} x="12" y="10" width="96" height="60" rx="3" />
+      {/* Cathedral: two towers, central facade with pediment, side chapel */}
+      <g class={facet} stroke-width=".8">
+        <path d="M32 60 V30 H40 V60 M33 30 V24 H39 V30 M34 24 Q36 19 38 24 M36 19.5 V15 M34.5 16.5 H37.5" />
+        <path d="M56 60 V30 H64 V60 M57 30 V24 H63 V30 M58 24 Q60 19 62 24 M60 19.5 V15 M58.5 16.5 H61.5" />
+        <path d="M40 60 V38 H56 V60 M40 38 L48 32 L56 38" />
+        <path d="M64 60 V44 H84 V60 M70 46 V44 L74 40 L78 44" />
+        <path d="M45 60 V53 Q48 49 51 53 V60" />
+        <path d="M72 60 V55 Q74 52 76 55 V60" />
+        <path d="M35 36 v3 M37 36 v3 M59 36 v3 M61 36 v3 M35 46 v3 M37 46 v3 M59 46 v3 M61 46 v3" />
+      </g>
+      <line x1="26" y1="60" x2="90" y2="60" />
+    </g>
+  )}
+  {kind === 'circuit' && (
+    <g>
+      {/* Ciudad Deportiva (Villahermosa) from above: the running loop around it and what's inside. */}
+      <rect class={face} x="6" y="12" width="108" height="56" rx="28" />
+      <rect x="11" y="17" width="98" height="46" rx="23" stroke-width="2.2" />
+      {/* Stadium with its track */}
+      <rect class={facet} x="20" y="25" width="24" height="30" rx="12" />
+      <rect class={face} x="25" y="31" width="14" height="18" rx="2" stroke-width=".8" />
+      {/* Baseball diamond */}
+      <path class={facet} d="M50 50 L50 27 A23 23 0 0 1 70 38 Z" stroke-width=".8" />
+      <path d="M50 44 l5 -5 l-5 -5 l-5 5 z" stroke-width=".6" transform="translate(5 0)" />
+      {/* Courts and the pool */}
+      <rect class={facet} x="74" y="26" width="9" height="12" stroke-width=".8" />
+      <rect class={facet} x="85" y="26" width="9" height="12" stroke-width=".8" />
+      <rect class={face} x="74" y="42" width="20" height="10" rx="1.5" stroke-width=".8" />
+      <path d="M77 47 h14" stroke-width=".5" stroke-dasharray="1.5 1.5" />
+      <rect class={facet} x="55" y="53" width="14" height="5" stroke-width=".6" />
+      {/* Start of the loop */}
+      <circle cx="109" cy="40" r="2.6" fill="currentColor" />
+    </g>
+  )}
+  {kind === 'clipboard' && (
+    <g>
+      <rect class={face} x="22" y="10" width="76" height="62" rx="3" />
+      <rect class={face} x="27" y="16" width="66" height="52" rx="1.5" />
+      <rect class={facet} x="50" y="7" width="20" height="7" rx="2" />
+      {/* Title and notes */}
+      <path d="M32 22 H54 M32 27 H50 M32 31 H46 M32 35 H49" stroke-opacity=".6" />
+      {/* Bar chart */}
+      <path d="M32 40 V62 H58" stroke-width=".8" />
+      <g class={facet}>
+        <rect x="35" y="54" width="3.5" height="8" />
+        <rect x="41" y="49" width="3.5" height="13" />
+        <rect x="47" y="52" width="3.5" height="10" />
+        <rect x="53" y="45" width="3.5" height="17" />
+      </g>
+      {/* Trend line and donut */}
+      <polyline points="62,60 67,55 72,57 77,49 82,47 88,40" />
+      <g class={face}><circle cx="62" cy="60" r="1.2" /><circle cx="72" cy="57" r="1.2" /><circle cx="82" cy="47" r="1.2" /><circle cx="88" cy="40" r="1.2" /></g>
+      <circle cx="82" cy="26" r="5" />
+      <circle cx="82" cy="26" r="2.2" />
+    </g>
+  )}
+  {kind === 'museum' && (
+    <g>
+      {/* Steps, columns, entablature and pediment */}
+      <path class={face} d="M24 70 H96 V66 H24 Z M28 66 H92 V62 H28 Z M32 62 H88 V58 H32 Z" />
+      <path class={facet} d="M38 30 H82 V58 H38 Z" stroke-opacity=".4" />
+      {[36, 44, 52, 60, 68, 76, 84].map((x) => <rect class={face} x={x - 2.5} y="30" width="5" height="28" />)}
+      <path class={face} d="M30 24 H90 V30 H30 Z" />
+      <path class={face} d="M28 24 L60 10 L92 24 Z" />
+      <path d="M38 22 L60 13 L82 22" stroke-opacity=".5" />
+    </g>
+  )}
+  {kind === 'camera' && (
+    <g>
+      {/* Disposable camera: body, paper wrap, lens, viewfinder, flash, shutter and wind wheel */}
+      <rect class={face} x="28" y="11" width="12" height="5" rx="1" />
+      <rect class={face} x="84" y="12" width="7" height="4" rx="1" />
+      <rect class={face} x="18" y="16" width="84" height="50" rx="5" />
+      <rect class={facet} x="18" y="38" width="84" height="22" />
+      <rect class={face} x="26" y="22" width="13" height="9" rx="1.5" />
+      <rect class={facet} x="74" y="22" width="20" height="9" rx="1.5" />
+      <circle class={face} cx="62" cy="42" r="13" />
+      <circle cx="62" cy="42" r="8.5" />
+      <circle cx="62" cy="42" r="3" stroke-opacity=".5" />
+    </g>
+  )}
+  {kind === 'mic' && (
+    <g>
+      {/* Broadcast microphone in a yoke on a stand */}
+      <path d="M40 30 Q40 54 60 54 Q80 54 80 30" stroke-width="1.4" />
+      <rect class={face} x="49" y="6" width="22" height="42" rx="11" />
+      <path d="M49 18 H71 M49 27 H71 M49 36 H71" stroke-opacity=".6" />
+      <path d="M60 54 V66" />
+      <path class={face} d="M46 66 H74 L77 71 H43 Z" />
+    </g>
+  )}
+  {kind === 'cover' && (
+    <g>
+      {/* Just a book cover: faceted, with a raised frame and title plate */}
+      <rect class={face} x="40" y="6" width="40" height="66" rx="1.5" />
+      <path class={facet} stroke-opacity=".3" d="M40 30 L62 44 L40 72 Z M80 6 L62 44 L80 52 Z" />
+      <rect x="45" y="11" width="30" height="56" stroke-opacity=".6" />
+      <rect class={face} x="51" y="18" width="18" height="7" />
+    </g>
+  )}
+  {kind === 'reel' && (
+    <g>
+      {/* Film reel with a strip of film running off it */}
+      <path class={facet} d="M58 52 L104 72 L100 79 L54 59 Z" />
+      <path d="M62 56 l3 1.3 M70 59.5 l3 1.3 M78 63 l3 1.3 M86 66.5 l3 1.3 M94 70 l3 1.3" stroke-width="2" stroke-opacity=".6" />
+      <circle class={face} cx="46" cy="38" r="27" />
+      {[0, 1, 2, 3, 4, 5].map((i) => <circle cx={46 + Math.cos(i * Math.PI / 3 + .3) * 15} cy={38 + Math.sin(i * Math.PI / 3 + .3) * 15} r="6" />)}
+      <circle cx="46" cy="38" r="2.5" />
+    </g>
+  )}
+  {kind === 'goals' && (
+    <g>
+      {/* Target with an arrow in the bullseye */}
+      <circle class={face} cx="54" cy="42" r="28" />
+      <circle class={facet} cx="54" cy="42" r="19" />
+      <circle class={face} cx="54" cy="42" r="10" />
+      <circle cx="54" cy="42" r="2.5" fill="currentColor" />
+      <path d="M54 42 L86 14" stroke-width="1.4" />
+      <path d="M86 14 l-1 6 M86 14 l-6 1 M80 20 l-1 6 M80 20 l-6 1" stroke-opacity=".7" />
+    </g>
+  )}
+  {kind === 'weeks' && (
+    <g>
+      {/* Life in weeks: a grid of weeks, the lived ones filled */}
+      <rect class={face} x="22" y="8" width="76" height="64" rx="3" />
+      {Array.from({ length: 8 }, (_, r) => Array.from({ length: 12 }, (_, c) => (
+        <rect x={28 + c * 5.6} y={14 + r * 6.8} width="3.6" height="3.6" rx=".6" stroke-width=".6" fill={r * 12 + c < 41 ? 'currentColor' : 'none'} />
+      )))}
+    </g>
+  )}
+</svg>

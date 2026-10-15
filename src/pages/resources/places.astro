@@ -1,0 +1,193 @@
+---
+// /resources/places: where I've visited. A world map with the countries I've visited filled in and a pin per
+// place; click a country and it opens by state/province (the ones I've been to filled), with its places
+// listed. "Places" in the breadcrumb goes back. /resources/places?country=<ISO a3> opens a country.
+// Data: src/places.ts. Shapes are drawn at build time (src/map.ts).
+import Base from '../../layouts/Base.astro';
+import ResourceEnter from '../../components/ResourceEnter.astro';
+import { COUNTRIES } from '../../places';
+import { WORLD, COUNTRY, worldShapes, worldPins, countryMap } from '../../map';
+const maps = COUNTRIES.map((c) => ({ c, m: countryMap(c) }));
+const regionCount = new Set(COUNTRIES.flatMap((c) => c.places.map((p) => p.region))).size;
+const placeCount = COUNTRIES.reduce((n, c) => n + c.places.length, 0);
+const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+---
+<Base title="Places">
+  <ResourceEnter slot="head" slug="places" />
+  <div class="-mt-6 mb-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 sm:-mt-10">
+    <h1 class="eyebrow">
+      <a href="/resources" class="hover:text-accent dark:hover:text-accent-dark">Resources</a>
+      <span class="text-stone-300 dark:text-stone-600">/</span>
+      <button type="button" class="crumb-world text-ink hover:text-accent dark:text-stone-100 dark:hover:text-accent-dark">PLACES</button>
+      <span class="crumb-country" hidden><span class="text-stone-300 dark:text-stone-600">/</span> <span class="crumb-name text-ink dark:text-stone-100"></span></span>
+    </h1>
+    <p class="mono text-[12px] text-stone-500 dark:text-stone-400">{plural(COUNTRIES.length, 'country', 'countries')} · {plural(regionCount, 'state')} · {plural(placeCount, 'place')}</p>
+  </div>
+
+  {/* The world */}
+  <div class="view world rise">
+    <svg viewBox={`0 0 ${WORLD.w} ${WORLD.h}`} class="w-full" role="img" aria-label={`World map: I've been to ${COUNTRIES.map((c) => c.name).join(', ')}`}>
+      {worldShapes.map((s) => s.visited
+        ? <path d={s.d} class="land been" data-country={COUNTRIES.find((c) => c.num === s.id)!.a3} tabindex="0" role="button" aria-label={`${s.name}: open`}><title>{s.name}</title></path>
+        : <path d={s.d} class="land" />)}
+      {worldPins.map((p) => <circle cx={p.x} cy={p.y} r="2.6" class="pin" data-country={p.country}><title>{p.name}</title></circle>)}
+    </svg>
+    <ul class="mt-6 flex flex-wrap justify-center gap-2">
+      {COUNTRIES.map((c) => <li><button type="button" class="chip" data-country={c.a3}>{c.name} <span class="opacity-50">{c.places.length}</span></button></li>)}
+    </ul>
+  </div>
+
+  {/* One country, by state/province */}
+  {maps.map(({ c, m }) => (
+    <div class="view country" data-country={c.a3} hidden>
+      <div class="relative">
+      <svg viewBox={`0 0 ${COUNTRY.w} ${COUNTRY.h}`} data-full={`0 0 ${COUNTRY.w} ${COUNTRY.h}`} class="cmap w-full" role="img" aria-label={`${c.name}: ${c.places.map((p) => p.name).join(', ')}`}>
+        {m.regions.map((r) => <path d={r.d} class:list={['region', r.visited && 'been']}><title>{r.name}</title></path>)}
+        {/* Whole-country layer: single places, and groups of close ones */}
+        <g class="top">
+          {m.singles.map((p) => (
+            <g class="place" transform={`translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`}>
+              {(Math.abs(p.ly) > 4 || Math.abs(p.lx) > 9) && <path d={`M0 0L${p.lx - Math.sign(p.lx) * 2} ${p.ly - 4}`} class="leader" />}
+              <circle r="5" class="pin" /><text x={p.lx} y={p.ly} text-anchor={p.anchor} class="pin-label">{p.name}</text>
+            </g>
+          ))}
+          {m.groups.map((g) => (
+            <g class="group" data-group={g.id} data-vb={`${g.box.x.toFixed(1)} ${g.box.y.toFixed(1)} ${g.box.w.toFixed(1)} ${g.box.h.toFixed(1)}`} transform={`translate(${g.x.toFixed(1)} ${g.y.toFixed(1)})`} role="button" tabindex="0" aria-label={`${g.name}: ${g.count} places, zoom in`}>
+              {(Math.abs(g.ly) > 4 || Math.abs(g.lx) > 15) && <path d={`M0 0L${g.lx - Math.sign(g.lx) * 2} ${g.ly - 4}`} class="leader" />}
+              <circle r="16" class="group-halo" /><circle r="11" class="pin" /><text y="4" text-anchor="middle" class="group-n">{g.count}</text>
+              <text x={g.lx} y={g.ly} text-anchor={g.anchor} class="pin-label">{g.name}</text>
+            </g>
+          ))}
+        </g>
+        {/* Zoomed-in layers, one per group, drawn at the size they're seen at */}
+        {m.groups.map((g) => (
+          <g class="zoom" data-group={g.id} style={`--k:${g.k.toFixed(3)}`}>
+            {g.pins.map((p) => (
+              <g transform={`translate(${p.x.toFixed(2)} ${p.y.toFixed(2)})`}>
+                {(Math.abs(p.ly * g.k) > 4 || Math.abs(p.lx * g.k) > 9) && <path d={`M0 0L${(p.lx - Math.sign(p.lx) * 2 / g.k).toFixed(2)} ${(p.ly - 4 / g.k).toFixed(2)}`} class="leader" />}
+                <circle r={(5 / g.k).toFixed(3)} class="pin" />
+                <text x={p.lx.toFixed(2)} y={p.ly.toFixed(2)} text-anchor={p.anchor} class="pin-label" style={`font-size:${(13 / g.k).toFixed(3)}px`}>{p.name}</text>
+              </g>
+            ))}
+          </g>
+        ))}
+      </svg>
+      <button type="button" class="unzoom" hidden>All of {c.name}</button>
+      </div>
+      {/* The places: just the cities */}
+      <ul class="mt-6 grid grid-cols-2 gap-x-10 sm:grid-cols-3">
+        {c.places.map((p) => <li class="border-b border-dotted border-stone-300 py-2 font-semibold dark:border-stone-700">{p.name}</li>)}
+      </ul>
+    </div>
+  ))}
+</Base>
+
+<style>
+  .view[hidden] { display: none; }
+  .view:not([hidden]) { animation: in .45s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes in { from { opacity: 0; transform: scale(.97); } }
+  .land { fill: #e7e2d8; stroke: var(--color-paper); stroke-width: .5; }
+  .land.been { fill: #3f8f86; cursor: pointer; transition: fill .2s ease; outline: none; }
+  .land.been:hover, .land.been:focus-visible, .land.been.hot { fill: #2c6c65; }
+  .pin { fill: #f2c94c; stroke: #1d1d20; stroke-width: 1; pointer-events: none; }
+  .region { fill: #ece7dd; stroke: #fff; stroke-width: .8; }
+  .region.been { fill: #3f8f86; }
+  .place .pin { stroke-width: 1.5; }
+  /* Borders, dots and labels keep their on-screen size when the map zooms. */
+  .region, .pin, .leader { vector-effect: non-scaling-stroke; }
+  .pin-label { vector-effect: non-scaling-stroke; }
+  .top, .zoom { transition: opacity .3s ease; }
+  .zoom { opacity: 0; pointer-events: none; }
+  .zoom.on { opacity: 1; transition-delay: .25s; }
+  .zoomed .top { opacity: 0; pointer-events: none; }
+  .group { cursor: pointer; outline: none; }
+  .group .pin { stroke-width: 1.5; }
+  .group-halo { fill: #f2c94c; opacity: .3; transition: opacity .2s ease; }
+  .group:hover .group-halo, .group:focus-visible .group-halo { opacity: .6; }
+  .group-n { font-size: 12px; font-weight: 700; fill: #1d1d20; pointer-events: none; }
+  .unzoom { position: absolute; left: 0; top: 0; border: 1px solid #d6d3d1; border-radius: 999px; padding: 4px 12px; font-size: 13px; background: var(--color-paper); }
+  .unzoom:hover { border-color: #3f8f86; color: #3f8f86; }
+  :global(.dark) .unzoom { background: var(--color-night); border-color: #44403c; }
+  /* When a label had to move away from its pin, a thin line joins them. */
+  .leader { stroke: #1d1d20; stroke-width: 1; opacity: .55; }
+  :global(.dark) .leader { stroke: #f5f5f4; }
+  .pin-label { font-size: 13px; font-weight: 600; fill: #1d1d20; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .chip { border: 1px solid #d6d3d1; border-radius: 999px; padding: 4px 12px; font-size: 13px; transition: border-color .2s ease, color .2s ease; }
+  .chip:hover { border-color: #3f8f86; color: #3f8f86; }
+  :global(.dark) .land { fill: #2b2926; stroke: #121211; }
+  :global(.dark) .region { fill: #2b2926; stroke: #121211; }
+  :global(.dark) .pin-label { fill: #f5f5f4; stroke: #121211; }
+  :global(.dark) .chip { border-color: #44403c; }
+  @media (prefers-reduced-motion: reduce) { .view:not([hidden]) { animation: none; } }
+</style>
+
+<script>
+  const world = document.querySelector<HTMLElement>('.world')!;
+  const views = [...document.querySelectorAll<HTMLElement>('.country')];
+  const crumb = document.querySelector<HTMLElement>('.crumb-country')!, crumbName = document.querySelector<HTMLElement>('.crumb-name')!;
+  const names = Object.fromEntries([...document.querySelectorAll<HTMLButtonElement>('.chip')].map((b) => [b.dataset.country!, b.firstChild!.textContent!.trim()]));
+
+  // Zooming a country map into a group of close places (and back), by animating its viewBox.
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const tweenBox = (svg: SVGSVGElement, to: string) => {
+    const from = svg.getAttribute('viewBox')!.split(' ').map(Number), end = to.split(' ').map(Number), t0 = performance.now();
+    if (still) { svg.setAttribute('viewBox', to); return; }
+    const step = (now: number) => {
+      const t = Math.min(1, (now - t0) / 600), e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      svg.setAttribute('viewBox', from.map((v, i) => (v + (end[i] - v) * e).toFixed(2)).join(' '));
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  const unzoom = (svg: SVGSVGElement) => {
+    if (!svg.classList.contains('zoomed')) return;
+    svg.classList.remove('zoomed');
+    svg.querySelectorAll('.zoom').forEach((z) => z.classList.remove('on'));
+    svg.parentElement!.querySelector<HTMLElement>('.unzoom')!.hidden = true;
+    tweenBox(svg, svg.dataset.full!);
+  };
+  document.querySelectorAll<SVGSVGElement>('.cmap').forEach((svg) => {
+    svg.querySelectorAll<SVGGElement>('.group').forEach((g) => {
+      const go = () => {
+        svg.classList.add('zoomed');
+        svg.querySelector(`.zoom[data-group="${g.dataset.group}"]`)!.classList.add('on');
+        svg.parentElement!.querySelector<HTMLElement>('.unzoom')!.hidden = false;
+        tweenBox(svg, g.dataset.vb!);
+      };
+      g.addEventListener('click', (e) => { e.stopPropagation(); go(); });
+      g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    });
+    svg.addEventListener('click', () => unzoom(svg));
+    svg.parentElement!.querySelector('.unzoom')!.addEventListener('click', () => unzoom(svg));
+  });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll<SVGSVGElement>('.cmap.zoomed').forEach(unzoom); });
+
+  const show = (a3: string | null) => {
+    document.querySelectorAll<SVGSVGElement>('.cmap.zoomed').forEach(unzoom);
+    const v = a3 ? views.find((x) => x.dataset.country === a3) : undefined;
+    world.hidden = !!v;
+    views.forEach((x) => (x.hidden = x !== v));
+    crumb.hidden = !v;
+    if (v) crumbName.textContent = names[a3!] ?? a3!;
+  };
+  const open = (a3: string | null) => {
+    show(a3);
+    const u = new URL(location.href);
+    if (a3) u.searchParams.set('country', a3); else u.searchParams.delete('country');
+    history.pushState(null, '', u);
+    scrollTo({ top: 0 });
+  };
+  document.querySelectorAll<SVGPathElement | HTMLButtonElement>('[data-country].been, .chip').forEach((el) => {
+    el.addEventListener('click', () => open(el.dataset.country!));
+    el.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') open(el.dataset.country!); });
+  });
+  // Hovering a chip lights its country on the map.
+  document.querySelectorAll<HTMLButtonElement>('.chip').forEach((b) => {
+    const land = document.querySelector(`.land[data-country="${b.dataset.country}"]`);
+    b.addEventListener('pointerenter', () => land?.classList.add('hot'));
+    b.addEventListener('pointerleave', () => land?.classList.remove('hot'));
+  });
+  document.querySelector('.crumb-world')!.addEventListener('click', () => open(null));
+  addEventListener('popstate', () => show(new URLSearchParams(location.search).get('country')));
+  show(new URLSearchParams(location.search).get('country'));
+</script>

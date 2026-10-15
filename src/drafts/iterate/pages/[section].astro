@@ -1,0 +1,21 @@
+---
+import Iterate from '../../layouts/Iterate.astro';
+import Poster from '../../components/Poster.astro';
+import { SECTIONS, type Section } from '../../iterate';
+export function getStaticPaths() {
+  return SECTIONS.map((s) => ({ params: { section: s.slug }, props: { s } }));
+}
+const { s } = Astro.props as { s: Section };
+---
+<Iterate title={s.label}>
+  <div class="frame">
+    <a href="/iterate" class="back" aria-label="Back to posters">←</a>
+    <Poster section={s} />
+  </div>
+</Iterate>
+
+<style>
+  .frame { width: min(100%, calc((100svh - 220px) * 3 / 5)); margin: 0 auto; }
+  .back { display: inline-block; margin-bottom: 16px; font-size: 18px; color: var(--muted); }
+  .back:hover { color: var(--ink); }
+</style>

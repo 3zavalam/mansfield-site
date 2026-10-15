@@ -1,0 +1,77 @@
+---
+// /resources/books: a bookshelf in the spirit of Stripe Press, spines only: title and author, no covers.
+// Pick a spine and it slides out; the line above the shelf says what it is.
+import Base from '../../layouts/Base.astro';
+import ResourceTitle from '../../components/ResourceTitle.astro';
+import SampleNote from '../../components/SampleNote.astro';
+import ResourceEnter from '../../components/ResourceEnter.astro';
+import { BOOKS, hasSamples } from '../../resources';
+// Spine colours: [background, text]. Picked from the title so a book always gets the same one.
+const SPINES = [['#1f3a5f', '#e9dfc6'], ['#7a1f2b', '#f1e3c8'], ['#2f4f3a', '#e9dfc6'], ['#c9a227', '#1d1a14'], ['#e8e2d0', '#2b2620'], ['#3b2f2f', '#d8b86a'], ['#b04a2f', '#fbeee0'], ['#1d1d1f', '#d8b86a'], ['#5b6b8c', '#f4efe4'], ['#d8cfc0', '#3b2f2f']];
+const hash = (s: string) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+const spine = (title: string) => {
+  const h = hash(title);
+  // Long titles get a thicker spine and wrap onto two lines.
+  return { color: SPINES[h % SPINES.length], height: 80 + (h % 20), width: title.length > 20 ? 66 : 38 + title.length * 0.8 };
+};
+---
+<Base title="Books">
+  <ResourceEnter slot="head" slug="books" />
+  <ResourceTitle label="Books" count={BOOKS.length} />
+  <SampleNote show={hasSamples(BOOKS)} />
+  <p class="caption min-h-[3rem] text-[17px] leading-snug" aria-live="polite"><span class="text-stone-500 dark:text-stone-400">Pick a book.</span></p>
+  <ul class="shelf mt-2">
+    {BOOKS.map((b, i) => {
+      const s = spine(b.title);
+      return (
+        <li>
+          <button type="button" class:list={['spine', b.title.length > 20 && 'long']} data-title={b.title} data-author={b.author} aria-label={`${b.title}, by ${b.author}`}
+            style={`--bg:${s.color[0]};--fg:${s.color[1]};--i:${i};height:${s.height}%;width:${s.width}px`}>
+            <span class="t">{b.title}</span>
+            <span class="a">{b.author}</span>
+          </button>
+        </li>
+      );
+    })}
+  </ul>
+</Base>
+
+<style>
+  /* Each row of the shelf is 300px of books on a wooden board; spines stand at the bottom of their slot. */
+  .shelf { display: flex; flex-wrap: wrap; align-items: stretch; }
+  .shelf li { flex: 1 0 auto; display: flex; align-items: flex-end; justify-content: center; height: 300px; padding: 0 2px; border-bottom: 14px solid #b9925e; box-shadow: inset 0 -1px 0 #8a6a3f; margin-bottom: 28px; }
+  :global(.dark) .shelf li { border-bottom-color: #6b4f2f; box-shadow: inset 0 -1px 0 #4a361f; }
+  .spine {
+    display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 14px 0 12px;
+    background: var(--bg); color: var(--fg); border-radius: 3px 3px 1px 1px; cursor: pointer;
+    box-shadow: inset 3px 0 0 rgb(255 255 255 / .08), inset -3px 0 0 rgb(0 0 0 / .15), 0 1px 0 rgb(0 0 0 / .2);
+    transition: transform .3s cubic-bezier(.2, .8, .2, 1), box-shadow .3s ease;
+  }
+  .spine:hover { transform: translateY(-6px); }
+  .spine.out { transform: translateY(-26px) rotate(-3deg); box-shadow: 0 18px 24px -14px rgb(0 0 0 / .5); }
+  .spine:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  .spine .t, .spine .a { writing-mode: vertical-rl; transform: rotate(180deg); }
+  .spine .t { flex: 1 1 auto; min-height: 0; overflow: hidden; font-size: 13px; font-weight: 600; line-height: 1.15; letter-spacing: .02em; text-align: right; }
+  .spine.long .t { font-size: 11px; line-height: 1.2; }
+  .spine .a { flex: none; margin-top: 10px; white-space: nowrap; font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; opacity: .75; }
+  /* Coming from /resources: the books drop onto the shelf one after another. */
+  :global(html.res-enter) .spine { animation: res-drop .6s cubic-bezier(.2, .9, .3, 1.15) both; animation-delay: calc(var(--i) * 50ms + 220ms); }
+  @keyframes res-drop { from { opacity: 0; transform: translateY(-60px); } }
+  @media (prefers-reduced-motion: reduce) { .spine { transition: none; animation: none !important; } }
+</style>
+
+<script>
+  // One book out at a time; its title and author go in the line above the shelf.
+  const caption = document.querySelector<HTMLElement>('.caption')!;
+  const spines = document.querySelectorAll<HTMLButtonElement>('.spine');
+  spines.forEach((s) => s.addEventListener('click', () => {
+    const was = s.classList.contains('out');
+    spines.forEach((o) => o.classList.remove('out'));
+    if (was) { caption.innerHTML = '<span class="text-stone-500 dark:text-stone-400">Pick a book.</span>'; return; }
+    s.classList.add('out');
+    caption.innerHTML = '';
+    const t = document.createElement('strong'); t.className = 'font-semibold'; t.textContent = s.dataset.title!;
+    const a = document.createElement('span'); a.className = 'text-stone-500 dark:text-stone-400'; a.textContent = ` · ${s.dataset.author}`;
+    caption.append(t, a);
+  }));
+</script>

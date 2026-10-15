@@ -1,0 +1,10 @@
+---
+// The small header row on each /resources/<kind> page: "Resources / <Label>" (no back arrow, the header
+// already shows where you are) and an optional count on the right.
+interface Props { label: string; count?: number }
+const { label, count } = Astro.props;
+---
+<div class="-mt-6 mb-6 flex items-baseline justify-between gap-4 sm:-mt-10">
+  <h1 class="eyebrow"><a href="/resources" class="hover:text-accent dark:hover:text-accent-dark">Resources</a> <span class="text-stone-300 dark:text-stone-600">/</span> <span class="text-ink dark:text-stone-100">{label}</span></h1>
+  {count !== undefined && <p class="mono text-[12px] text-stone-500 dark:text-stone-400">{count}</p>}
+</div>

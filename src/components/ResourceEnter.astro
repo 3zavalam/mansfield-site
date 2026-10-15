@@ -1,0 +1,43 @@
+---
+// The second half of the /resources transitions. /resources fills the screen with a colour from the object
+// you clicked and sets sessionStorage 'res-enter' to the collection; this (in the page's head slot) picks
+// that up before first paint, starts the page under the same colour and lets it go: Photos opens like a
+// shutter from the centre, the rest fade while their items (.rise > *, each with --i) come up in turn.
+// Opening a collection any other way (a link, a reload) shows it normally.
+interface Props { slug: string }
+const { slug } = Astro.props;
+---
+<script is:inline define:vars={{ slug }}>
+  try {
+    if (sessionStorage.getItem('res-enter') === slug) {
+      sessionStorage.removeItem('res-enter');
+      document.documentElement.classList.add('res-enter');
+      document.documentElement.dataset.res = slug;
+    }
+  } catch (e) {}
+</script>
+<style is:global>
+  @property --iris { syntax: '<length>'; inherits: false; initial-value: 0px; }
+  html[data-res='photos'] { --veil: #0b0c10; }
+  html[data-res='movies'] { --veil: #d94f3d; }
+  html[data-res='books'] { --veil: #7a1f2b; }
+  html[data-res='podcasts'] { --veil: #1d1d20; }
+  html[data-res='museums'] { --veil: #ece5d9; }
+  html.dark[data-res='museums'] { --veil: #2b2621; }
+  html[data-res='places'] { --veil: #3f8f86; }
+  html.res-enter body::after {
+    content: ''; position: fixed; inset: 0; z-index: 200; pointer-events: none; background: var(--veil);
+    animation: res-veil .6s cubic-bezier(.3, .7, .3, 1) .08s forwards;
+  }
+  /* Photos: a shutter opening from the middle. */
+  html.res-enter[data-res='photos'] body::after {
+    -webkit-mask: radial-gradient(circle at 50% 50%, transparent var(--iris), #000 calc(var(--iris) + 1px));
+            mask: radial-gradient(circle at 50% 50%, transparent var(--iris), #000 calc(var(--iris) + 1px));
+    animation: res-iris .9s cubic-bezier(.55, 0, .2, 1) .12s forwards;
+  }
+  html.res-enter .rise > * { animation: res-rise .65s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 45ms + 220ms); }
+  @keyframes res-veil { to { opacity: 0; visibility: hidden; } }
+  @keyframes res-iris { to { --iris: 150vmax; visibility: hidden; } }
+  @keyframes res-rise { from { opacity: 0; transform: translateY(22px); } }
+  @media (prefers-reduced-motion: reduce) { html.res-enter body::after { display: none; } html.res-enter .rise > * { animation: none; } }
+</style>

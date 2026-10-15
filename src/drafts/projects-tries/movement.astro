@@ -1,0 +1,289 @@
+---
+// /iteratev3/projects/movement: the inside of a mechanical watch, seen from the back. Every part is something
+// from my career. The gear train is experience, one wheel driving the next (UDLAP → RIANSA → Piquero → INRS →
+// Club León); the escapement and winding parts are projects (Winner Way is the balance, the beating heart).
+// The balance swings, the escape wheel ticks once per beat and drives the whole train back to the barrel.
+// Scrolling winds the crown: it spins, the ratchet clicks round and the balance beats faster for a while.
+import Base from '../../../layouts/Base.astro';
+import ProjectSheet from '../../../components/ProjectSheet.astro';
+import { NAV, HOME } from '../../../iteratev3';
+import { items } from '../../../iteratev3-projects';
+const byId = Object.fromEntries(items.map((i) => [i.id, i]));
+
+type Draw = 'gear' | 'escape' | 'balance' | 'fork' | 'ratchet' | 'crown';
+// x, y, r in movement units (plate radius 240). ax, ay: where the label's leader line starts.
+// side: which column the label sits in.
+type Part = { id: string; part: string; draw: Draw; x: number; y: number; r: number; ax: number; ay: number; side: -1 | 1 };
+const P: Part[] = [
+  { id: 'udlap', part: 'Mainspring barrel', draw: 'gear', x: -95, y: 85, r: 80, ax: -150, ay: 142, side: -1 },
+  { id: 'riansa', part: 'Centre wheel', draw: 'gear', x: -33, y: -22.4, r: 44, ax: -62, ay: -55, side: -1 },
+  { id: 'piquero', part: 'Third wheel', draw: 'gear', x: 45.8, y: -8.5, r: 36, ax: 62, ay: 20, side: 1 },
+  { id: 'mitacs', part: 'Fourth wheel', draw: 'gear', x: 62.9, y: -72.3, r: 30, ax: 70, ay: -100, side: 1 },
+  { id: 'leon', part: 'Escape wheel', draw: 'escape', x: 118.9, y: -57.3, r: 28, ax: 140, ay: -78, side: 1 },
+  { id: 'xg', part: 'Pallet fork', draw: 'fork', x: 140, y: 8, r: 0, ax: 158, ay: 8, side: 1 },
+  { id: 'winner-way', part: 'Balance wheel', draw: 'balance', x: 150, y: 82, r: 60, ax: 200, ay: 118, side: 1 },
+  { id: 'reservas', part: 'Minute wheel', draw: 'gear', x: 2.6, y: 28.4, r: 18, ax: 12, ay: 44, side: 1 },
+  { id: 'web', part: 'Ratchet wheel', draw: 'ratchet', x: -95, y: 85, r: 46, ax: -128, ay: 62, side: -1 },
+  { id: 'match', part: 'Crown wheel', draw: 'gear', x: -157, y: 62.4, r: 20, ax: -170, ay: 48, side: -1 },
+  { id: 'superstore', part: 'Crown', draw: 'crown', x: -247, y: 62.4, r: 16, ax: -262, ay: 62.4, side: -1 },
+];
+// Labels: each side's parts in order of height, spread evenly down the column.
+const LX = 318;
+const labelY = new Map<string, number>();
+for (const side of [-1, 1]) {
+  const list = P.filter((p) => p.side === side).sort((a, b) => a.ay - b.ay);
+  list.forEach((p, i) => labelY.set(p.id, -200 + (400 / (list.length - 1)) * i));
+}
+// The mechanism is drawn a little larger and higher on the plate than its raw coordinates.
+const SC = 1.05, DY = -28;
+const T = (x: number, y: number) => [x * SC, y * SC + DY] as const;
+const num = (p: Part) => String(P.indexOf(p) + 1).padStart(2, '0');
+
+// Outlines
+const f = (n: number) => n.toFixed(2);
+const pol = (a: number, r: number) => `${f(Math.cos(a) * r)},${f(Math.sin(a) * r)}`;
+const gear = (n: number, r: number, d = 4) => {
+  const s = Math.PI / n, pts: string[] = [];
+  for (let i = 0; i < n; i++) { const t = (i / n) * Math.PI * 2; pts.push(pol(t - s * .5, r - d / 2), pol(t - s * .3, r + d / 2), pol(t + s * .3, r + d / 2), pol(t + s * .5, r - d / 2)); }
+  return `M${pts.join('L')}Z`;
+};
+const saw = (n: number, r: number, d = 6) => { // ratchet and escape teeth: a slope then a drop
+  const pts: string[] = [];
+  for (let i = 0; i < n; i++) { const t = (i / n) * Math.PI * 2, s = (Math.PI * 2) / n; pts.push(pol(t, r - d), pol(t + s * .78, r + 1), pol(t + s * .9, r + 1)); }
+  return `M${pts.join('L')}Z`;
+};
+const spokes = (r: number, k: number) => Array.from({ length: k }, (_, i) => `M${pol((i / k) * Math.PI * 2, r * .2)}L${pol((i / k) * Math.PI * 2, r * .78)}`).join('');
+const spiral = (r0: number, r1: number, turns: number) => {
+  const pts: string[] = [];
+  for (let i = 0; i <= turns * 48; i++) { const t = (i / 48) * Math.PI * 2, r = r0 + ((r1 - r0) * i) / (turns * 48); pts.push(pol(t, r)); }
+  return `M${pts.join('L')}`;
+};
+// Perlage: rows of overlapping circles graining the plate.
+const perlage: [number, number][] = [];
+for (let y = -232; y <= 232; y += 15) for (let x = -232 + (((y + 232) / 15) % 2) * 7.5; x <= 232; x += 15) if (x * x + y * y < 226 * 226) perlage.push([x, y]);
+
+const face = 'fill-white dark:fill-stone-900';
+const line = 'stroke-stone-500 dark:stroke-stone-400';
+---
+<Base title="Projects" nav={NAV} home={HOME} cta={false} footer={false} theme="v3">
+  <div class="movement-page relative left-1/2 w-screen -translate-x-1/2 px-3 sm:px-6">
+    <div class="flex items-baseline justify-between gap-4 sm:mx-auto sm:max-w-6xl">
+      <p class="eyebrow">Projects <span class="mono normal-case tracking-normal text-stone-400 dark:text-stone-500">· Calibre EZ-26, seen from the back</span></p>
+      <p class="mono hidden text-[11px] text-stone-500 sm:block dark:text-stone-400"><span class="mr-1 inline-block h-2 w-2 rounded-full bg-stone-400 align-middle"></span> experience &nbsp;<span class="mr-1 inline-block h-2 w-2 rounded-full bg-accent align-middle dark:bg-accent-dark"></span> projects</p>
+    </div>
+
+    <div class="stage relative mx-auto mt-2" tabindex="0" aria-label="Watch movement. Scroll to wind it. Each part is a project or a job; pick one to read about it.">
+      <svg class="h-full w-full overflow-visible" viewBox="-480 -270 960 540" stroke-linejoin="round" stroke-linecap="round">
+        <defs>
+          <clipPath id="plate"><circle r="240" /></clipPath>
+        </defs>
+
+        {/* Case ring and main plate with perlage */}
+        <circle r="252" class="fill-stone-200 dark:fill-stone-800" />
+        <circle r="240" class="fill-stone-50 stroke-stone-300 dark:fill-stone-950 dark:stroke-stone-700" />
+        <g clip-path="url(#plate)" fill="none" class="stroke-stone-200 dark:stroke-stone-800" stroke-width=".5" opacity=".55">
+          {perlage.map(([x, y]) => <circle cx={x} cy={y} r="9" />)}
+        </g>
+        <text y="176" text-anchor="middle" class="fill-stone-400 text-[11px] dark:fill-stone-500" letter-spacing="4">MANSFIELD · CALIBRE EZ-26</text>
+        <text y="191" text-anchor="middle" class="fill-stone-400 text-[7px] dark:fill-stone-600" letter-spacing="3">11 JEWELS · MÉXICO · UNADJUSTED</text>
+
+        <g transform={`translate(0 ${DY}) scale(${SC})`}>
+        {/* Crown stem through the case */}
+        <path d="M-177 62.4 H-232" class="stroke-stone-400 dark:stroke-stone-500" stroke-width="5" />
+
+        {/* Parts. Each is a group at its centre; the inner .spin group is what turns. */}
+        {P.map((p) => {
+          const it = byId[p.id];
+          const club = it.kind === 'Club';
+          return (
+            <g class:list={['part', club ? 'club' : 'build']} data-id={p.id} transform={`translate(${p.x} ${p.y})`} tabindex="0" role="button" aria-label={`${num(p)} ${p.part}: ${it.t}`}>
+              <g class:list={['spin', line]} data-draw={p.draw} fill="none" stroke-width="1">
+                {p.draw === 'gear' && <>
+                  <path d={gear(Math.round(p.r * (p.r > 60 ? .9 : .8)), p.r)} class={face} />
+                  <circle r={p.r * .82} />
+                  <path d={spokes(p.r, p.r > 40 ? 5 : 4)} />
+                  <circle r={p.r * .2} class={face} />
+                </>}
+                {p.draw === 'escape' && <>
+                  <path d={saw(15, p.r, 8)} class={face} />
+                  <circle r={p.r * .62} />
+                  <path d={spokes(p.r * .8, 4)} />
+                </>}
+                {p.draw === 'ratchet' && <>
+                  <path d={saw(30, p.r, 5)} class="fill-stone-100 dark:fill-stone-800" />
+                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => <path d={`M${pol((i / 12) * Math.PI * 2, p.r * .3)}L${pol((i / 12) * Math.PI * 2 + .35, p.r * .82)}`} stroke-width=".5" />)}
+                  <circle r={p.r * .3} class={face} />
+                </>}
+                {p.draw === 'balance' && <>
+                  <path d={spiral(7, 38, 7)} stroke-width=".6" class="hairspring" />
+                  <circle r={p.r} stroke-width="5" class="stroke-stone-600 dark:stroke-stone-300" />
+                  <circle r={p.r - 4} stroke-width=".6" />
+                  {[0, 1, 2].map((i) => <path d={`M${pol((i / 3) * Math.PI * 2, 8)}L${pol((i / 3) * Math.PI * 2, p.r - 2)}`} stroke-width="2.2" class="stroke-stone-600 dark:stroke-stone-300" />)}
+                  {Array.from({ length: 12 }, (_, i) => <circle cx={f(Math.cos((i / 12) * Math.PI * 2) * (p.r + 4))} cy={f(Math.sin((i / 12) * Math.PI * 2) * (p.r + 4))} r="2.4" class={face} />)}
+                  <circle r="8" class={face} />
+                </>}
+                {p.draw === 'fork' && <>
+                  {/* Anchor: two pallets reaching for the escape wheel, a lever down to the balance roller. */}
+                  <path d="M0 0 L-19 -46 M0 0 L14 -48 M0 0 L8 54" stroke-width="3.2" class="stroke-stone-600 dark:stroke-stone-300" />
+                  <path d="M-23 -50 l6 -2 l2 8 l-6 2 Z M11 -54 l6 1 l-1 8 l-6 -1 Z" class="fill-rose-600 stroke-rose-700 dark:fill-rose-500" />
+                  <path d="M3 52 l0 8 M13 52 l0 8" stroke-width="2" class="stroke-stone-600 dark:stroke-stone-300" />
+                </>}
+                {p.draw === 'crown' && <>
+                  <rect x="-16" y="-17" width="30" height="34" rx="4" class={face} />
+                  <g class="knurl">{Array.from({ length: 9 }, (_, i) => <path d={`M-14 ${-15 + i * 4} H12`} stroke-width=".7" />)}</g>
+                </>}
+              </g>
+              {/* Jewel at the pivot */}
+              {p.draw !== 'crown' && <><circle r="4.2" class="fill-white stroke-stone-400 dark:fill-stone-900" stroke-width=".8" /><circle r="2.6" class="fill-rose-600 dark:fill-rose-500" /></>}
+              {/* Big invisible hit area so small parts are easy to hover and tap */}
+              <circle r={Math.max(p.r, 22)} fill="transparent" class="hit" />
+            </g>
+          );
+        })}
+
+        {/* Bridges over the train and the balance cock, outlined so the wheels show through. */}
+        <g fill="none" class="pointer-events-none">
+          <path d="M-33 -22.4 L45.8 -8.5 L62.9 -72.3 L118.9 -57.3" stroke-width="24" class="bridge-edge" />
+          <path d="M-33 -22.4 L45.8 -8.5 L62.9 -72.3 L118.9 -57.3" stroke-width="22" class="bridge" />
+          <path d="M150 82 L222 18" stroke-width="20" class="bridge-edge" />
+          <path d="M150 82 L222 18" stroke-width="18" class="bridge" />
+          <path d="M-95 85 L-157 62.4" stroke-width="30" class="bridge-edge" />
+          <path d="M-95 85 L-157 62.4" stroke-width="28" class="bridge" />
+        </g>
+        {/* Screws and jewels on the bridges */}
+        {[[ -33, -22.4], [45.8, -8.5], [62.9, -72.3], [118.9, -57.3], [150, 82], [-95, 85], [-157, 62.4]].map(([x, y]) => (
+          <g transform={`translate(${x} ${y})`} class="pointer-events-none"><circle r="4.2" class="fill-white stroke-stone-400 dark:fill-stone-900" stroke-width=".8" /><circle r="2.6" class="fill-rose-600 dark:fill-rose-500" /></g>
+        ))}
+        {[[8, -40, 30], [222, 18, -20], [-126, 74, 60], [96, -30, 10], [178, 52, 70]].map(([x, y, a]) => (
+          <g transform={`translate(${x} ${y}) rotate(${a})`} class="pointer-events-none"><circle r="5.5" class="fill-stone-200 stroke-stone-400 dark:fill-stone-700 dark:stroke-stone-500" stroke-width=".8" /><path d="M-4 0 H4" class="stroke-stone-500 dark:stroke-stone-400" stroke-width="1.4" /></g>
+        ))}
+
+        </g>
+
+        {/* Labels with leader lines (wide screens only) */}
+        <g class="labels">
+          {P.map((p) => {
+            const it = byId[p.id], y = labelY.get(p.id)!, x = p.side * LX, ex = x - p.side * 14, [ax, ay] = T(p.ax, p.ay);
+            return (
+              <g class="label" data-id={p.id} role="button" tabindex="-1">
+                <path d={`M${ax} ${ay} L${ex} ${y} L${x} ${y}`} fill="none" stroke-width=".7" stroke-dasharray="2 2" class="leader stroke-stone-400 dark:stroke-stone-600" />
+                <circle cx={ax} cy={ay} r="2.2" class:list={['dot', it.kind === 'Club' ? 'fill-stone-400' : 'fill-accent dark:fill-accent-dark']} />
+                <text x={x + p.side * 8} y={y - 4} text-anchor={p.side < 0 ? 'end' : 'start'} class="mono fill-stone-400 text-[9px] dark:fill-stone-500" letter-spacing="1">{num(p)} · {p.part.toUpperCase()}</text>
+                <text x={x + p.side * 8} y={y + 11} text-anchor={p.side < 0 ? 'end' : 'start'} class="name fill-ink text-[14px] font-semibold dark:fill-stone-100">{it.t}</text>
+                <rect x={p.side < 0 ? x - 170 : x} y={y - 16} width="170" height="34" fill="transparent" />
+              </g>
+            );
+          })}
+        </g>
+      </svg>
+    </div>
+
+    {/* Small screens: the key under the movement */}
+    <ol class="key mx-auto mt-3 grid max-w-md grid-cols-2 gap-x-4 gap-y-1.5 text-[13px] lg:hidden">
+      {P.map((p) => (
+        <li><button type="button" class="open flex w-full items-baseline gap-2 text-left" data-id={p.id}>
+          <span class:list={['mono text-[10px]', byId[p.id].kind === 'Club' ? 'text-stone-400' : 'text-accent dark:text-accent-dark']}>{num(p)}</span>
+          <span class="truncate"><span class="font-semibold">{byId[p.id].t}</span></span>
+        </button></li>
+      ))}
+    </ol>
+
+    <div class="mx-auto mt-2 flex max-w-6xl justify-between text-[11px] uppercase tracking-[0.18em] text-stone-500 dark:text-stone-400">
+      <span>Scroll to wind · pick a part</span>
+      <span class="mono tracking-normal">Power reserve <span class="reserve">▮▯▯▯▯</span></span>
+    </div>
+  </div>
+  <ProjectSheet />
+</Base>
+
+<style>
+  .stage { width: min(100%, calc((100svh - 12rem) * 960 / 540), 1200px); aspect-ratio: 960 / 540; outline: none; }
+  .bridge { stroke: var(--color-paper); opacity: .72; }
+  .bridge-edge { stroke: #d6d3d1; }
+  :global(.dark) .bridge { stroke: #1c1917; }
+  :global(.dark) .bridge-edge { stroke: #44403c; }
+  .part { cursor: pointer; outline: none; }
+  .part .spin { transition: stroke .2s ease; }
+  .part.on .spin, .part:focus-visible .spin { stroke: var(--color-accent); }
+  :global(.dark) .part.on .spin { stroke: var(--color-accent-dark); }
+  .label { cursor: pointer; }
+  .label .name, .label .leader { transition: fill .2s ease, stroke .2s ease; }
+  .label.on .name { fill: var(--color-accent); }
+  .label.on .leader { stroke: var(--color-accent); stroke-dasharray: none; }
+  :global(.dark) .label.on .name { fill: var(--color-accent-dark); }
+  /* Narrow screens: only the movement, framed tighter; the key below names the parts. */
+  @media (max-width: 1023px) {
+    .stage { width: min(100%, calc(100svh - 21rem), 560px); aspect-ratio: 1; }
+    .labels { display: none; }
+  }
+</style>
+
+<script>
+  // The escapement drives everything: the balance swings as a sine; every half swing (a beat) the escape
+  // wheel is let go by half a tooth. Each wheel in the train turns the other way, at a speed set by its size.
+  const stage = document.querySelector<HTMLElement>('.stage')!;
+  const svg = stage.querySelector('svg')!;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const g = (id: string) => svg.querySelector<SVGGElement>(`.part[data-id="${id}"] .spin`)!;
+  const R: Record<string, number> = { udlap: 80, riansa: 44, piquero: 36, mitacs: 30, leon: 28, reservas: 18, web: 46, match: 20 };
+  // Escape-wheel angle → each train wheel's angle (mesh: the next one turns the other way, scaled by radii).
+  const train: [string, number][] = [['mitacs', -R.leon / R.mitacs], ['piquero', R.leon / R.piquero], ['riansa', -R.leon / R.riansa], ['udlap', R.leon / R.udlap], ['reservas', R.leon / R.reservas]];
+  const knurl = svg.querySelector<SVGGElement>('.knurl')!;
+  const hair = svg.querySelector<SVGPathElement>('.hairspring')!;
+  const reserve = document.querySelector('.reserve')!;
+
+  let phase = 0, esc = 0, escTo = 0, wind = 0, windTo = 0, energy = .25, last = performance.now();
+  const frame = (now: number) => {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    energy = Math.max(.05, energy - dt * .012);
+    const rate = still ? 0 : Math.PI * 2 * (1.1 + energy * 1.6); // beats faster when wound
+    const amp = 120 + energy * 120;
+    const before = Math.floor(phase / Math.PI);
+    phase += rate * dt;
+    const beats = Math.floor(phase / Math.PI) - before;
+    if (beats > 0) escTo += beats * 12; // half a tooth of a 15-tooth wheel per beat
+    esc += (escTo - esc) * .45;        // snaps forward: a tick, not a glide
+    wind += (windTo - wind) * .2;
+
+    const s = Math.sin(phase);
+    g('winner-way').setAttribute('transform', `rotate(${(amp * s).toFixed(2)})`);
+    hair.setAttribute('transform', `rotate(${(-amp * s * .85).toFixed(2)}) scale(${(1 + s * .03).toFixed(3)})`);
+    g('xg').setAttribute('transform', `rotate(${(Math.tanh(-Math.cos(phase) * 5) * 7).toFixed(2)})`);
+    g('leon').setAttribute('transform', `rotate(${esc.toFixed(2)})`);
+    for (const [id, k] of train) g(id).setAttribute('transform', `rotate(${(esc * k).toFixed(2)})`);
+    // Winding: the crown turns the crown wheel, which turns the ratchet on top of the barrel.
+    g('match').setAttribute('transform', `rotate(${(wind * 2.3).toFixed(2)})`);
+    g('web').setAttribute('transform', `rotate(${(-wind * 2.3 * R.match / R.web).toFixed(2)})`);
+    knurl.setAttribute('transform', `translate(0 ${(((wind * .4) % 4) + 4) % 4 - 2})`);
+    reserve.textContent = Array.from({ length: 5 }, (_, i) => (i < Math.round(energy * 5) ? '▮' : '▯')).join('');
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+
+  stage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const d = Math.abs(e.deltaY) + Math.abs(e.deltaX);
+    windTo += d * .6; energy = Math.min(1, energy + d * .0009);
+  }, { passive: false });
+
+  // Hover a part or its label to light both; click to read about it.
+  const light = (id: string | null) => svg.querySelectorAll<SVGGElement>('.part, .label').forEach((el) => el.classList.toggle('on', el.dataset.id === id));
+  const open = (id: string) => document.dispatchEvent(new CustomEvent('sheet:open', { detail: id }));
+  svg.querySelectorAll<SVGGElement>('.part, .label').forEach((el) => {
+    el.addEventListener('pointerenter', () => light(el.dataset.id!));
+    el.addEventListener('pointerleave', () => light(null));
+    el.addEventListener('focus', () => light(el.dataset.id!));
+    el.addEventListener('blur', () => light(null));
+    el.addEventListener('click', () => open(el.dataset.id!));
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(el.dataset.id!); } });
+  });
+  document.querySelectorAll<HTMLButtonElement>('.key .open').forEach((b) => {
+    b.addEventListener('click', () => open(b.dataset.id!));
+    b.addEventListener('pointerenter', () => light(b.dataset.id!));
+    b.addEventListener('pointerleave', () => light(null));
+  });
+
+  // On narrow screens frame just the movement.
+  const fit = () => svg.setAttribute('viewBox', innerWidth < 1024 ? '-262 -262 524 524' : '-480 -270 960 540');
+  fit(); addEventListener('resize', fit);
+</script>

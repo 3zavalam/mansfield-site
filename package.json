@@ -6,16 +6,24 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "photos": "node scripts/import-disposables.mjs",
+    "movies": "node scripts/import-movies.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^5.18.2",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "three": "^0.180.0"
   },
   "devDependencies": {
-    "playwright": "^1.64.0"
+    "@types/three": "^0.180.0",
+    "d3-geo": "^3.1.1",
+    "playwright": "^1.64.0",
+    "sharp": "^0.34.5",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
   }
 }

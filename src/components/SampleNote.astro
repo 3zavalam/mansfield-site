@@ -1,0 +1,10 @@
+---
+// Shown on a /resources page while its list still has placeholder entries (sample: true in src/resources.ts).
+interface Props { show: boolean }
+const { show } = Astro.props;
+---
+{show && (
+  <p class="mb-5 inline-flex items-center gap-2 rounded-full border border-dashed border-stone-300 px-3 py-1 text-[12px] text-stone-500 dark:border-stone-700 dark:text-stone-400">
+    <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>Samples for now: the real ones go in src/resources.ts
+  </p>
+)}

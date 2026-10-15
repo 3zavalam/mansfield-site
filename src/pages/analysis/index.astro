@@ -1,0 +1,28 @@
+---
+// /analysis: every analysis, newest first, in a dotted list (doc icon, date, title: subtitle, arrow).
+import Base from '../../layouts/Base.astro';
+import { getPosts } from '../../posts';
+const posts = await getPosts();
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit', timeZone: 'UTC' });
+---
+<Base title="Analysis">
+  {/* No back link or title block: the header already says where you are; content starts right under it. */}
+  <h1 class="sr-only">Analysis</h1>
+    <ul class="-mt-6 border-t border-dotted border-stone-400 sm:-mt-10 dark:border-stone-600">
+      {posts.map((p) => (
+        <li class="border-b border-dotted border-stone-400 dark:border-stone-600">
+          <a href={`/analysis/${p.id}`} class="group flex items-center gap-4 py-5 sm:gap-6">
+            <svg class="h-5 w-5 shrink-0 text-stone-500 dark:text-stone-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 3h10a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" /><path d="M9 8h6M9 12h6M9 16h4" />
+            </svg>
+            <time class="mono hidden shrink-0 text-[15px] tabular-nums text-stone-500 sm:block dark:text-stone-400" datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time>
+            <span class="min-w-0 flex-1">
+              <span class="block text-lg leading-snug transition-colors group-hover:text-accent sm:text-xl dark:group-hover:text-accent-dark"><span class="font-semibold">{p.data.title}{p.data.subtitle && ':'}</span>{p.data.subtitle && <span class="font-normal"> {p.data.subtitle}</span>}</span>
+              <time class="mono mt-1 block text-[13px] tabular-nums text-stone-500 sm:hidden dark:text-stone-400" datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time>
+            </span>
+            <span class="shrink-0 text-lg text-stone-500 transition-transform group-hover:translate-x-1 group-hover:text-accent dark:text-stone-400 dark:group-hover:text-accent-dark" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+</Base>

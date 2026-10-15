@@ -1,42 +1,76 @@
 ---
+// Home: the four-link header (Projects, Personal, Analysis, Resources). The first screen holds
+// the latest analysis (its notes image links to it) and flat versions of the v2 objects; below the fold, Work with me.
 import Base from '../layouts/Base.astro';
-import PostList from '../components/PostList.astro';
-import { getPosts } from '../posts';
-const posts = (await getPosts()).slice(0, 3);
+import FlatObject from '../components/FlatObject.astro';
+import { getPosts, fullTitle } from '../posts';
+import { SECTIONS, href } from '../sections';
+import { EMAIL } from '../consts';
+const [latest] = await getPosts();
+// What I do or can do, shortened from /work-with-me. Instead of prices, a no-risk way to pay for each.
+const work = [
+  { t: 'Finish your AI-built MVP', d: 'Deploy, fix and wire up auth, payments and the database so real users can use it.', p: 'Pay when it’s live' },
+  { t: 'Power BI dashboards', d: 'A clean data model and a dashboard your team actually opens.', p: 'Pay only if your team uses it' },
+  { t: 'Python automation', d: 'Scripts that clean files, build reports or scrape the web on a schedule.', p: 'Pay with part of the hours it saves' },
+  { t: 'AI chatbots', d: 'Answers from your own content, wired into the tools you already use.', p: 'A % of what it earns or saves you' },
+  { t: 'Club analytics', d: 'Players, matches and attendance in one place for volunteer-run football clubs.', p: 'Free until it helps' },
+];
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 ---
 <Base>
-  <section>
-    <p class="eyebrow">Runnin' down my dream</p>
-    <h1 class="serif mt-4 text-[2.6rem] leading-[1.05] tracking-tight sm:text-6xl">Mansfield</h1>
-    <p class="serif mt-5 max-w-2xl text-xl leading-relaxed text-stone-600 italic sm:text-2xl dark:text-stone-300">
-      Engineer building data, software and AI tools in public, and learning how businesses actually work.
-    </p>
-  </section>
+  {latest && (
+    <a href={`/analysis/${latest.id}`} class="group grid items-center gap-5 sm:grid-cols-[1fr_1.45fr] sm:gap-8">
+      <div>
+        <p class="eyebrow">Latest analysis</p>
+        <h1 class="serif mt-3 text-[1.9rem] leading-[1.1] tracking-tight transition-colors group-hover:text-accent sm:text-4xl dark:group-hover:text-accent-dark"><span class="font-semibold">{latest.data.title}{latest.data.subtitle && ':'}</span>{latest.data.subtitle && <span class="font-normal"> {latest.data.subtitle}</span>}</h1>
+        <p class="mt-2 text-sm text-stone-500 dark:text-stone-400"><time datetime={latest.data.date.toISOString()}>{fmt(latest.data.date)}</time></p>
+        <p class="mt-4 hidden text-sm font-medium text-stone-600 transition-colors group-hover:text-accent sm:block dark:text-stone-300 dark:group-hover:text-accent-dark">Read the analysis →</p>
+      </div>
+      <picture>
+        {/* Trying the yellow legal-pad version of the notes (from "MBA yellow.pdf") */}
+        <source media="(min-width: 900px)" srcset="/writing/villarreal-24-25/notes-yellow.jpg" />
+        <img src="/writing/villarreal-24-25/notes-yellow-sm.jpg" alt={`Preview of the notes for “${fullTitle(latest)}”`} width="2550" height="1650" class="w-full rounded-xl border border-stone-200 bg-white transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-lg dark:border-stone-800" />
+      </picture>
+    </a>
+  )}
 
-  <section class="mt-14 max-w-2xl space-y-4 text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">
-    <p>I'm a Computer Systems Engineer from México (UDLAP, 2026). Right now I build scouting tools at Club León. Before that: AI and web scraping research in Montreal, Power BI dashboards for a sales team, and a chatbot that answered questions for a 500+ person event.</p>
-    <p>In February 2027 I move to Valencia, Spain, for a master's. I pay for that with freelance work, and I'm documenting the whole thing here: what I build, how, and what I learn about business along the way. <a class="link" href="/about">More about me →</a></p>
-    <p>My dream is to live off what I like doing. I don't like the word job.</p>
-  </section>
-
-  <section class="mt-16">
-    <div class="flex items-baseline justify-between"><h2 class="eyebrow">Now</h2><a href="/now" class="text-sm text-stone-500 hover:text-accent dark:text-stone-400">More →</a></div>
-    <ul class="mt-5 grid gap-px overflow-hidden rounded-xl border border-stone-200 bg-stone-200 sm:grid-cols-3 dark:border-stone-800 dark:bg-stone-800">
-      <li class="bg-paper p-5 dark:bg-night"><p class="text-sm font-medium">Club León FC</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Remote internship, building data tools for the scouting team.</p></li>
-      <li class="bg-paper p-5 dark:bg-night"><p class="text-sm font-medium">Freelance</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Taking on first projects to fund my master's.</p></li>
-      <li class="bg-paper p-5 dark:bg-night"><p class="text-sm font-medium">Valencia, Feb 2027</p><p class="mt-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">Preparing the move to Spain.</p></li>
+  <nav class="mt-8 sm:mt-10" aria-label="Everything else">
+    <h2 class="eyebrow">Everything else</h2>
+    <ul class="mt-3 grid grid-cols-4 gap-2 sm:gap-3">
+      {SECTIONS.map((s) => (
+        <li>
+          <a href={href(s.slug)} class="group flex flex-col items-center rounded-xl border border-stone-200 px-1.5 pb-2.5 pt-2 transition hover:-translate-y-0.5 hover:border-stone-300 sm:px-3 sm:pb-3 dark:border-stone-800 dark:hover:border-stone-700">
+            <FlatObject kind={s.kind} class="w-full max-w-[110px] transition-transform duration-300 group-hover:scale-[1.05]" />
+            <span class="mt-1 text-[9px] font-medium uppercase tracking-[0.14em] text-stone-500 transition-colors group-hover:text-ink sm:text-[11px] sm:tracking-[0.22em] dark:text-stone-400 dark:group-hover:text-white">{s.label}</span>
+          </a>
+        </li>
+      ))}
     </ul>
-  </section>
+  </nav>
 
-  {posts.length > 0 && (<section class="mt-16">
-    <div class="flex items-baseline justify-between"><h2 class="eyebrow">Latest writing</h2><a href="/writing" class="text-sm text-stone-500 hover:text-accent dark:text-stone-400">All →</a></div>
-    <div class="mt-2"><PostList posts={posts} /></div>
-  </section>)}
-
-  <section class="mt-16 rounded-2xl bg-ink px-6 py-10 text-paper sm:px-10 dark:bg-stone-100 dark:text-night">
-    <p class="eyebrow !text-stone-400 dark:!text-stone-500">Work with me</p>
-    <h2 class="serif mt-3 text-3xl leading-tight sm:text-4xl">Built 80% of your product with AI? I'll help you ship the last 20%.</h2>
-    <p class="mt-4 max-w-xl leading-relaxed text-stone-300 dark:text-stone-600">Deploys, auth, payments, databases, dashboards and automations, for founders and small teams in the US, Canada and Europe. My first 5 projects are free in exchange for a testimonial.</p>
-    <a href="/work-with-me" class="mt-7 inline-block rounded-full bg-paper px-5 py-2.5 text-sm font-medium text-ink transition hover:bg-accent hover:text-white dark:bg-night dark:text-stone-100">See services & pricing →</a>
+  <section class="mt-16 border-t border-stone-200 pt-10 sm:mt-20 dark:border-stone-800" aria-labelledby="work">
+    <p class="eyebrow">Work with me</p>
+    <h2 id="work" class="serif mt-3 text-3xl leading-tight tracking-tight sm:text-4xl">I freelance to pay for my master's.</h2>
+    <p class="mt-3 max-w-xl text-[17px] leading-relaxed text-stone-600 dark:text-stone-400">I move to Valencia in February 2027 to study, and I want to fund it with good work for good people. You only pay if it works.</p>
+    <p class="mt-6 inline-flex items-center gap-3 rounded-full border border-amber-500/40 bg-amber-50 py-2 pl-2 pr-4 text-sm dark:border-amber-400/30 dark:bg-amber-400/5">
+      <span class="shrink-0 whitespace-nowrap rounded-full bg-amber-400 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-ink">First 5 free</span>
+      <span class="text-stone-700 dark:text-stone-300">You pay with an honest testimonial.</span>
+    </p>
+    <ul class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {work.map((w, i) => (
+        <li class="flex flex-col rounded-xl border border-stone-200 p-5 dark:border-stone-800">
+          <span class="mono text-xs text-stone-400 dark:text-stone-500">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="mt-2 text-lg font-semibold leading-snug">{w.t}</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-stone-600 dark:text-stone-400">{w.d}</p>
+          <p class="mt-4 border-t border-dotted border-stone-300 pt-3 text-sm font-medium text-accent dark:border-stone-700 dark:text-accent-dark">{w.p}</p>
+        </li>
+      ))}
+      <li class="flex">
+        <a href={`mailto:${EMAIL}`} class="flex flex-1 flex-col justify-between rounded-xl bg-ink p-5 text-paper transition hover:bg-accent dark:bg-stone-100 dark:text-night dark:hover:bg-white">
+          <span class="text-lg font-semibold leading-snug">Got something else?</span>
+          <span class="mt-6 text-sm font-medium">Email me →</span>
+        </a>
+      </li>
+    </ul>
   </section>
 </Base>

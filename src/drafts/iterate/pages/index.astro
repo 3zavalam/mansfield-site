@@ -1,0 +1,21 @@
+---
+import Iterate from '../../layouts/Iterate.astro';
+import Poster from '../../components/Poster.astro';
+import { SECTIONS } from '../../iterate';
+---
+<Iterate>
+  <nav class="wall" aria-label="Sections">
+    {SECTIONS.map((s) => <Poster section={s} href={`/iterate/${s.slug}`} />)}
+  </nav>
+</Iterate>
+
+<style>
+  /* All three posters always sit side by side and fit the first screen:
+     width is capped by the viewport width, and by its height (posters are 3:5). */
+  .wall {
+    --gap: clamp(12px, 3vw, 44px);
+    --w: min(270px, calc((100vw - 32px - 2 * var(--gap)) / 3), calc((100svh - 200px) * 3 / 5));
+    display: grid; justify-content: center; gap: var(--gap);
+    grid-template-columns: repeat(3, var(--w));
+  }
+</style>

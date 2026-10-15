@@ -1,0 +1,67 @@
+---
+// /resources/podcasts: a grid of the hosts' group photos (or the show's colours until there's a photo).
+// Click one for what I think of it.
+import Base from '../../layouts/Base.astro';
+import ResourceTitle from '../../components/ResourceTitle.astro';
+import SampleNote from '../../components/SampleNote.astro';
+import ResourceEnter from '../../components/ResourceEnter.astro';
+import { PODCASTS, hasSamples, bg } from '../../resources';
+const initials = (s: string) => s.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+---
+<Base title="Podcasts">
+  <ResourceEnter slot="head" slug="podcasts" />
+  <ResourceTitle label="Podcasts" count={PODCASTS.length} />
+  <SampleNote show={hasSamples(PODCASTS)} />
+  <ul class="rise grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+    {PODCASTS.map((p, i) => (
+      <li style={`--i:${i}`}>
+        <button type="button" class="tile" data-i={i} aria-label={`${p.name}: what I think`} style={p.img ? '' : `background:${bg(p.tone)}`}>
+          {p.img ? <img src={p.img} alt={p.hosts ?? ''} loading="lazy" class="absolute inset-0 h-full w-full object-cover" /> : <span class="mark">{initials(p.name)}</span>}
+          <span class="chip">{p.name}</span>
+        </button>
+      </li>
+    ))}
+  </ul>
+
+  {/* One comment card per podcast; the picked one is shown. */}
+  <dialog class="say">
+    {PODCASTS.map((p, i) => (
+      <article data-i={i} hidden>
+        <div class="say-photo" style={p.img ? '' : `background:${bg(p.tone)}`}>
+          {p.img ? <img src={p.img} alt={p.hosts ?? ''} class="h-full w-full object-cover" /> : <span class="mark">{initials(p.name)}</span>}
+        </div>
+        <div class="p-6 sm:p-7">
+          <p class="mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">{p.hosts}</p>
+          <h2 class="mt-1 text-2xl font-semibold">{p.name}</h2>
+          <p class="mt-3 text-[17px] leading-relaxed text-stone-700 dark:text-stone-300">{p.comment}</p>
+        </div>
+      </article>
+    ))}
+    <form method="dialog"><button class="say-close" aria-label="Close">×</button></form>
+  </dialog>
+</Base>
+
+<style>
+  .tile { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 6px; cursor: pointer; transition: transform .25s ease, box-shadow .25s ease; }
+  .tile:hover, .tile:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 28px -16px rgb(0 0 0 / .5); outline: none; }
+  .mark { position: absolute; inset: 0; display: grid; place-items: center; color: rgb(255 255 255 / .9); font-size: clamp(34px, 6vw, 56px); font-weight: 700; letter-spacing: -.02em; }
+  .chip { position: absolute; right: 8px; top: 8px; max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 8px; border-radius: 4px; background: rgb(255 255 255 / .16); border: 1px solid rgb(255 255 255 / .25); color: #fff; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .say { margin: auto; width: min(92vw, 520px); padding: 0; border: 1px solid #e7e5e4; border-radius: 16px; overflow: hidden; background: var(--color-paper); color: var(--color-ink); }
+  :global(.dark) .say { background: var(--color-night); color: #f5f5f4; border-color: #292524; }
+  .say::backdrop { background: rgb(12 12 12 / .55); backdrop-filter: blur(4px); }
+  .say[open] { animation: up .25s ease; }
+  .say-photo { position: relative; aspect-ratio: 16 / 9; }
+  .say-close { position: absolute; right: 12px; top: 12px; width: 34px; height: 34px; border-radius: 50%; background: rgb(255 255 255 / .9); color: #1a1917; font-size: 20px; line-height: 1; }
+  @keyframes up { from { opacity: 0; transform: translateY(12px) scale(.97); } }
+  @media (prefers-reduced-motion: reduce) { .tile, .say[open] { transition: none; animation: none; } }
+</style>
+
+<script>
+  const say = document.querySelector<HTMLDialogElement>('.say')!;
+  const cards = say.querySelectorAll<HTMLElement>('article');
+  document.querySelectorAll<HTMLButtonElement>('.tile').forEach((b) => b.addEventListener('click', () => {
+    cards.forEach((c) => (c.hidden = c.dataset.i !== b.dataset.i));
+    say.showModal();
+  }));
+  say.addEventListener('click', (e) => { if (e.target === say) say.close(); });
+</script>

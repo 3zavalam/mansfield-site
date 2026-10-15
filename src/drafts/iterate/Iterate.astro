@@ -1,0 +1,124 @@
+---
+// Layout for the /iterate site. Self-contained: shares nothing with the main site.
+import { PALETTES } from '../iterate';
+interface Props { title?: string }
+const { title } = Astro.props;
+const fullTitle = title ? `${title} · Iterate` : 'Iterate';
+// One rule per palette, selected by <html data-palette="…">. The first palette is the default.
+const paletteCss = PALETTES.map((p, i) =>
+  `${i === 0 ? ':root, ' : ''}:root[data-palette="${p.id}"] { --bg: ${p.bg}; --ink: ${p.ink}; ${p.colors.map((c, j) => `--c${j + 1}: ${c};`).join(' ')} }`
+).join('\n');
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#b7b1a6" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style is:inline set:html={paletteCss}></style>
+  <script is:inline>
+    try { var p = localStorage.getItem('iterate-palette'); if (p) document.documentElement.dataset.palette = p; } catch (e) {}
+  </script>
+</head>
+<body>
+  <canvas class="wall-bg" aria-hidden="true"></canvas>
+  <main class="shell"><slot /></main>
+
+  <button type="button" class="switcher" aria-label="Change colours" title="Change colours">
+    <i style="background:var(--c1)"></i><i style="background:var(--c2)"></i><i style="background:var(--c3)"></i>
+  </button>
+
+  <script is:inline define:vars={{ ids: PALETTES.map((p) => p.id) }}>
+    var root = document.documentElement;
+    document.querySelector('.switcher').addEventListener('click', function () {
+      var next = ids[(ids.indexOf(root.dataset.palette || ids[0]) + 1) % ids.length];
+      root.dataset.palette = next;
+      try { localStorage.setItem('iterate-palette', next); } catch (e) {}
+    });
+  </script>
+  <script>
+    // The wall: big soft colour glows in the palette colours, slowly drifting behind the posters.
+    import { colors, reduceMotion, rgba } from '../iterate-palette';
+    const canvas = document.querySelector<HTMLCanvasElement>('.wall-bg')!, ctx = canvas.getContext('2d')!;
+    let w = 0, h = 0;
+    const resize = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      w = innerWidth; h = innerHeight;
+      canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize(); addEventListener('resize', resize);
+
+    const frame = (now: number) => {
+      const t = reduceMotion ? 0 : now / 1000, cs = colors();
+      ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'soft-light';
+      [[.18, .25, 0], [.82, .3, 1], [.3, .85, 2], [.78, .8, 4]].forEach(([bx, by, ci], i) => {
+        const x = (bx + Math.sin(t * .07 + i * 2) * .08) * w, y = (by + Math.cos(t * .06 + i) * .08) * h, rad = Math.max(w, h) * .42;
+        const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
+        g.addColorStop(0, rgba(cs[ci], .9)); g.addColorStop(1, rgba(cs[ci], 0));
+        ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+      });
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  </script>
+</body>
+</html>
+
+<style is:global>
+  :root {
+    --muted: color-mix(in srgb, var(--ink) 62%, transparent);
+    --faint: color-mix(in srgb, var(--ink) 35%, transparent);
+    --c: var(--c1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(1100px 700px at 50% 0%, rgba(255, 255, 255, 0.18), transparent 70%),
+      var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color .5s;
+  }
+  a { color: inherit; text-decoration: none; }
+  .shell { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 640px) { .shell { padding: 0 32px; } }
+  .label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted);
+  }
+  main.shell {
+    min-height: 100svh; padding-top: 80px; padding-bottom: 80px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+
+  .wall-bg { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
+
+  /* Palette switcher: one button, cycles through the palettes. */
+  .switcher {
+    position: fixed; top: 20px; right: 20px; z-index: 10;
+    display: flex; padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 999px;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px -12px rgba(30, 20, 10, 0.4);
+    cursor: pointer; transition: transform .25s cubic-bezier(.2,.7,.2,1), background .25s;
+  }
+  .switcher:hover { background: #fff; transform: scale(1.06); }
+  .switcher:active { transform: scale(.96); }
+  .switcher:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .switcher i {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid #fff; margin-left: -6px; transition: background-color .5s;
+  }
+  .switcher i:first-child { margin-left: 0; }
+</style>

@@ -1,0 +1,145 @@
+---
+// A dial of numbered items on an arc whose centre sits off one edge (side="left": arc on the left,
+// details to its right; side="right": mirrored). Scroll, swipe or arrow keys turn it one step at a time;
+// the middle number is the one you're on, and clicking it opens the ProjectSheet pop-up.
+import { src, type Item } from '../iteratev3-projects';
+interface Props { items: Item[]; label: string; side: 'left' | 'right'; class?: string }
+const { items, label, side, class: cls = '' } = Astro.props;
+const nn = (i: number) => String(i + 1).padStart(2, '0');
+const right = side === 'right';
+---
+<section class:list={['dial relative overflow-hidden select-none', cls]} data-side={side} aria-label={label} tabindex="0">
+  <p class:list={['eyebrow absolute top-0 z-10', right ? 'right-4 sm:right-6' : 'left-4 sm:left-6']}>{label}</p>
+
+  <span class="arc pointer-events-none absolute rounded-full border border-stone-300 dark:border-stone-700" aria-hidden="true"></span>
+  {items.map((it, i) => (
+    <>
+      <span class="tick pointer-events-none absolute left-0 top-0 h-[7px] w-[7px] rounded-full bg-stone-300 text-ink dark:bg-stone-600 dark:text-stone-200" aria-hidden="true"></span>
+      <button type="button" class="num mono absolute left-0 top-0 font-bold leading-none tabular-nums" data-id={it.id} aria-label={`${nn(i)}: ${it.t}`}>{nn(i)}</button>
+    </>
+  ))}
+
+  {/* What the middle number is. */}
+  <div class:list={['detail absolute', right && 'text-right']}>
+    {items.map((it, i) => (
+      <div data-detail={i} hidden={i !== 0}>
+        <p class="mono text-[11px] uppercase tracking-[0.18em] text-stone-500 dark:text-stone-400">{it.when}</p>
+        <p class="mt-1.5 text-lg font-semibold leading-snug sm:text-xl">{it.t}</p>
+        <p class="text-[15px] leading-snug text-stone-500 sm:text-[17px] dark:text-stone-400">{it.s}</p>
+        <button type="button" class:list={['open group mt-4 inline-flex items-center gap-3', right ? 'flex-row-reverse text-right' : 'text-left']} data-id={it.id}>
+          <span class:list={['grid h-12 w-[4.5rem] shrink-0 place-items-center overflow-hidden rounded border border-stone-200 dark:border-stone-700', it.dark ? 'bg-stone-900' : 'bg-white']}>
+            {it.img
+              ? <img src={src(it.img)} alt="" loading="lazy" class="h-full w-full object-cover object-top" />
+              : it.logo ? <img src={src(it.logo)} alt="" class="h-8 w-8 object-contain" /> : <span class="text-[9px] font-bold text-ink">{it.t}</span>}
+          </span>
+          <span class="whitespace-nowrap text-sm font-medium text-ink transition-colors group-hover:text-accent dark:text-stone-200 dark:group-hover:text-accent-dark">{right ? '← Read more' : 'Read more →'}</span>
+        </button>
+      </div>
+    ))}
+  </div>
+
+  <span class:list={['count mono pointer-events-none absolute bottom-0 text-[12px] text-stone-500 dark:text-stone-400', right ? 'right-4 sm:right-6' : 'left-4 sm:left-6']}>01 — {nn(items.length - 1)}</span>
+</section>
+
+<style>
+  .dial { outline: none; }
+  .num { color: var(--color-ink); white-space: nowrap; }
+  :global(.dark) .num { color: #f5f5f4; }
+  .num:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+  .detail { transition: opacity .25s ease; }
+  .detail.fade { opacity: 0; }
+</style>
+
+<script>
+  // Each dial is a circle whose centre sits off its left (or right) edge. Items sit STEP radians apart;
+  // `pos` eases toward `target`, the index you're on, so the dial turns smoothly from one to the next.
+  const STEP = 0.3;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const open = (id: string) => document.dispatchEvent(new CustomEvent('sheet:open', { detail: id }));
+
+  document.querySelectorAll<HTMLElement>('.dial').forEach((dial) => {
+    const flip = dial.dataset.side === 'right' ? -1 : 1; // mirror x for the right-hand dial
+    const arc = dial.querySelector<HTMLElement>('.arc')!;
+    const nums = [...dial.querySelectorAll<HTMLButtonElement>('.num')];
+    const ticks = [...dial.querySelectorAll<HTMLElement>('.tick')];
+    const detail = dial.querySelector<HTMLElement>('.detail')!;
+    const details = [...detail.querySelectorAll<HTMLElement>('[data-detail]')];
+    const countEl = dial.querySelector('.count')!;
+    const n = nums.length;
+    let target = 0, pos = 0, shown = 0, W = 0, H = 0, R = 0, cx = 0, cy = 0, big = 0;
+    const X = (x: number) => (flip === 1 ? x : W - x); // x measured from the dial's own edge
+
+    const measure = () => {
+      W = dial.clientWidth; H = dial.clientHeight;
+      R = H * .62; cy = H / 2;
+      cx = Math.min(W * .2, 200) - R; // so the arc reaches this far in from its edge
+      big = Math.min(W * .2, H * .2, 120);
+      arc.style.cssText = `width:${R * 2}px;height:${R * 2}px;left:${X(cx) - R}px;top:${cy - R}px`;
+      const inset = cx + R + 28 + big * 1.3, w = Math.min(W - inset - 16, 300);
+      detail.style.cssText = `${flip === 1 ? 'left' : 'right'}:${inset}px;top:${cy}px;width:${w}px;transform:translateY(-38%)`;
+    };
+
+    const draw = () => {
+      nums.forEach((el, i) => {
+        const th = (i - pos) * STEP, k = Math.min(Math.abs(i - pos), 1); // k: 0 in the middle, 1 a step away or more
+        const px = X(cx + Math.cos(th) * R), py = cy + Math.sin(th) * R;
+        ticks[i].style.translate = `${px - 3.5}px ${py - 3.5}px`;
+        ticks[i].style.background = k < .5 ? 'currentColor' : '';
+        const r = R + 22 + (1 - k) * 6, size = big * (1 - k * .55);
+        el.style.fontSize = `${size}px`;
+        el.style.transformOrigin = flip === 1 ? '0 50%' : '100% 50%';
+        const x = X(cx + Math.cos(th) * r) - (flip === 1 ? 0 : el.offsetWidth);
+        const y = cy + Math.sin(th) * r;
+        el.style.translate = `${x}px ${y - size / 2}px`;
+        el.style.rotate = `${flip * th * (180 / Math.PI) * k}deg`;
+        // Fade out toward the top and bottom edges, where the label and counter sit.
+        const edge = Math.max(0, Math.min(1, (y - 40) / 30, (H - 40 - y) / 30));
+        el.style.opacity = String(Math.abs(th) > 1.5 ? 0 : (1 - k * .82) * edge);
+        el.tabIndex = i === target ? 0 : -1;
+      });
+    };
+
+    const show = (i: number) => {
+      if (i === shown) return;
+      shown = i; detail.classList.add('fade');
+      setTimeout(() => { details.forEach((d) => (d.hidden = d.dataset.detail !== String(i))); detail.classList.remove('fade'); }, still ? 0 : 160);
+      countEl.textContent = `${String(i + 1).padStart(2, '0')} — ${String(n).padStart(2, '0')}`;
+    };
+    const go = (i: number) => { target = Math.max(0, Math.min(n - 1, i)); show(target); if (still) pos = target; };
+
+    const frame = () => {
+      pos += (target - pos) * .14;
+      if (Math.abs(target - pos) < .001) pos = target;
+      draw(); requestAnimationFrame(frame);
+    };
+    measure(); draw(); requestAnimationFrame(frame);
+    new ResizeObserver(() => { measure(); draw(); }).observe(dial);
+
+    // One step per scroll gesture: deltas add up past a threshold, then a short pause so a trackpad's
+    // long swipe doesn't fly past several items.
+    let acc = 0, lock = 0;
+    dial.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const now = performance.now();
+      if (now < lock) return;
+      acc += e.deltaY + e.deltaX;
+      if (Math.abs(acc) > 40) { go(target + Math.sign(acc)); acc = 0; lock = now + 380; }
+    }, { passive: false });
+    let y0: number | null = null;
+    dial.addEventListener('touchstart', (e) => { y0 = e.touches[0].clientY; }, { passive: true });
+    dial.addEventListener('touchmove', (e) => {
+      if (y0 === null) return;
+      e.preventDefault();
+      const d = y0 - e.touches[0].clientY;
+      if (Math.abs(d) > 40) { go(target + Math.sign(d)); y0 = e.touches[0].clientY; }
+    }, { passive: false });
+    dial.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); go(target + 1); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); go(target - 1); }
+    });
+
+    // Clicking a number goes to it; clicking the middle one (or "Read more") opens the pop-up.
+    nums.forEach((el, i) => el.addEventListener('click', () => (i === target ? open(el.dataset.id!) : go(i))));
+    dial.querySelectorAll<HTMLButtonElement>('.open').forEach((b) => b.addEventListener('click', () => open(b.dataset.id!)));
+  });
+</script>

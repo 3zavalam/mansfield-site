@@ -1,0 +1,49 @@
+---
+// /resources: a board of post-its, one per collection. Each opens its own page (/resources/<slug>).
+import Base from '../../layouts/Base.astro';
+import FlatObject from '../../components/FlatObject.astro';
+import { COLLECTIONS } from '../../resources';
+// A slightly different tilt and offset per note, so the board looks stuck by hand.
+const tilt = [-3, 2.5, -1.5, 3, -2.5];
+const lift = [0, 14, 4, 18, 8];
+---
+<Base title="Resources">
+  <link slot="head" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" />
+  <h1 class="sr-only">Resources</h1>
+  <ul class="board -mt-2 grid grid-cols-2 gap-x-4 gap-y-6 sm:-mt-4 sm:grid-cols-3 sm:gap-x-8 sm:gap-y-10">
+    {COLLECTIONS.map((c, i) => (
+      <li style={`--tilt:${tilt[i]}deg;--lift:${lift[i]}px;--note:${c.color}`}>
+        <a href={`/resources/${c.slug}`} class="note group">
+          <span class="tape" aria-hidden="true"></span>
+          <FlatObject kind={c.kind} class="icon mx-auto w-[78%]" />
+          <span class="label">{c.label}</span>
+          <span class="sub">{c.note}</span>
+          <span class="count">{c.list.length}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Base>
+
+<style>
+  .board li { transform: translateY(var(--lift)); }
+  .note {
+    position: relative; display: flex; flex-direction: column; aspect-ratio: 1; padding: 14% 10% 10%;
+    background: var(--note); color: #2b2620;
+    transform: rotate(var(--tilt)); transform-origin: 50% 0;
+    box-shadow: 0 1px 1px rgb(0 0 0 / .08), 0 14px 22px -12px rgb(0 0 0 / .35);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  /* A folded bottom-right corner */
+  .note::after { content: ''; position: absolute; right: 0; bottom: 0; width: 8%; height: 10%; background: linear-gradient(135deg, rgb(0 0 0 / .12) 0 50%, transparent 50%); }
+  .note:hover, .note:focus-visible { transform: rotate(0deg) translateY(-6px) scale(1.03); box-shadow: 0 2px 2px rgb(0 0 0 / .08), 0 24px 30px -14px rgb(0 0 0 / .4); outline: none; }
+  .note:focus-visible { box-shadow: 0 0 0 3px var(--color-accent); }
+  .tape { position: absolute; left: 50%; top: -9px; width: 34%; height: 20px; translate: -50% 0; rotate: -2deg; background: rgb(255 255 255 / .55); box-shadow: 0 1px 2px rgb(0 0 0 / .06); }
+  /* The drawing is another component, so reach it through the note. */
+  .note :global(.icon) { color: #3b342b; }
+  .note :global(.icon .fill-white), .note :global(.icon .fill-stone-100) { fill: rgb(255 255 255 / .55); }
+  .label { margin-top: auto; font-family: Caveat, 'Bradley Hand', cursive; font-size: clamp(26px, 4.4vw, 40px); font-weight: 700; line-height: 1; }
+  .sub { margin-top: .25rem; font-family: Caveat, 'Bradley Hand', cursive; font-size: clamp(15px, 2.2vw, 20px); line-height: 1.1; opacity: .7; }
+  .count { position: absolute; right: 9%; top: 9%; font: 600 12px ui-monospace, Menlo, monospace; opacity: .5; }
+  @media (prefers-reduced-motion: reduce) { .note { transition: none; } }
+</style>

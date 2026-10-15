@@ -4,6 +4,7 @@ const writing = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/writing' }),
   schema: z.object({
     title: z.string(),
+    subtitle: z.string().optional(), // shown after the title, not bold
     description: z.string(),
     date: z.coerce.date(),
     draft: z.boolean().default(false),

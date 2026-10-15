@@ -1,0 +1,23 @@
+---
+// /iteratev3/projects/dial: two dials like the two sides of a clock face. Projects (things I've built)
+// on the left, Experience (clubs I've worked for) on the right. See Dial.astro.
+import Base from '../../../layouts/Base.astro';
+import Dial from '../../../components/Dial.astro';
+import ProjectSheet from '../../../components/ProjectSheet.astro';
+import { NAV, HOME } from '../../../iteratev3';
+import { items } from '../../../iteratev3-projects';
+const builds = items.filter((i) => i.kind === 'Build');
+const clubs = items.filter((i) => i.kind === 'Club');
+---
+<Base title="Projects" nav={NAV} home={HOME} cta={false} footer={false} theme="v3">
+  {/* Full width of the window, not just the text column. */}
+  <div class="clock relative left-1/2 grid w-screen -translate-x-1/2 sm:grid-cols-2">
+    <Dial items={builds} label="Projects" side="left" />
+    <Dial items={clubs} label="Experience" side="right" class="border-t border-dotted border-stone-300 sm:border-t-0 sm:border-l dark:border-stone-700" />
+  </div>
+  <ProjectSheet />
+</Base>
+
+<style>
+  .clock { height: calc(100svh - 10.5rem); min-height: 440px; }
+</style>

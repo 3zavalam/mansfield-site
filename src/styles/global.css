@@ -17,3 +17,8 @@ a.link { @apply underline decoration-stone-300 underline-offset-4 transition-col
 .eyebrow { @apply text-xs font-medium uppercase tracking-[0.16em] text-stone-500 dark:text-stone-400; }
 .prose { --tw-prose-links: var(--color-ink); }
 .dark .prose { --tw-prose-links: #e7e5e4; }
+
+/* /iteratev3: Futura everywhere (Jost, a Futura-style web font, where Futura isn't installed). */
+.v3, .v3 .serif { font-family: Futura, "Futura PT", "Jost", "Century Gothic", ui-sans-serif, system-ui, sans-serif; }
+.v3 .serif { font-weight: 500; letter-spacing: -0.01em; }
+.v3 .mono { font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; }

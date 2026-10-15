@@ -1,0 +1,130 @@
+---
+// /iteratev3/projects/watch: a plain field watch. It tells the real time; each hour from 1 to 11 is a job
+// (1–5, oldest first) or a project (6–11). Point at an hour and the hands go there and the dial's small print
+// says what it is; click it to read more. On touch screens the first tap points, the second opens.
+import Base from '../../../layouts/Base.astro';
+import ProjectSheet from '../../../components/ProjectSheet.astro';
+import { NAV, HOME } from '../../../iteratev3';
+import { items } from '../../../iteratev3-projects';
+const order = ['udlap', 'riansa', 'piquero', 'mitacs', 'leon', 'winner-way', 'xg', 'match', 'web', 'reservas', 'superstore'];
+const SHORT: Record<string, string> = { mitacs: 'INRS × Mitacs', match: 'Post-match', web: 'Interactive Web', superstore: 'Superstore' };
+const hours = order.map((id, i) => {
+  const it = items.find((x) => x.id === id)!;
+  return { id, h: i + 1, name: SHORT[id] ?? it.t, kind: it.kind === 'Club' ? 'Experience' : 'Project', when: it.when };
+});
+const at = (h: number, r: number) => [Math.sin((h * Math.PI) / 6) * r, -Math.cos((h * Math.PI) / 6) * r] as const;
+---
+<Base title="Projects" nav={NAV} home={HOME} cta={false} footer={false} theme="v3">
+  <div class="watch-page flex flex-col items-center justify-center">
+    <div class="watch relative">
+      <svg viewBox="-230 -230 460 460" class="h-full w-full" role="img" aria-label="A watch whose hours are my jobs and projects">
+        <defs>
+          <radialGradient id="case" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#5b5b5f" /><stop offset=".6" stop-color="#3a3a3d" /><stop offset="1" stop-color="#232325" /></radialGradient>
+          <radialGradient id="dial" cx="45%" cy="40%" r="75%"><stop offset="0" stop-color="#1c1c1e" /><stop offset="1" stop-color="#0b0b0c" /></radialGradient>
+        </defs>
+        {/* Crown, case, dial */}
+        <rect x="200" y="-20" width="22" height="40" rx="5" fill="#3a3a3d" />
+        <path d="M203 -16 V16 M208 -18 V18 M213 -18 V18 M218 -16 V16" stroke="#29292b" stroke-width="2" />
+        <circle r="212" fill="url(#case)" />
+        <circle r="196" fill="#151517" />
+        <circle r="190" fill="url(#dial)" />
+        {/* Minute track and hour blocks */}
+        {Array.from({ length: 60 }, (_, i) => i % 5
+          ? <line y1="-182" y2="-174" transform={`rotate(${i * 6})`} stroke="#d6d3d1" stroke-width="1.6" />
+          : <rect x="-3.5" y="-184" width="7" height="13" transform={`rotate(${i * 6})`} fill="#f5f5f4" />)}
+        {/* Numerals */}
+        <text x="0" y={at(12, 140)[1] + 13} text-anchor="middle" class="numeral" fill="#f5f5f4">12</text>
+        {hours.map((o) => { const [x, y] = at(o.h, 140); return <text x={x} y={y + 13} text-anchor="middle" class="numeral" data-id={o.id} fill="#f5f5f4">{o.h}</text>; })}
+        {/* Small print */}
+        <text y="-62" text-anchor="middle" fill="#f5f5f4" class="brand">MANSFIELD</text>
+        <text y="-42" text-anchor="middle" fill="#d6d3d1" class="sub">PROJECTS</text>
+        <g class="print" text-anchor="middle">
+          <text y="66" fill="#a8a29e" class="kind">POINT AT AN HOUR</text>
+          <text y="88" fill="#f5f5f4" class="name">EST. 2024</text>
+        </g>
+        {/* Hands */}
+        <g class="hand-h"><path d="M-6 18 L-6 -78 L0 -92 L6 -78 L6 18 Z" fill="#f5f5f4" /><path d="M0 -20 V-80" stroke="#0b0b0c" stroke-width="2" /></g>
+        <g class="hand-m"><path d="M-4.5 22 L-4.5 -132 L0 -146 L4.5 -132 L4.5 22 Z" fill="#f5f5f4" /><path d="M0 -24 V-134" stroke="#0b0b0c" stroke-width="1.6" /></g>
+        <g class="hand-s"><path d="M0 40 V-160" stroke="#dc2626" stroke-width="2" /><circle cy="34" r="6" fill="none" stroke="#dc2626" stroke-width="3" /></g>
+        <circle r="8" fill="#dc2626" /><circle r="2.5" fill="#0b0b0c" />
+      </svg>
+      {/* The hours you can point at */}
+      {hours.map((o) => { const [x, y] = at(o.h, 140); return (
+        <button type="button" class="hour" data-id={o.id} data-h={o.h} data-kind={`${o.kind} · ${o.when}`.toUpperCase()} data-name={o.name.toUpperCase()}
+          style={`left:${50 + (x / 460) * 100}%;top:${50 + (y / 460) * 100}%`} aria-label={`${o.h} o'clock: ${o.name}`} />
+      ); })}
+    </div>
+    <p class="mt-5 text-center text-[12px] uppercase tracking-[0.18em] text-stone-500 dark:text-stone-400">Hover a number to see what it is · click to open it<br /><span class="text-stone-400 dark:text-stone-500">1–5 experience · 6–11 projects</span></p>
+  </div>
+  <ProjectSheet />
+</Base>
+
+<style>
+  .watch-page { min-height: calc(100svh - 10.5rem); }
+  .watch { width: min(100%, calc(100svh - 14rem), 560px); min-width: 280px; aspect-ratio: 1; filter: drop-shadow(0 20px 30px rgb(0 0 0 / .25)); }
+  .numeral { font-size: 38px; font-weight: 700; letter-spacing: -1px; transition: fill .2s ease; }
+  .numeral.on { fill: #dc2626; }
+  .brand { font-size: 19px; font-weight: 700; letter-spacing: 1px; }
+  .sub { font-size: 11px; font-weight: 600; letter-spacing: 3px; }
+  .kind { font-size: 9px; letter-spacing: 2px; }
+  .name { font-size: 15px; font-weight: 700; letter-spacing: 1.5px; }
+  .print { transition: opacity .2s ease; }
+  .print.fade { opacity: 0; }
+  /* Invisible buttons over each numeral (sized here, not with utility classes, so they always cover it). */
+  .hour { position: absolute; width: 13%; height: 13%; translate: -50% -50%; border-radius: 50%; cursor: pointer; background: transparent; z-index: 1; }
+  .hour:focus-visible { outline: 2px solid #dc2626; outline-offset: 2px; }
+</style>
+
+<script>
+  // Hands show the real time; pointing at an hour sends them there (hour hand on it, minute hand on 12).
+  const svg = document.querySelector<SVGSVGElement>('.watch svg')!;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hand = (sel: string) => ({ el: svg.querySelector<SVGGElement>(sel)!, a: 0, to: 0 });
+  const H = hand('.hand-h'), M = hand('.hand-m'), S = hand('.hand-s');
+  const print = svg.querySelector<SVGGElement>('.print')!;
+  const [kindEl, nameEl] = print.querySelectorAll('text');
+  const idle = [kindEl.textContent!, nameEl.textContent!];
+  let picked: HTMLButtonElement | null = null;
+
+  // Move a hand's target the shortest way round from where it's heading.
+  const aim = (h: { to: number }, deg: number) => { h.to += ((deg - h.to) % 360 + 540) % 360 - 180; };
+  const now = () => { const d = new Date(); return [((d.getHours() % 12) + d.getMinutes() / 60) * 30, (d.getMinutes() + d.getSeconds() / 60) * 6, d.getSeconds() * 6]; };
+  const [h0, m0, s0] = now(); H.a = H.to = h0; M.a = M.to = m0; S.a = S.to = s0;
+
+  const say = (kind: string, name: string) => {
+    print.classList.add('fade');
+    setTimeout(() => { kindEl.textContent = kind; nameEl.textContent = name; print.classList.remove('fade'); }, still ? 0 : 140);
+  };
+  const point = (b: HTMLButtonElement | null) => {
+    picked = b;
+    svg.querySelectorAll('.numeral').forEach((n) => n.classList.toggle('on', !!b && (n as SVGElement).dataset.id === b.dataset.id));
+    if (b) say(b.dataset.kind!, b.dataset.name!); else say(idle[0], idle[1]);
+  };
+
+  let lastSec = -1;
+  const frame = () => {
+    const [h, m, s] = now();
+    if (picked) { aim(H, +picked.dataset.h! * 30); aim(M, 0); } else { aim(H, h); aim(M, m); }
+    const sec = Math.round(s / 6);
+    if (sec !== lastSec) { aim(S, s); lastSec = sec; }
+    for (const [x, k] of [[H, .12], [M, .12], [S, .5]] as const) {
+      x.a = still ? x.to : x.a + (x.to - x.a) * k;
+      x.el.setAttribute('transform', `rotate(${x.a.toFixed(2)})`);
+    }
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+
+  const open = (id: string) => document.dispatchEvent(new CustomEvent('sheet:open', { detail: id }));
+  document.querySelectorAll<HTMLButtonElement>('.hour').forEach((b) => {
+    b.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') point(b); });
+    b.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') point(null); });
+    b.addEventListener('focus', () => { if (b.matches(':focus-visible')) point(b); }); // keyboard only
+    b.addEventListener('blur', () => point(null));
+    b.addEventListener('click', (e) => {
+      // Touch: first tap points at it, the second opens it.
+      if ((e as PointerEvent).pointerType === 'touch' && picked !== b) { point(b); return; }
+      open(b.dataset.id!);
+    });
+  });
+</script>

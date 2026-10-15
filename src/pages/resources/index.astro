@@ -1,0 +1,242 @@
+---
+// /resources: one object per collection, drawn like the disposable camera, each doing its own little thing
+// on hover (the flash fires, popcorn pops, the top book slides out, ON AIR lights up, the picture light
+// comes on). Clicking plays it once more and carries straight into the collection (see the script).
+import Base from '../../layouts/Base.astro';
+import DisposableCamera from '../../components/DisposableCamera.astro';
+import { MOVIES, BOOKS, PODCASTS, MUSEUMS } from '../../resources';
+import { TRIPS, PHOTO_COUNT, PLAIN_LOOK } from '../../trips';
+import { COUNTRIES } from '../../places';
+// Popcorn on top of the bucket: [x, y, r].
+const kernels = [[72, 92, 15], [96, 80, 16], [124, 74, 17], [152, 78, 16], [180, 84, 15], [200, 96, 12], [84, 70, 12], [112, 60, 13], [140, 58, 14], [168, 64, 12], [126, 44, 12], [100, 50, 10], [154, 46, 10]];
+const books = [
+  { x: 34, y: 176, w: 190, h: 34, bg: '#1f3a5f', fg: '#e9dfc6', t: 'GOAL · SORIANO' },
+  { x: 46, y: 144, w: 172, h: 32, bg: '#c9a227', fg: '#1d1a14', t: 'EXCELLENT ADVICE' },
+  { x: 28, y: 114, w: 184, h: 30, bg: '#e8e2d0', fg: '#2b2620', t: '' },
+  { x: 52, y: 84, w: 160, h: 30, bg: '#7a1f2b', fg: '#f1e3c8', t: 'THE DIP · GODIN', top: true },
+];
+const href = (slug: string) => `/resources/${slug}`;
+---
+<Base title="Resources">
+  <h1 class="sr-only">Resources</h1>
+  <ul class="things -mt-2 grid grid-cols-2 gap-x-6 gap-y-10 sm:-mt-4 sm:gap-x-10 sm:gap-y-4">
+    {/* Photos: the disposable camera */}
+    <li class="col-span-2 sm:col-span-1">
+      <a href={href('photos')} class="thing t-photos">
+        <span class="art"><DisposableCamera look={PLAIN_LOOK} exp={27} id="lens-clip-home" class="cam" /><span class="burst" aria-hidden="true"></span></span>
+        <span class="name">Photos</span><span class="sub">{TRIPS.length} {TRIPS.length === 1 ? 'roll' : 'rolls'}{PHOTO_COUNT ? ` · ${PHOTO_COUNT} photos` : ''}</span>
+      </a>
+    </li>
+
+    {/* Movies: a striped popcorn bucket */}
+    <li>
+      <a href={href('movies')} class="thing t-movies">
+        <span class="art">
+          <svg viewBox="0 0 260 220" aria-hidden="true">
+            <defs><clipPath id="bucket"><path d="M62 210L48 98H212L198 210Z" /></clipPath></defs>
+            <ellipse cx="130" cy="212" rx="78" ry="6" fill="rgb(0 0 0 / .1)" />
+            <g class="kernels">
+              {kernels.map(([x, y, r], i) => <g class="k" style={`--d:${(i % 5) * 60}ms`}><circle cx={x} cy={y + 18} r={r} fill="#fff6d8" stroke="#e7c873" stroke-width="1.5" /><circle cx={x - r * .3} cy={y + 18 - r * .3} r={r * .35} fill="#f6d77a" /></g>)}
+            </g>
+            <g clip-path="url(#bucket)">
+              <rect x="40" y="96" width="180" height="120" fill="#fbf5ec" />
+              {[0, 2, 4, 6, 8].map((i) => <rect x={40 + i * 20} y="96" width="20" height="120" fill="#d94f3d" />)}
+              <rect x="40" y="132" width="180" height="34" fill="#fbf5ec" />
+              <text x="130" y="154" text-anchor="middle" font-size="13" font-weight="800" letter-spacing="1.5" fill="#d94f3d">NOW SHOWING</text>
+            </g>
+            <path d="M44 98H216" stroke="#b83d2e" stroke-width="5" stroke-linecap="round" />
+          </svg>
+        </span>
+        <span class="name">Movies</span><span class="sub">{MOVIES.length} films</span>
+      </a>
+    </li>
+
+    {/* Books: a stack, spines out */}
+    <li>
+      <a href={href('books')} class="thing t-books">
+        <span class="art">
+          <svg viewBox="0 0 260 220" aria-hidden="true">
+            <ellipse cx="130" cy="212" rx="96" ry="6" fill="rgb(0 0 0 / .1)" />
+            {books.map((b) => (
+              <g class:list={['book', b.top && 'top']}>
+                <rect x={b.x} y={b.y} width={b.w} height={b.h} rx="3" fill={b.bg} />
+                <rect x={b.x + b.w - 12} y={b.y + 3} width="10" height={b.h - 6} fill="#f6efe0" />
+                <path d={`M${b.x + b.w - 11} ${b.y + 9}h8M${b.x + b.w - 11} ${b.y + 15}h8M${b.x + b.w - 11} ${b.y + 21}h8`} stroke="#d8cdb5" stroke-width="1" />
+                <rect x={b.x + 10} y={b.y + 4} width="3" height={b.h - 8} fill={b.fg} opacity=".5" />
+                {b.t && <text x={b.x + 22} y={b.y + b.h / 2 + 4} font-size="11" font-weight="700" letter-spacing="1.5" fill={b.fg}>{b.t}</text>}
+              </g>
+            ))}
+          </svg>
+        </span>
+        <span class="name">Books</span><span class="sub">{BOOKS.length} on the shelf</span>
+      </a>
+    </li>
+
+    {/* Podcasts: a broadcast mic and an ON AIR sign */}
+    <li class="pod">
+      <a href={href('podcasts')} class="thing t-podcasts">
+        <span class="art">
+          <svg viewBox="0 0 260 220" aria-hidden="true">
+            <ellipse cx="160" cy="212" rx="60" ry="6" fill="rgb(0 0 0 / .1)" />
+            <rect x="14" y="24" width="86" height="32" rx="6" fill="#26262a" /><rect class="lamp" x="20" y="30" width="74" height="20" rx="3" fill="#4a2522" />
+            <text x="57" y="45" text-anchor="middle" font-size="13" font-weight="800" letter-spacing="2" fill="#2a1513" class="lamp-text">ON AIR</text>
+            <path d="M160 160V200" stroke="#3b3b40" stroke-width="8" />
+            <rect x="120" y="198" width="80" height="12" rx="6" fill="#26262a" />
+            <path d="M118 96v26a42 42 0 0 0 84 0v-26" fill="none" stroke="#3b3b40" stroke-width="7" />
+            <rect x="132" y="30" width="56" height="118" rx="28" fill="#1d1d20" />
+            <path d="M136 56h48M134 72h52M134 88h52M134 104h52M136 120h48" stroke="#4a4a50" stroke-width="2" />
+            <rect x="132" y="128" width="56" height="20" fill="#2b2b30" />
+            <circle cx="160" cy="138" r="3" fill="#d94f3d" />
+            <path d="M200 200c26 0 30 -30 46 -30" fill="none" stroke="#26262a" stroke-width="4" stroke-linecap="round" />
+          </svg>
+        </span>
+        <span class="name">Podcasts</span><span class="sub">{PODCASTS.length} shows</span>
+      </a>
+    </li>
+
+    {/* Museums: a framed painting under its picture light */}
+    <li class="mus">
+      <a href={href('museums')} class="thing t-museums">
+        <span class="art">
+          <svg viewBox="0 0 260 220" aria-hidden="true">
+            <defs><radialGradient id="cone" cx="50%" cy="0%" r="90%"><stop offset="0" stop-color="#ffe7a8" stop-opacity=".75" /><stop offset="1" stop-color="#ffe7a8" stop-opacity="0" /></radialGradient></defs>
+            <path class="cone" d="M104 30L60 190H200L156 30Z" fill="url(#cone)" />
+            <rect x="96" y="20" width="68" height="9" rx="4" fill="#b8913e" /><path d="M130 20V8" stroke="#8a6c2f" stroke-width="3" />
+            <rect x="58" y="40" width="144" height="150" fill="#1a1512" />
+            <rect x="68" y="50" width="124" height="130" fill="#fbf9f4" />
+            <rect x="80" y="62" width="100" height="106" fill="#2f5d8a" />
+            <circle cx="150" cy="92" r="14" fill="#f2c94c" />
+            <path d="M80 168V132q18 -18 34 -2t34 -10t32 6V168Z" fill="#2e6b4f" />
+            <path d="M80 168V148q24 -12 50 0t50 -4V168Z" fill="#c8553d" />
+            <rect x="110" y="198" width="40" height="12" fill="#fff" stroke="#e7e5e4" />
+          </svg>
+        </span>
+        <span class="name">Museums</span><span class="sub">{MUSEUMS.length} curious things</span>
+      </a>
+    </li>
+
+    {/* Places: a folded paper map with pins */}
+    <li class="map">
+      <a href={href('places')} class="thing t-places">
+        <span class="art">
+          <svg viewBox="0 0 260 220" aria-hidden="true">
+            <defs><clipPath id="paper"><path d="M36 64L98 50L162 64L224 50V180L162 194L98 180L36 194Z" /></clipPath></defs>
+            <ellipse cx="130" cy="206" rx="96" ry="6" fill="rgb(0 0 0 / .1)" />
+            <path d="M36 64L98 50V180L36 194Z" fill="#e6dcc6" /><path d="M98 50L162 64V194L98 180Z" fill="#f4ecdb" /><path d="M162 64L224 50V180L162 194Z" fill="#e6dcc6" />
+            <g clip-path="url(#paper)">
+              <path d="M30 120q20 -30 46 -22t40 -18q22 -8 30 10t30 6q24 -12 34 8t30 4V200H30Z" fill="#3f8f86" opacity=".85" />
+              <path d="M40 80q14 -6 22 2t18 -4" fill="none" stroke="#3f8f86" stroke-width="7" stroke-linecap="round" opacity=".5" />
+              <path d="M58 168C90 150 104 120 126 112S170 116 190 98" fill="none" stroke="#1d1d20" stroke-width="2" stroke-dasharray="5 5" />
+            </g>
+            <path d="M98 50V180M162 64V194" stroke="rgb(0 0 0 / .12)" stroke-width="1.5" />
+            {[[126, 112], [190, 98], [58, 168]].map(([x, y], i) => (
+              <g class="mpin" style={`--d:${i * 90}ms`} transform={`translate(${x} ${y})`}><g class="mpin-in"><path d="M0 0C-9 -12 -9 -26 0 -26S9 -12 0 0Z" fill="#d94f3d" /><circle cy="-17" r="3.5" fill="#fbf5ec" /></g></g>
+            ))}
+          </svg>
+        </span>
+        <span class="name">Places</span><span class="sub">{COUNTRIES.length} countries · {COUNTRIES.reduce((n, c) => n + c.places.length, 0)} places</span>
+      </a>
+    </li>
+  </ul>
+</Base>
+
+<style>
+  /* Wide screens: two rows of three (Photos, Movies, Books; Podcasts, Museums, Places). */
+  @media (min-width: 640px) {
+    .things { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .things > li { grid-column: span 2; }
+  }
+  .thing { display: flex; flex-direction: column; align-items: center; text-align: center; outline: none; }
+  .art { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 260 / 220; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+  .art > svg, .art :global(.cam) { position: relative; width: 92%; overflow: visible; }
+  /* In the dark, a soft spotlight behind each object so dark ones (mic, frame) still read. */
+  :global(.dark) .art::before { content: ''; position: absolute; inset: 4% 8%; border-radius: 50%; background: radial-gradient(closest-side, rgb(255 255 255 / .09), transparent); }
+  .thing:hover .art, .thing:focus-visible .art { transform: translateY(-6px); }
+  .thing:focus-visible .name { color: var(--color-accent); }
+  .name { margin-top: 6px; font-size: 12px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; color: #57534e; transition: color .2s ease; }
+  .thing:hover .name { color: var(--color-ink); }
+  :global(.dark) .name { color: #a8a29e; }
+  :global(.dark) .thing:hover .name { color: #fff; }
+  .sub { margin-top: 2px; font-size: 13px; color: #a8a29e; }
+
+  /* Photos: the flash fires */
+  .burst { position: absolute; left: 41%; top: 18%; width: 26%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(#fff, rgb(255 255 255 / .6) 30%, transparent 70%); opacity: 0; pointer-events: none; }
+  .t-photos:hover .burst, .t-photos.go .burst { animation: burst .6s ease-out; }
+  .t-photos:hover :global(.flash-window), .t-photos.go :global(.flash-window) { animation: flashwin .6s ease-out; }
+  @keyframes burst { 10% { opacity: 1; transform: scale(2.2); } 100% { opacity: 0; transform: scale(3); } }
+  @keyframes flashwin { 10% { fill: #fff; } }
+
+  /* Movies: popcorn pops */
+  .k { transform-box: fill-box; transform-origin: center bottom; }
+  .t-movies:hover .k, .t-movies.go .k { animation: pop .55s cubic-bezier(.3, 1.6, .5, 1) var(--d) both; }
+  @keyframes pop { 40% { transform: translateY(-14px) rotate(-8deg); } 100% { transform: none; } }
+
+  /* Books: the top one slides out */
+  .book.top { transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+  .t-books:hover .book.top, .t-books.go .book.top { transform: translate(22px, -6px) rotate(-5deg); }
+
+  /* Podcasts: ON AIR lights up */
+  .lamp, .lamp-text { transition: fill .2s ease; }
+  .t-podcasts:hover .lamp, .t-podcasts.go .lamp { fill: #ff4b3e; filter: drop-shadow(0 0 8px #ff4b3e); }
+  .t-podcasts:hover .lamp-text, .t-podcasts.go .lamp-text { fill: #fff; }
+
+  /* Museums: the picture light comes on */
+  .cone { opacity: .15; transition: opacity .3s ease; }
+  .t-museums:hover .cone, .t-museums.go .cone { opacity: 1; }
+
+  /* Places: the pins drop in */
+  .mpin-in { transform-box: fill-box; transform-origin: center bottom; }
+  .t-places:hover .mpin-in, .t-places.go .mpin-in { animation: drop .5s cubic-bezier(.3, 1.5, .5, 1) var(--d) both; }
+  @keyframes drop { 0% { transform: translateY(-22px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+
+  :global(.leave) { position: fixed; inset: 0; z-index: 200; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) { .art, .book.top { transition: none; } .k, .burst, .thing :global(.flash-window) { animation: none !important; } }
+</style>
+
+<script>
+  // Leaving for a collection: the object does its trick, then a colour from it fills the screen from where it
+  // is (for the camera: we zoom into the lens and its black takes over). The collection page starts under the
+  // same colour and lets it go (see ResourceEnter.astro), so the two pages read as one move.
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dark = () => document.documentElement.classList.contains('dark');
+  const COLOR: Record<string, () => string> = {
+    photos: () => '#0b0c10', movies: () => '#d94f3d', books: () => '#7a1f2b', podcasts: () => '#1d1d20', museums: () => (dark() ? '#2b2621' : '#ece5d9'), places: () => '#3f8f86',
+  };
+  // How long each object's trick gets before the colour comes in.
+  const TRICK: Record<string, number> = { photos: 160, movies: 320, books: 260, podcasts: 220, museums: 260, places: 380 };
+  const center = (el: Element) => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+
+  document.querySelectorAll<HTMLAnchorElement>('.thing').forEach((a) => a.addEventListener('click', (e) => {
+    if (still || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    const slug = a.href.split('/').filter(Boolean).pop()!;
+    a.classList.remove('go'); void a.offsetWidth; a.classList.add('go');
+
+    let [x, y] = center(a.querySelector('.art')!);
+    if (slug === 'photos') {
+      // Zoom about the lens: (350, 160) in the camera's 520×300 drawing.
+      const cam = a.querySelector('.cam')!.getBoundingClientRect(), art = a.querySelector<HTMLElement>('.art')!, box = art.getBoundingClientRect();
+      x = cam.left + (cam.width * 350) / 520; y = cam.top + (cam.height * 160) / 300;
+      art.style.transformOrigin = `${x - box.left}px ${y - box.top}px`;
+      setTimeout(() => art.animate([{ transform: 'none' }, { transform: 'scale(18)' }], { duration: 620, easing: 'cubic-bezier(.7, 0, .9, .5)', fill: 'forwards' }), TRICK.photos);
+    }
+    const veil = document.createElement('div');
+    veil.className = 'leave';
+    veil.style.background = COLOR[slug]();
+    document.body.appendChild(veil);
+    const R = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    veil.animate([{ clipPath: `circle(0px at ${x}px ${y}px)` }, { clipPath: `circle(${R}px at ${x}px ${y}px)` }],
+      { duration: slug === 'photos' ? 520 : 480, delay: TRICK[slug] + (slug === 'photos' ? 140 : 0), easing: 'cubic-bezier(.6, 0, .4, 1)', fill: 'both' })
+      .finished.then(() => {
+        try { sessionStorage.setItem('res-enter', slug); } catch {}
+        location.href = a.href;
+      });
+  }));
+
+  // Coming back with the browser's back button restores this page as it was left: clear the veil and zoom.
+  addEventListener('pageshow', (e) => {
+    if (!e.persisted) return;
+    document.querySelectorAll('.leave').forEach((v) => v.remove());
+    document.querySelectorAll<HTMLElement>('.thing').forEach((t) => { t.classList.remove('go'); t.querySelector<HTMLElement>('.art')!.getAnimations().forEach((an) => an.cancel()); });
+  });
+</script>

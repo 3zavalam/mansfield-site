@@ -1,5 +1,6 @@
 ---
-title: "Villarreal CF 24/25: my first club analysis"
+title: "Villarreal CF 24/25"
+subtitle: "My first club analysis"
 description: "Villarreal CF 24/25: notes, interactive version and sources."
 date: 2026-10-13
 tags: [business-analysis, football, villarreal]
@@ -7,9 +8,9 @@ tags: [business-analysis, football, villarreal]
 
 ## The notes
 
-<a class="not-prose block cursor-zoom-in" href="/writing/villarreal-24-25/notes-hires.webp" data-lightbox="/writing/villarreal-24-25/notes-hires.webp" aria-label="Open the notes full size"><picture><source media="(min-width: 900px)" srcset="/writing/villarreal-24-25/notes-preview.webp" /><img src="/writing/villarreal-24-25/notes-preview-sm.webp" alt="Emilio's handwritten one-page notes on Villarreal CF's 2024/25 accounts, in Spanish: three statements, amortisation, player sales, academy, LaLiga squad cost limit and wage ratios" width="2550" height="1650" loading="lazy" class="w-full rounded-lg border border-stone-200 bg-white dark:border-stone-800" /></picture></a>
+<a class="not-prose block cursor-zoom-in" href="/writing/villarreal-24-25/notes-yellow-hires.jpg" data-lightbox="/writing/villarreal-24-25/notes-yellow-hires.jpg" aria-label="Open the notes full size"><picture><source media="(min-width: 900px)" srcset="/writing/villarreal-24-25/notes-yellow.jpg" /><img src="/writing/villarreal-24-25/notes-yellow-sm.jpg" alt="Emilio's handwritten one-page notes on Villarreal CF's 2024/25 accounts, in Spanish: three statements, amortisation, player sales, academy, LaLiga squad cost limit and wage ratios" width="2550" height="1650" loading="lazy" class="w-full rounded-lg border border-stone-200 bg-white dark:border-stone-800" /></picture></a>
 
-<p class="not-prose mt-4 text-sm"><a class="link" href="/writing/villarreal-24-25/villarreal-cf-24-25-notes.pdf" download>Download PDF (8.6 MB)</a></p>
+<p class="not-prose mt-4 text-sm"><a class="link" href="/writing/villarreal-24-25/villarreal-cf-24-25-notes-yellow.pdf" download>Download PDF (9.1 MB)</a></p>
 
 ## Interactive version
 
