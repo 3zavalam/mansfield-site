@@ -99,6 +99,16 @@ export const MOVIES: Movie[] = moviePosters
 // From the vault (`npm run resources`, see scripts/import-obsidian.mjs): src/data/books.json.
 export const BOOK_STATUS = [['reading', 'Reading'], ['read', 'Read'], ['paused', 'Paused'], ['next', 'Next']] as const;
 export const BOOKS: Book[] = bookList as Book[];
+// Favorites, kept here so `npm run resources` never touches them. Matched by title against the vault's list;
+// a favorite that isn't in the list carries its own author.
+const FAVORITES: { title: string; author?: string }[] = [
+  { title: "Goal - The Ball Doesn't Go In By Chance" },
+  { title: 'Running Down a Dream' },
+  { title: 'What I Talk About When I Talk About Running', author: 'Haruki Murakami' },
+  { title: 'Thinking, Fast and Slow' },
+  { title: 'Excellent Advice for Living' },
+];
+export const FAVORITE_BOOKS: Book[] = FAVORITES.map((f) => BOOKS.find((b) => b.title === f.title) ?? { title: f.title, author: f.author, status: 'read' });
 
 // His podcast ideas from the vault (Main/Ideas, `tipo: podcast`; see scripts/import-obsidian.mjs), one tile per show.
 const PODCAST_INFO: Record<string, { hosts?: string; comment?: string }> = {

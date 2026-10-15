@@ -1,0 +1,23 @@
+---
+// One labelled shelf of spines on /resources/books.
+import type { Book } from '../resources';
+interface Props { label: string; list: (Book & { i: number })[]; spine: (t: string) => { color: string[]; height: number; width: number } }
+const { label, list, spine } = Astro.props;
+---
+<section class="mt-4">
+  <h2 class="eyebrow mb-3">{label} <span class="mono text-[12px] text-stone-400">{list.length}</span></h2>
+  <ul class="shelf">
+    {list.map((b) => {
+      const s = spine(b.title);
+      return (
+        <li>
+          <button type="button" class:list={['spine', b.title.length > 20 && 'long']} data-title={b.title} data-author={b.author ?? ''} data-note={b.note ?? ''} aria-label={b.author ? `${b.title}, by ${b.author}` : b.title}
+            style={`--bg:${s.color[0]};--fg:${s.color[1]};--i:${b.i};height:${s.height}%;width:${s.width}px`}>
+            <span class="t">{b.title}</span>
+            {b.author && <span class="a">{b.author}</span>}
+          </button>
+        </li>
+      );
+    })}
+  </ul>
+</section>

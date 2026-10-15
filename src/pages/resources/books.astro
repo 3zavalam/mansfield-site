@@ -4,8 +4,9 @@
 import Base from '../../layouts/Base.astro';
 import ResourceTitle from '../../components/ResourceTitle.astro';
 import SampleNote from '../../components/SampleNote.astro';
+import BookShelf from '../../components/BookShelf.astro';
 import ResourceEnter from '../../components/ResourceEnter.astro';
-import { BOOKS, BOOK_STATUS, hasSamples } from '../../resources';
+import { BOOKS, FAVORITE_BOOKS, hasSamples, type Book } from '../../resources';
 // Spine colours: [background, text]. Picked from the title so a book always gets the same one.
 const SPINES = [['#1f3a5f', '#e9dfc6'], ['#7a1f2b', '#f1e3c8'], ['#2f4f3a', '#e9dfc6'], ['#c9a227', '#1d1a14'], ['#e8e2d0', '#2b2620'], ['#3b2f2f', '#d8b86a'], ['#b04a2f', '#fbeee0'], ['#1d1d1f', '#d8b86a'], ['#5b6b8c', '#f4efe4'], ['#d8cfc0', '#3b2f2f']];
 const hash = (s: string) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
@@ -14,42 +15,30 @@ const spine = (title: string) => {
   // Long titles get a thicker spine and wrap onto two lines.
   return { color: SPINES[h % SPINES.length], height: 80 + (h % 20), width: title.length > 20 ? 66 : 38 + title.length * 0.8 };
 };
+const byStatus = (st: string) => BOOKS.filter((b) => b.status === st);
+let n = 0;
+const shelf = (label: string, list: typeof BOOKS) => ({ label, list: list.map((b) => ({ ...b, i: n++ })) });
+const top = [shelf('Favorites', FAVORITE_BOOKS), shelf('Reading', byStatus('reading'))];
+const rest = [shelf('Next', byStatus('next')), shelf('Read', byStatus('read')), shelf('Paused', byStatus('paused'))].filter((x) => x.list.length);
 ---
 <Base title="Books">
   <ResourceEnter slot="head" slug="books" />
   <ResourceTitle label="Books" count={BOOKS.length} />
   <SampleNote show={hasSamples(BOOKS)} />
   <p class="caption min-h-[4.5rem] text-[17px] leading-snug" aria-live="polite"><span class="text-stone-500 dark:text-stone-400">Pick a book.</span></p>
-  {BOOK_STATUS.map(([status, label]) => {
-    const list = BOOKS.filter((b) => b.status === status);
-    return list.length > 0 && (
-      <section class="mt-4">
-        <h2 class="eyebrow mb-3">{label} <span class="mono text-[12px] text-stone-400">{list.length}</span></h2>
-        <ul class="shelf">
-          {list.map((b) => {
-            const s = spine(b.title);
-            const i = BOOKS.indexOf(b);
-            return (
-              <li>
-                <button type="button" class:list={['spine', b.title.length > 20 && 'long']} data-title={b.title} data-author={b.author ?? ''} data-note={b.note ?? ''} aria-label={b.author ? `${b.title}, by ${b.author}` : b.title}
-                  style={`--bg:${s.color[0]};--fg:${s.color[1]};--i:${i};height:${s.height}%;width:${s.width}px`}>
-                  <span class="t">{b.title}</span>
-                  {b.author && <span class="a">{b.author}</span>}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-    );
-  })}
+  <div class="duo grid gap-x-8 sm:grid-cols-2">
+    {top.map((sh) => <BookShelf {...sh} spine={spine} />)}
+  </div>
+  {rest.map((sh) => <BookShelf {...sh} spine={spine} />)}
 </Base>
 
-<style>
+<style is:global>
   /* Each row of the shelf is 300px of books on a wooden board; spines stand at the bottom of their slot. */
   .shelf { display: flex; flex-wrap: wrap; align-items: stretch; }
+  /* Favorites and Reading share a row: one board each, spines squeeze instead of wrapping. */
+  @media (min-width: 640px) { .duo .shelf { flex-wrap: nowrap; } .duo .shelf li { flex: 1 1 0; min-width: 0; } .duo .spine { max-width: 100%; } }
   .shelf li { flex: 1 0 auto; display: flex; align-items: flex-end; justify-content: center; height: 300px; padding: 0 2px; border-bottom: 14px solid #b9925e; box-shadow: inset 0 -1px 0 #8a6a3f; margin-bottom: 28px; }
-  :global(.dark) .shelf li { border-bottom-color: #6b4f2f; box-shadow: inset 0 -1px 0 #4a361f; }
+  .dark .shelf li { border-bottom-color: #6b4f2f; box-shadow: inset 0 -1px 0 #4a361f; }
   .spine {
     display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 14px 0 12px;
     background: var(--bg); color: var(--fg); border-radius: 3px 3px 1px 1px; cursor: pointer;
@@ -64,7 +53,7 @@ const spine = (title: string) => {
   .spine.long .t { font-size: 11px; line-height: 1.2; }
   .spine .a { flex: none; margin-top: 10px; white-space: nowrap; font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; opacity: .75; }
   /* Coming from /resources: the books drop onto the shelf one after another. */
-  :global(html.res-enter) .spine { animation: res-drop .6s cubic-bezier(.2, .9, .3, 1.15) both; animation-delay: calc(var(--i) * 50ms + 220ms); }
+  html.res-enter .spine { animation: res-drop .6s cubic-bezier(.2, .9, .3, 1.15) both; animation-delay: calc(var(--i) * 50ms + 220ms); }
   @keyframes res-drop { from { opacity: 0; transform: translateY(-60px); } }
   @media (prefers-reduced-motion: reduce) { .spine { transition: none; animation: none !important; } }
 </style>
