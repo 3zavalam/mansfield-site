@@ -2,10 +2,12 @@
 // /personal: two cards up top (analyses published, goals: click one for its dates), then life in weeks up to 90.
 // The weeks are drawn at build time and redrawn in the browser so the count is always today's.
 import Base from '../layouts/Base.astro';
-import { getPosts } from '../posts';
+import { getPosts, getMemos, memoName } from '../posts';
 import { GOALS, EVENTS, YEARS, WEEKS_PER_YEAR, CELL, BOX, DIP_ME, lifeWeeks, squares, weekOf } from '../personal';
 const posts = await getPosts();
 const latest = posts[0];
+// Memo of the month: one line linking to the newest memo.
+const memo = (await getMemos())[0];
 const target = GOALS.find((g) => g.analyses);
 const { total, lived, pct } = lifeWeeks();
 const W = WEEKS_PER_YEAR * CELL, H = YEARS * CELL;
@@ -110,6 +112,15 @@ const span = (from: string, to: string) => {
       ))}
     </div>
   </div>
+
+  {/* Memo of the month: one line, opening onto the memo's page. */}
+  {memo && (
+    <a href={`/personal/memos/${memo.id}`} class="group mt-5 flex items-baseline gap-2 text-[17px]">
+      <span class="font-semibold">{memoName(memo)}</span>
+      {memo.data.draft && <span class="text-sm font-medium text-amber-700 dark:text-amber-400">Draft</span>}
+      <span class="text-stone-400 transition-transform group-hover:translate-x-1 group-hover:text-accent dark:group-hover:text-accent-dark">→</span>
+    </a>
+  )}
 
   {/* The Dip (Seth Godin): the curve from the book, with where I think I am on it. */}
   <section class="mt-14 grid items-center gap-6 sm:grid-cols-[1fr_1.35fr] sm:gap-10" aria-labelledby="dip">

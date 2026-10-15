@@ -1,0 +1,28 @@
+---
+// One monthly memo: just my text, laid out like an analysis.
+import Base from '../../../layouts/Base.astro';
+import { render } from 'astro:content';
+import { getMemos, memoName } from '../../../posts';
+export async function getStaticPaths() {
+  const memos = await getMemos();
+  return memos.map((memo, i) => ({ params: { slug: memo.id }, props: { memo, newer: memos[i - 1], older: memos[i + 1] } }));
+}
+const { memo, newer, older } = Astro.props;
+const { Content } = await render(memo);
+---
+<Base title={memoName(memo)} description={`${memoName(memo)}.`} type="article">
+  <article>
+    <p class="eyebrow"><a href="/personal" class="hover:text-ink dark:hover:text-stone-100">Personal</a></p>
+    <h1 class="serif mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{memoName(memo)}</h1>
+    {memo.data.draft && <p class="mt-4 text-sm font-medium text-amber-700 dark:text-amber-400">Draft</p>}
+    <div class="prose prose-stone mt-10 max-w-none prose-headings:font-semibold prose-h2:text-2xl prose-p:text-[17px] prose-p:leading-[1.75] prose-li:text-[17px] prose-blockquote:border-amber-500 prose-blockquote:not-italic prose-a:decoration-stone-300 prose-a:underline-offset-4 dark:prose-invert">
+      <Content />
+    </div>
+  </article>
+  {(newer || older) && (
+    <nav class="mt-16 flex justify-between gap-6 border-t border-stone-200 pt-6 text-sm dark:border-stone-800">
+      {older ? <a href={`/personal/memos/${older.id}`} class="group"><span class="block text-stone-500 dark:text-stone-400">← Previous</span><span class="font-medium group-hover:text-accent dark:group-hover:text-accent-dark">{memoName(older)}</span></a> : <span></span>}
+      {newer && <a href={`/personal/memos/${newer.id}`} class="group text-right"><span class="block text-stone-500 dark:text-stone-400">Next →</span><span class="font-medium group-hover:text-accent dark:group-hover:text-accent-dark">{memoName(newer)}</span></a>}
+    </nav>
+  )}
+</Base>

@@ -8,3 +8,11 @@ export async function getPosts() {
   const all = await getCollection('writing', (p) => SHOW_DRAFTS || !p.data.draft);
   return all.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
+
+// Monthly memos, newest first. Each is called "Memo of October, 2026", plus ": its title" if it has one.
+export const monthName = (month: string) => new Date(`${month}-01T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' }) + `, ${month.slice(0, 4)}`;
+export const memoName = (m: { data: { month: string; title?: string } }) => `Memo of ${monthName(m.data.month)}${m.data.title ? `: ${m.data.title}` : ''}`;
+export async function getMemos() {
+  const all = await getCollection('memos', (m) => SHOW_DRAFTS || !m.data.draft);
+  return all.sort((a, b) => b.data.month.localeCompare(a.data.month));
+}
