@@ -12,6 +12,10 @@
 //                                   embedded photo (![[...]] in Attachments/) and the text under it becomes one piece,
 //                                   grouped by the note's ## sections. Photos go to public/img/resources/museums/<visit>/
 //                                   as 1600px WebP + 600px thumbs; sharp drops all EXIF/GPS metadata.
+// House inspiration ("Casa", Main/Resources/Casa) is never imported anywhere on the site. Museums are read ONLY
+// from Main/Resources/Museos/ (plus the photos those notes embed, from Attachments/). As guards: any note under a
+// Casa/ folder or tagged casa/house, any museum ## section about the house ("Para la casa"), any line tagged
+// #casa/#house, and the pieces listed in CASA_PIECES (a safety net) are all skipped.
 // Personal/ is never read. Writes src/data/books.json, podcasts.json and museums.json (read by src/resources.ts).
 // Notes in those files are edited by hand and kept as they are (even when empty); only a new entry gets its
 // first "Mi nota" as a starting note. Re-running adds and removes entries.
@@ -24,6 +28,19 @@ const OUT = 'src/data';
 // Kept off the site on purpose (health / therapy / addiction).
 const EXCLUDE = ['The Glucose Revolution', 'Sin miedo', 'In the Realm of Hungry Ghosts', 'Good Sugar Bad Sugar'];
 
+// Safety net: house items by source note and piece title, in case a note still holds them.
+const CASA_PIECES = { 'ROM - Toronto (oct 2026)': ['Platos celadon', 'Mesa tallada'] };
+const CASA_TAGS = /^(casa|house)(\/|$)/i;
+const CASA_SECTION = /\b(casa|house|home)\b/i;
+const isCasaPath = (rel) => /(^|\/)Casa\//i.test(rel.split(path.sep).join('/'));
+const tagsOf = (txt) => {
+  const head = txt.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
+  const inline = head.match(/^tags:\s*\[?([^\]\n]*)\]?\s*$/m)?.[1] ?? '';
+  const list = [...head.matchAll(/^\s*-\s*(.+)$/gm)].filter((m) => /^tags:\s*$/m.test(head.slice(0, m.index))).map((m) => m[1]);
+  const body = [...txt.matchAll(/(?:^|\s)#([\p{L}\w/-]+)/gu)].map((m) => m[1]);
+  return [...inline.split(','), ...list, ...body].map((t) => t.trim().replace(/^["'#]|["']$/g, '')).filter(Boolean);
+};
+const isCasa = (rel, txt = '') => isCasaPath(rel) || tagsOf(txt).some((t) => CASA_TAGS.test(t));
 const md = (dir) => (fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith('.md')).sort((a, b) => a.localeCompare(b)) : []);
 const read = (f) => fs.readFileSync(f, 'utf8');
 const front = (txt) => {
@@ -42,7 +59,9 @@ const RW_BOOKS = path.join(VAULT, 'Readwise/Books');
 const oldBooks = prev('books.json', (b) => b.title);
 const books = [];
 for (const f of md(path.join(VAULT, 'Main/Resources/Leer/Lista'))) {
-  const fm = front(read(path.join(VAULT, 'Main/Resources/Leer/Lista', f)));
+  const btxt = read(path.join(VAULT, 'Main/Resources/Leer/Lista', f));
+  if (isCasa(path.join('Main/Resources/Leer/Lista', f), btxt)) continue;
+  const fm = front(btxt);
   const [title, byline] = f.replace(/\.md$/, '').split(' — ');
   if (fm.tipo !== 'Libro' || EXCLUDE.includes(title)) continue;
   const status = fm.estado === 'Leyendo' ? 'reading' : fm.estado === 'Leído' ? 'read' : fm.estado === 'Pausado' ? 'paused' : fm.next === 'true' ? 'next' : null;
@@ -61,7 +80,7 @@ const ideas = new Map();
 const POD_DIRS = ['Main/Ideas', 'Main/Ideas/Podcasts'];
 for (const f of POD_DIRS.flatMap((d) => md(path.join(VAULT, d)).map((n) => path.join(d, n)))) {
   const txt = read(path.join(VAULT, f));
-  if (!/^tipo:\s*podcast\s*$/m.test(txt)) continue;
+  if (!/^tipo:\s*podcast\s*$/m.test(txt) || isCasa(f, txt)) continue;
   const head = txt.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
   const get = (k) => head.match(new RegExp(`^${k}:[ \\t]*(.*)$`, "m"))?.[1].trim().replace(/^'(.*)'$/, (_, v) => v.replace(/''/g, "'")).replace(/^"(.*)"$/, '$1').trim();
   const title = get('titulo') || path.basename(f).replace(/( \d+)?\.md$/, '');
@@ -106,6 +125,8 @@ for (const f of md(path.join(VAULT, 'Main/Resources/Museos'))) {
   if (!m) continue;
   const [, short, city, mon, year] = m;
   const txt = read(path.join(VAULT, 'Main/Resources/Museos', f));
+  if (isCasa(path.join('Main/Resources/Museos', f), txt)) continue;
+  const skipTitles = CASA_PIECES[f.replace(/\.md$/, '')] ?? [];
   const full = txt.match(new RegExp(`${short} \\(([^)]+)\\)`))?.[1];
   const day = txt.match(/el (\d{1,2}) de (\w+) de (\d{4})/);
   const month = String(MONTHS[mon.toLowerCase().slice(0, 3)]).padStart(2, '0');
@@ -123,11 +144,14 @@ for (const f of md(path.join(VAULT, 'Main/Resources/Museos'))) {
   for (const line of txt.split('\n')) {
     const h = line.match(/^##\s+(.+)/);
     if (h) { section = h[1].trim(); cur = undefined; continue; }
+    if (section && CASA_SECTION.test(section)) continue; // e.g. "## Para la casa"
+    if (/(?:^|\s)#(casa|house)\b/i.test(line)) { cur = undefined; continue; }
     const e = line.match(/^!\[\[([^\]|]+\.(?:jpe?g|png|webp|heic))(?:\|[^\]]*)?\]\]/i);
     if (e) {
       const src = path.join(VAULT, 'Attachments', e[1]);
-      if (!fs.existsSync(src)) { cur = undefined; continue; }
       const slug = e[1].replace(/\.[^.]+$/, '').replace(/^.*? - /, '');
+      const skipped = skipTitles.some((t) => t.toLowerCase() === slug.toLowerCase());
+      if (!fs.existsSync(src) || skipped) { cur = skipped ? null : undefined; continue; }
       const name = slug.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-');
       const big = await sharp(src).rotate().resize({ width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true }).webp({ quality: 80 }).toFile(path.join(imgDir, `${name}.webp`));
       await sharp(src).rotate().resize({ width: 600, height: 600, fit: 'inside', withoutEnlargement: true }).webp({ quality: 78 }).toFile(path.join(imgDir, `${name}-sm.webp`));
@@ -137,6 +161,7 @@ for (const f of md(path.join(VAULT, 'Main/Resources/Museos'))) {
     }
     if (!line.trim() || /^\[\[.*\]\]$/.test(line.trim())) continue;
     if (!section) continue; // the intro line
+    if (cur === null) continue; // the text under a skipped (house) photo
     if (!cur) { cur = { section, text: [] }; pieces.push(cur); }
     cur.text.push(line.trim());
   }

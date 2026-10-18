@@ -3,7 +3,7 @@
     "name": "Royal Ontario Museum (ROM)",
     "city": "Toronto",
     "date": "2026-10-02",
-    "note": "Came away inspired by Chinese prints, celadon-green ceramics and mineral color palettes, plus the idea of Han and Tang epitaphs as short life biographies.",
+    "note": "Came away inspired by Chinese prints and mineral color palettes, plus the idea of Han and Tang epitaphs as short life biographies.",
     "pieces": [
       {
         "section": "Inspiración",
@@ -49,24 +49,6 @@
         "w": 1200,
         "h": 1600,
         "note": "Idea: usar este estilo para perfiles/profile pictures (como los avatares de cada bot en Grok Bot o los de Xbox) si algún día hago algo que ocupe logos o perfiles. Cada máscara puede ser uno."
-      },
-      {
-        "section": "Para la casa",
-        "title": "Platos celadon",
-        "img": "/img/resources/museums/rom-toronto-2026-10/platos-celadon.webp",
-        "sm": "/img/resources/museums/rom-toronto-2026-10/platos-celadon-sm.webp",
-        "w": 1600,
-        "h": 1200,
-        "note": "Me gustaron cómo se ven estos platos/tazones verde celadón. Para la casa."
-      },
-      {
-        "section": "Para la casa",
-        "title": "Mesa tallada",
-        "img": "/img/resources/museums/rom-toronto-2026-10/mesa-tallada.webp",
-        "sm": "/img/resources/museums/rom-toronto-2026-10/mesa-tallada-sm.webp",
-        "w": 1600,
-        "h": 1200,
-        "note": "Me gustó la mesa, el color y el grosor. No me gustaron las patas con esculturas. Para la casa."
       },
       {
         "section": "La muerte y los epitafios",
