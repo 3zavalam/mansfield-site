@@ -1,0 +1,1055 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Radiografía del Valencia</title>
+<meta name="description" content="Análisis financiero del Valencia CF, 2022/23 a 2025/26, con cada cifra enlazada a su documento.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Archivo:wdth,wght@75..100,400..700&display=swap">
+<style>
+/* Layout: "expediente" — una columna de lectura con margen de fuentes a la izquierda; cada cifra lleva su sello de origen. */
+:root{
+  --paper:#F1F2EF; --paper-2:#E6E8E4; --plate:#F7F6F1; --ink:#15181D; --ink-2:#3A4048; --muted:#62686F; --rule:#CBCFCB;
+  --azul:#1F3F8C; --azul-soft:#DCE3F2; --naranja:#C4501A;
+  --gain:#2B7449; --gain-soft:#D9EADF; --loss:#B0372A; --loss-soft:#F2DAD5;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4;
+  --f-display:"Gloock", "Bodoni 72", Didot, Georgia, serif;
+  --f-body:"Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --f-ui:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --measure:40rem; --wide:68rem;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#121417; --paper-2:#1B1E22; --plate:#E9E8E2; --ink:#ECEDE9; --ink-2:#C7CAC6; --muted:#989EA6; --rule:#2E3238;
+  --azul:#93AEF2; --azul-soft:#1F2B45; --naranja:#F08A4B;
+  --gain:#6CC08F; --gain-soft:#1C3226; --loss:#EE8272; --loss-soft:#3B2321;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#121417; --paper-2:#1B1E22; --plate:#E9E8E2; --ink:#ECEDE9; --ink-2:#C7CAC6; --muted:#989EA6; --rule:#2E3238;
+  --azul:#93AEF2; --azul-soft:#1F2B45; --naranja:#F08A4B;
+  --gain:#6CC08F; --gain-soft:#1C3226; --loss:#EE8272; --loss-soft:#3B2321;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; color-scheme:dark }
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:1.075rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{padding-inline:clamp(16px,4vw,40px);padding-block:0 4rem}
+a{color:var(--azul);text-underline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;line-height:1.08;margin:0}
+p{margin:0}
+.tab{font-variant-numeric:tabular-nums}
+.ui{font-family:var(--f-ui)}
+.eyebrow{font-family:var(--f-ui);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+:focus-visible{outline:2px solid var(--azul);outline-offset:2px;border-radius:3px}
+
+/* ---------- top bar ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.bar-in{max-width:var(--wide);margin:0 auto;padding:.5rem clamp(16px,4vw,40px);display:flex;gap:1rem;align-items:center}
+.brand{font-family:var(--f-display);font-size:1.05rem;white-space:nowrap}
+.chap{display:flex;gap:.25rem;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}
+.chap::-webkit-scrollbar{display:none}
+.chap a{font-family:var(--f-ui);font-size:.78rem;color:var(--muted);text-decoration:none;padding:.3rem .55rem;border-radius:99px;white-space:nowrap}
+.chap a:hover,.chap a.on{color:var(--ink);background:var(--paper-2)}
+
+/* ---------- hero ---------- */
+.hero{max-width:var(--wide);margin:0 auto;padding-top:clamp(1.5rem,4vw,3rem)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:1.5rem}
+.kicker{display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center}
+.live{font-family:var(--f-ui);font-size:.78rem;display:inline-flex;align-items:center;gap:.45rem;padding:.25rem .65rem;border-radius:99px;background:var(--loss-soft);color:var(--loss);font-weight:600}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--loss)}
+.hero h1{font-size:clamp(2.6rem,7.2vw,5.6rem);letter-spacing:-.01em;max-width:14ch}
+.hero h1 em{font-style:normal;color:var(--azul)}
+.dek{font-size:clamp(1.12rem,2vw,1.32rem);color:var(--ink-2);max-width:var(--measure);line-height:1.5}
+.byline{font-family:var(--f-ui);font-size:.82rem;color:var(--muted)}
+.plate{background:var(--plate);border-radius:2px;overflow:hidden;box-shadow:0 1px 0 var(--rule)}
+.plate img{display:block;width:100%;height:auto}
+:root[data-theme="dark"] .plate img{filter:brightness(.88) contrast(1.02)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .plate img{filter:brightness(.88) contrast(1.02)}}
+figcaption{font-family:var(--f-ui);font-size:.78rem;color:var(--muted);margin-top:.5rem;line-height:1.45}
+
+/* ---------- sections ---------- */
+section.ch{max-width:var(--wide);margin:0 auto;padding-top:clamp(3rem,7vw,5.5rem);scroll-margin-top:3.5rem}
+.ch-head{display:grid;gap:.6rem;max-width:var(--measure);margin-bottom:1.6rem}
+.ch-head .num{font-family:var(--f-display);font-size:1rem;color:var(--azul)}
+.ch-head h2{font-size:clamp(1.9rem,4.2vw,2.9rem)}
+.prose{max-width:var(--measure);display:grid;gap:1rem}
+.lede{max-width:var(--measure)}
+#bullets{display:grid;gap:1.1rem}
+.prose strong{font-weight:600}
+.split{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem;align-items:start}
+@media (min-width:880px){.split{grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)}.split.rev{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}}
+hr.rule{border:0;border-top:1px solid var(--rule);margin:0}
+
+/* source chips */
+.src{all:unset;cursor:pointer;font-family:var(--f-ui);font-size:.7rem;font-weight:600;letter-spacing:.02em;color:var(--azul);background:var(--azul-soft);padding:.12rem .45rem;border-radius:3px;white-space:nowrap;vertical-align:.12em;line-height:1.4}
+.src::before{content:"↗ ";opacity:.7}
+.src:hover{filter:brightness(1.07)}
+.src:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+.est{font-family:var(--f-ui);font-size:.7rem;font-weight:600;color:var(--muted);border:1px dashed var(--rule);padding:.08rem .4rem;border-radius:3px;white-space:nowrap;vertical-align:.12em}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+.stat{padding:1.1rem 1.1rem 1.2rem 0;display:grid;gap:.35rem;align-content:start;border-right:1px solid var(--rule)}
+.stat + .stat{padding-left:1.1rem}
+.stat:last-child{border-right:0}
+@media (max-width:600px){.stat{border-right:0;border-bottom:1px solid var(--rule);padding-left:0!important}.stat:last-child{border-bottom:0}}
+.stat b{font-family:var(--f-display);font-weight:400;font-size:clamp(2.2rem,4.5vw,3rem);line-height:1;font-variant-numeric:tabular-nums}
+.stat b.neg{color:var(--loss)}
+.stat span{font-size:.95rem;color:var(--ink-2);line-height:1.4}
+
+/* panels & controls */
+.panel{background:var(--paper-2);border-radius:6px;padding:clamp(1rem,2.5vw,1.6rem);display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;min-width:0}
+.panel>*,.prose>*,.card>*{min-width:0}
+.ctrls{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center}
+.seg{display:inline-flex;background:var(--paper);border:1px solid var(--rule);border-radius:99px;padding:3px;flex-wrap:wrap}
+.seg button{all:unset;cursor:pointer;font-family:var(--f-ui);font-size:.82rem;padding:.35rem .8rem;border-radius:99px;color:var(--muted);font-variant-numeric:tabular-nums}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.seg button:focus-visible{outline:2px solid var(--azul)}
+.tog{display:inline-flex;gap:.45rem;align-items:center;font-family:var(--f-ui);font-size:.82rem;color:var(--ink-2);cursor:pointer;user-select:none}
+.tog input{accent-color:var(--azul);width:1rem;height:1rem}
+.note{font-family:var(--f-ui);font-size:.8rem;color:var(--muted);line-height:1.5}
+.callout{border-left:3px solid var(--azul);padding:.2rem 0 .2rem 1rem;font-size:1.05rem}
+.callout.warn{border-color:var(--loss)}
+
+/* waterfall */
+.wf{display:grid;gap:3px;font-family:var(--f-ui);font-size:.82rem}
+.wf-row{display:grid;grid-template-columns:minmax(7.5rem,34%) 1fr;gap:.75rem;align-items:center;min-height:30px}
+.wf-row .lab{color:var(--ink-2);line-height:1.2}
+.wf-row.tot .lab{color:var(--ink);font-weight:700}
+.wf-track{position:relative;height:24px}
+.wf-bar{position:absolute;top:3px;height:18px;border-radius:2px;transition:left .45s ease,width .45s ease,background .3s}
+.wf-row.tot .wf-bar{top:0;height:24px}
+.wf-val{position:absolute;top:3px;line-height:18px;font-variant-numeric:tabular-nums;white-space:nowrap;transition:left .45s ease;color:var(--ink)}
+.wf-zero{position:absolute;top:-4px;bottom:-4px;width:1px;background:var(--ink);opacity:.5}
+.wf-axis{position:relative;height:18px}
+.wf-axis span{position:absolute;transform:translateX(-50%);font-size:.7rem;color:var(--muted)}
+.wf-row.off .wf-bar{background:repeating-linear-gradient(135deg,var(--rule) 0 3px,transparent 3px 7px)!important;outline:1px dashed var(--muted)}
+.story{min-height:5.5em}
+
+/* svg charts */
+svg.ch{width:100%;height:auto;display:block;overflow:visible}
+svg text{font-family:var(--f-ui)}
+.ax{fill:var(--muted);font-size:11px}
+.axl{stroke:var(--rule);stroke-width:1}
+.base{stroke:var(--ink);stroke-width:1;opacity:.6}
+.lbl{fill:var(--ink);font-size:12px;font-weight:600}
+.lbl-m{fill:var(--ink-2);font-size:11px}
+.hit{fill:transparent;cursor:default}
+.mult{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:1.4rem 1.8rem}
+.mult figure{margin:0;display:grid;gap:.35rem;min-width:0}
+.mult h3{font-family:var(--f-ui);font-size:.92rem;font-weight:700}
+.mult .sub{font-family:var(--f-ui);font-size:.78rem;color:var(--muted)}
+
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:.35rem 1rem;font-family:var(--f-ui);font-size:.8rem;color:var(--ink-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.35rem;vertical-align:-1px}
+
+/* tiers (who owns each euro) */
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:1rem}
+.tier{border-top:3px solid var(--ink);padding-top:.8rem;display:grid;gap:.55rem;align-content:start}
+.tier h3{font-family:var(--f-ui);font-size:1rem;font-weight:700}
+.tier .who{font-family:var(--f-ui);font-size:.8rem;color:var(--muted)}
+.tier ul{margin:0;padding-left:1.1rem;display:grid;gap:.25rem;font-size:.97rem}
+.tier.t1{border-color:var(--loss)} .tier.t2{border-color:var(--s4)} .tier.t3{border-color:var(--gain)}
+.stack{display:flex;height:34px;border-radius:3px;overflow:hidden;gap:2px;background:var(--paper)}
+.stack div{min-width:0;display:flex;align-items:center;padding-inline:.45rem;font-family:var(--f-ui);font-size:.74rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden}
+
+/* timeline */
+.tl{position:relative;display:grid;gap:0;padding-left:1.4rem;border-left:2px solid var(--rule)}
+.tl-item{position:relative;padding:.1rem 0 1.2rem .4rem;display:grid;gap:.15rem}
+.tl-item::before{content:"";position:absolute;left:calc(-1.4rem - 7px);top:.45rem;width:12px;height:12px;border-radius:50%;background:var(--paper);border:2px solid var(--ink)}
+.tl-item.fut::before{border-style:dashed;border-color:var(--muted)}
+.tl-item.now::before{background:var(--loss);border-color:var(--loss)}
+.tl-item.key::before{background:var(--azul);border-color:var(--azul)}
+.tl-date{font-family:var(--f-ui);font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
+.tl-item p{font-size:.98rem}
+
+/* simulator */
+.sim{display:grid;gap:1rem}
+.sim input[type=range]{width:100%;accent-color:var(--azul)}
+.sim-out{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr));gap:1rem}
+.sim-out div{display:grid;gap:.1rem}
+.sim-out b{font-family:var(--f-display);font-weight:400;font-size:2rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.sim-out span{font-family:var(--f-ui);font-size:.78rem;color:var(--muted)}
+.splitbar{display:flex;height:38px;gap:2px;border-radius:3px;overflow:hidden;background:var(--paper)}
+.splitbar div{transition:width .3s ease;display:flex;align-items:center;justify-content:center;font-family:var(--f-ui);font-size:.78rem;font-weight:700;color:#fff;overflow:hidden;white-space:nowrap}
+
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr));gap:1rem}
+.card{background:var(--paper-2);border-radius:6px;padding:1.1rem 1.2rem;display:grid;gap:.6rem;align-content:start}
+.card h3{font-family:var(--f-ui);font-size:1rem;font-weight:700}
+.card blockquote{margin:0;font-style:italic;color:var(--ink-2);border-left:2px solid var(--rule);padding-left:.8rem;font-size:.97rem}
+.pill{justify-self:start;font-family:var(--f-ui);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.2rem .55rem;border-radius:99px}
+.pill.ok{background:var(--gain-soft);color:var(--gain)} .pill.wa{background:var(--azul-soft);color:var(--azul)} .pill.bad{background:var(--loss-soft);color:var(--loss)}
+
+/* risks */
+.risks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr));gap:1rem;counter-reset:r}
+.risk{border:1px solid var(--rule);border-radius:6px;padding:1.1rem;display:grid;gap:.5rem;align-content:start;background:var(--paper)}
+.risk h3{font-size:1.45rem}
+.risk .chain{font-family:var(--f-ui);font-size:.85rem;color:var(--ink-2);display:grid;gap:.3rem}
+.risk .chain span::before{content:"→ ";color:var(--loss);font-weight:700}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;border-top:2px solid var(--ink)}
+table{border-collapse:collapse;width:100%;font-family:var(--f-ui);font-size:.86rem;font-variant-numeric:tabular-nums}
+th,td{padding:.55rem .6rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+th{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+td.n,th.n{text-align:right;white-space:nowrap}
+td.neg{color:var(--loss)}
+
+/* glossary */
+.gl-tools{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.gl-tools input{font:inherit;font-family:var(--f-ui);font-size:.9rem;padding:.5rem .8rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink);min-width:0;flex:1;max-width:22rem}
+.gl{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));gap:0 2rem}
+.gl details{border-bottom:1px solid var(--rule);padding:.65rem 0}
+.gl summary{cursor:pointer;font-family:var(--f-ui);font-weight:700;font-size:.95rem;list-style:none;display:flex;justify-content:space-between;gap:1rem}
+.gl summary::after{content:"+";color:var(--muted);font-weight:400}
+.gl details[open] summary::after{content:"–"}
+.gl details p{margin-top:.4rem;font-size:.95rem;color:var(--ink-2)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));gap:1rem;counter-reset:st}
+.steps div{counter-increment:st;display:grid;gap:.3rem;align-content:start;border-top:1px solid var(--ink);padding-top:.6rem}
+.steps div::before{content:"Paso " counter(st);font-family:var(--f-ui);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--azul)}
+.steps b{font-family:var(--f-ui);font-size:.95rem}
+.steps p{font-size:.93rem;color:var(--ink-2)}
+
+/* evidence gallery */
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,12.5rem),1fr));gap:1rem}
+.gal button{all:unset;cursor:pointer;display:grid;gap:.4rem;align-content:start}
+.gal button:focus-visible{outline:2px solid var(--azul);outline-offset:3px}
+.gal .th{aspect-ratio:4/3;max-width:100%;background:#fff;border:1px solid var(--rule);overflow:hidden;border-radius:3px}
+.gal .th img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;transition:transform .3s}
+.gal button:hover .th img{transform:scale(1.03)}
+.gal b{font-family:var(--f-ui);font-size:.82rem;line-height:1.3}
+.gal span{font-family:var(--f-ui);font-size:.72rem;color:var(--muted)}
+.filters{display:flex;flex-wrap:wrap;gap:.4rem}
+.filters button{all:unset;cursor:pointer;font-family:var(--f-ui);font-size:.78rem;padding:.3rem .7rem;border:1px solid var(--rule);border-radius:99px;color:var(--ink-2)}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:50;background:rgba(10,12,15,.78);display:grid;place-items:center;padding:clamp(12px,3vw,32px)}
+.lb-in{background:var(--paper);border-radius:6px;max-width:min(1100px,100%);max-height:100%;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden;width:100%}
+.lb-head{display:flex;justify-content:space-between;gap:1rem;align-items:start;padding:.9rem 1.1rem;border-bottom:1px solid var(--rule)}
+.lb-head h3{font-family:var(--f-ui);font-size:1rem;font-weight:700}
+.lb-head p{font-family:var(--f-ui);font-size:.8rem;color:var(--muted)}
+.lb-close{all:unset;cursor:pointer;font-family:var(--f-ui);font-size:.85rem;padding:.35rem .7rem;border:1px solid var(--rule);border-radius:99px;white-space:nowrap}
+.lb-img{overflow:auto;background:#fff;min-height:0}
+.lb-img img{display:block;width:100%;height:auto;max-width:none}
+.lb-foot{display:flex;flex-wrap:wrap;gap:.5rem 1.2rem;padding:.75rem 1.1rem;border-top:1px solid var(--rule);font-family:var(--f-ui);font-size:.82rem}
+
+/* sources table + checklist */
+.chk{display:grid;gap:.1rem}
+.chk label{display:flex;gap:.7rem;align-items:flex-start;padding:.6rem 0;border-bottom:1px solid var(--rule);cursor:pointer}
+.chk input{accent-color:var(--azul);width:1.1rem;height:1.1rem;margin-top:.25rem;flex:none}
+.chk input:checked + span{color:var(--muted);text-decoration:line-through}
+.errata{display:grid;gap:.1rem}
+.errata div{display:grid;grid-template-columns:2rem 1fr;gap:.6rem;padding:.7rem 0;border-bottom:1px solid var(--rule)}
+.errata div::before{content:"✕";font-family:var(--f-ui);color:var(--loss);font-weight:700}
+.errata p{font-size:.97rem}
+.errata s{color:var(--muted)}
+
+/* tooltip */
+#tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--paper);font-family:var(--f-ui);font-size:.8rem;line-height:1.35;padding:.45rem .6rem;border-radius:4px;max-width:16rem;opacity:0;transition:opacity .12s}
+#tip.on{opacity:1}
+footer{max-width:var(--wide);margin:4rem auto 0;border-top:1px solid var(--rule);padding-top:1rem;font-family:var(--f-ui);font-size:.8rem;color:var(--muted);display:grid;gap:.4rem}
+</style>
+
+<div class="bar"><div class="bar-in">
+  <span class="brand">VCF · Radiografía</span>
+  <nav class="chap" id="chap" aria-label="Capítulos">
+    <a href="#tesis">Tesis</a><a href="#cascada">Cuenta de resultados</a><a href="#tendencias">Tendencias</a><a href="#ingresos">Ingresos</a><a href="#aficion">Afición</a><a href="#caja">Caja</a><a href="#deuda">Deuda</a><a href="#duenos">¿De quién es cada euro?</a><a href="#estadio">Nou Mestalla</a><a href="#presupuesto">Presupuesto</a><a href="#reglas">Reglas y auditoría</a><a href="#riesgos">Riesgos</a><a href="#leer">Cómo leer</a><a href="#fuentes">Fuentes</a>
+  </nav>
+</div></div>
+
+<div class="wrap">
+
+<header class="hero" id="top">
+  <div class="hero-grid">
+    <div class="kicker">
+      <span class="eyebrow">Práctica de presidente · Caso 01 · Valencia CF</span>
+      <span class="live"><i></i>Hoy: 19.º con 4 puntos tras 7 jornadas</span>
+    </div>
+    <h1>Lleno en la grada, <em>apretado en la caja.</em></h1>
+    <p class="dek">Un club con una afición enorme que no monetiza, que vive de una televisión que cae y de vender jugadores, con los salarios en el 81% de sus ingresos. Para construir su estadio dejó la TV en prenda y vendió hasta 2052 lo que el estadio va a generar. Es una apuesta que puede transformarlo, pero solo funciona si sigue en Primera, si la obra llega a tiempo y si el dueño lo sigue sosteniendo.</p>
+    <p class="byline">Cuentas anuales consolidadas 2022/23–2024/25, presupuestos LFP 2024/25 y 2025/26, LaLiga y prensa. Todas las cifras en millones de euros salvo que se indique. Cada <button class="src" data-ev="b7728926">sello azul</button> abre el documento original.</p>
+    <figure style="margin:0">
+      <div class="plate"><img src="img/hero.jpg" alt="Acuarela: la estructura sin terminar del Nou Mestalla con una grúa y naranjos en primer plano" width="1800" height="820"></div>
+      <figcaption>El Nou Mestalla en obras. Se paró en 2009, se reanudó en enero de 2025 y la terminación está prevista para el verano de 2027. Ilustración en acuarela generada para este análisis.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<!-- ============ 1. TESIS ============ -->
+<section class="ch" id="tesis">
+  <div class="ch-head"><span class="num">I</span><h2>La tesis en cuatro números</h2></div>
+  <div class="stats">
+    <div class="stat"><span class="eyebrow">Salarios / ingresos, 24/25</span><b class="tab">81%</b><span>De cada 100 € que entran, 81 se van en personal. Arriba de 70% es zona de riesgo. <button class="src" data-ev="2219b155">PyG 24/25</button></span></div>
+    <div class="stat"><span class="eyebrow">Sin vender jugadores, 24/25</span><b class="tab neg">−17,8</b><span>Resultado de explotación si quitas ventas y la reversión del estadio. <button class="src" data-ev="2219b155">PyG 24/25</button></span></div>
+    <div class="stat"><span class="eyebrow">Ingresos que van a la deuda, 23/24</span><b class="tab">37%</b><span>39,8 M entre intereses y devolución de préstamos. <button class="src" data-ev="5f176dd2">Informe de gestión</button></span></div>
+    <div class="stat"><span class="eyebrow">Fin de la cesión del estadio</span><b class="tab">2052</b><span>Hasta entonces, entradas, VIP, naming y eventos cobran primero los bonistas. <button class="src" data-ev="c6541aa2">Nota 1.3</button></span></div>
+  </div>
+</section>
+
+<!-- ============ 2. CASCADA ============ -->
+<section class="ch" id="cascada">
+  <div class="split">
+    <div class="prose">
+      <div class="ch-head" style="margin:0"><span class="num">II</span><h2>La cuenta de resultados, línea por línea</h2></div>
+      <p>Una cuenta de pérdidas y ganancias se lee como una cascada: los ingresos arriba y cada línea que baja les quita o les suma algo hasta llegar al resultado. No importan los números sueltos, sino <strong>qué se come cada uno del ingreso</strong>.</p>
+      <p>Cambia de temporada y quita las ventas de jugadores o la reversión del estadio para ver el negocio sin esas ayudas.</p>
+      <p class="story callout" id="wf-story"></p>
+      <p class="note">Al quitar una línea no se recalculan los impuestos; es una aproximación para ver el tamaño del hueco. El presupuesto 25/26 junta ventas y deterioros en una sola línea.</p>
+    </div>
+    <div class="panel">
+      <div class="ctrls">
+        <div class="seg" role="group" aria-label="Temporada" id="wf-year"></div>
+      </div>
+      <div class="ctrls">
+        <label class="tog"><input type="checkbox" id="wf-noventas"> Quitar venta de jugadores</label>
+        <label class="tog"><input type="checkbox" id="wf-norev"> Quitar reversión del estadio</label>
+      </div>
+      <div class="wf" id="wf" role="img" aria-label="Cascada de la cuenta de resultados"></div>
+      <div class="wf-row" aria-hidden="true" style="min-height:0"><span></span><div class="wf-axis" id="wf-axis"></div></div>
+      <div class="legend"><span><i style="background:var(--gain)"></i>Suma</span><span><i style="background:var(--loss)"></i>Resta</span><span><i style="background:var(--ink)"></i>Subtotal</span></div>
+      <p class="note" id="wf-src"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. TENDENCIAS ============ -->
+<section class="ch" id="tendencias">
+  <div class="ch-head"><span class="num">III</span><h2>Tres años en cuatro gráficas</h2>
+    <p class="lede">En 23/24 parecía que el club se estaba arreglando. En 24/25 los salarios se dispararon, la TV siguió cayendo y los intereses subieron. El resultado final se ve igual porque vendieron más jugadores: <strong>el problema de fondo empeoró y quedó tapado por las ventas.</strong></p>
+  </div>
+  <div class="mult" id="mult"></div>
+  <p class="note" style="margin-top:1rem">Barras rayadas: presupuesto LFP 2025/26, no un resultado real. <button class="src" data-ev="ca85c68c">Nota 16.3</button> Las cuentas 2025/26 se publican hacia noviembre de 2026.</p>
+</section>
+
+<!-- ============ 4. INGRESOS ============ -->
+<section class="ch" id="ingresos">
+  <div class="ch-head"><span class="num">IV</span><h2>De dónde entra el dinero</h2></div>
+  <div class="split rev">
+    <div class="panel">
+      <div class="legend" id="mix-legend"></div>
+      <div id="mix"></div>
+      <p class="note">Millones de euros por temporada. <button class="src" data-ev="6f36431c">Nota 12.1 · 23/24</button> <button class="src" data-ev="2219b155">PyG 24/25</button></p>
+    </div>
+    <div class="prose">
+      <p>La televisión es más de la mitad de lo que ingresa el Valencia, y <strong>cae tres años seguidos</strong>: 67,8 → 60,1 → 53,2 M. El comercial está estancado y la tienda es pequeña.</p>
+      <figure style="margin:0"><div class="plate"><img src="img/naranjas.jpg" alt="Acuarela de una rama de naranjo" width="900" height="640"></div></figure>
+    </div>
+  </div>
+
+  <div class="split" style="margin-top:2.5rem">
+    <div class="prose">
+      <h3 style="font-size:1.6rem">Contra el promedio de LaLiga</h3>
+      <p>En 22/23 LaLiga sumó las cuentas de todos sus clubes como si fueran uno solo. Comparado con ese promedio, el Valencia <strong>depende mucho más de la TV</strong> y genera muy poco comercial. Ese hueco comercial es, probablemente, su mayor espacio para crecer.</p>
+      <p class="note">El promedio está inflado por Real Madrid y Barcelona, sobre todo en comercial. Por eso el siguiente paso es comparar con clubes parecidos.</p>
+    </div>
+    <div class="panel">
+      <div id="vsliga"></div>
+      <div class="legend"><span><i style="background:var(--azul)"></i>Valencia 22/23</span><span><i style="background:var(--muted)"></i>LaLiga 22/23 (todos los clubes)</span></div>
+      <p class="note">% de los ingresos. <button class="src" data-ev="43510d1c">LaLiga · ingresos</button> <button class="src" data-ev="6f36431c">Nota 12.1</button></p>
+    </div>
+  </div>
+
+  <div class="split rev" style="margin-top:2.5rem">
+    <div class="panel">
+      <h3 class="ui" style="font-size:1rem;font-weight:700">Cómo se reparte la TV de LaLiga</h3>
+      <div id="tvsplit"></div>
+      <div id="tvwin"></div>
+      <p class="note">Real Decreto-ley 5/2015, art. 5. Posiciones de la gráfica de LaLiga. <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2015-4780" target="_blank" rel="noopener">BOE</a> · <button class="src" data-ev="7ec746bf">Posiciones</button></p>
+    </div>
+    <div class="prose">
+      <h3 style="font-size:1.6rem">Por qué la TV no se recupera rápido</h3>
+      <p>La mitad se reparte a partes iguales. Un 25% depende de la <strong>implantación social</strong>: un tercio por abonos y taquilla, dos tercios por audiencia. El otro 25% depende de los <strong>resultados de las últimas cinco temporadas</strong>, y la más reciente pesa un 35%.</p>
+      <p>Es un promedio móvil: <strong>un mal año castiga durante cinco</strong>. Además, el acuerdo de LaLiga con el fondo CVC reduce la TV a cambio de dinero adelantado, y parte de ese dinero va al estadio.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. AFICIÓN ============ -->
+<section class="ch" id="aficion">
+  <div class="ch-head"><span class="num">V</span><h2>Demanda de sobra, monetización baja</h2>
+  <p class="lede">Mestalla está casi lleno. El club no puede crecer consiguiendo más aficionados; solo puede crecer <strong>cobrando más por aficionado</strong>. Y para eso necesita un producto que hoy no tiene: palcos, hospitalidad, servicios.</p></div>
+  <div class="stats">
+    <div class="stat"><span class="eyebrow">Abonados 23/24</span><b class="tab">38.376</b><span>Abono medio ≈ 404 € por temporada, unos 21 € por partido.</span></div>
+    <div class="stat"><span class="eyebrow">Asistencia media</span><b class="tab">43.640</b><span>Alrededor del 90% de ocupación.</span></div>
+    <div class="stat"><span class="eyebrow">Entrada media</span><b class="tab">≈ 38 €</b><span>177.772 entradas vendidas en la temporada.</span></div>
+    <div class="stat"><span class="eyebrow">Ingreso por partido en casa</span><b class="tab">≈ 1,1 M €</b><span>El Tottenham genera ≈ 11 M £ por partido en su estadio nuevo.</span></div>
+  </div>
+  <p class="note" style="margin-top:.6rem">Datos de afición del club. <button class="src" data-ev="7274f344">Afición 23/24</button> Precios medios calculados: ingresos ÷ unidades. Tottenham: <a href="https://www.matchdayfinance.com/post/tottenham-financial-update" target="_blank" rel="noopener">Matchday Finance</a> <span class="est">fuente externa</span></p>
+
+  <div class="split" style="margin-top:2rem">
+    <div class="panel sim">
+      <h3 class="ui" style="font-size:1rem;font-weight:700">¿Y si cobrara más por aficionado?</h3>
+      <label class="note" for="fan">Ingreso medio por asistente y partido: <b id="fan-v" class="tab" style="color:var(--ink)"></b></label>
+      <input type="range" id="fan" min="20" max="90" step="1" value="27">
+      <div class="sim-out">
+        <div><b id="fan-tot"></b><span>Ingreso de día de partido por temporada</span></div>
+        <div><b id="fan-diff"></b><span>Diferencia contra hoy (≈ 22,3 M)</span></div>
+      </div>
+      <p class="note">Simulación ilustrativa: 43.640 asistentes × 19 partidos de liga en casa × ingreso medio. Hoy el promedio implícito es ≈ 27 € por asistente y partido. No incluye copas ni eventos.</p>
+    </div>
+    <div class="prose">
+      <h3 style="font-size:1.6rem">La lección del Tottenham</h3>
+      <p>En su última temporada en White Hart Lane, el Tottenham ingresó 45,3 M £ por día de partido. Con el estadio nuevo pasó de 42 M £ en 2014 a 118 M £ en 2023, sobre todo por hospitalidad y palcos.</p>
+      <p>Pero llegó al estadio siendo rentable y con deuda barata, a ≈3%. <strong>El Valencia llega con deuda cara, salarios al 81% y el 37% de sus ingresos comprometido.</strong> El estadio puede ser la solución, pero el punto de partida es mucho más frágil.</p>
+      <p class="note">Fuentes externas: <a href="https://medium.com/@CharlesRichards/spurs-stadium-finance-update-more-borrowing-more-revenue-more-nike-c42bbd42c2d1" target="_blank" rel="noopener">Charles Richards</a>, <a href="https://spurswithalasdairgold.substack.com/p/spurs-are-sitting-pretty-but-67bn" target="_blank" rel="noopener">The Bottom Line</a>, <a href="https://www.matchdayfinance.com/post/tottenham-hotspur-financial-results-2024-25" target="_blank" rel="noopener">Matchday Finance</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. CAJA ============ -->
+<section class="ch" id="caja">
+  <div class="ch-head"><span class="num">VI</span><h2>La cuenta dice «equilibrio». La caja dice «apretado».</h2>
+  <p class="lede">El beneficio no es dinero en el banco. Devolver un préstamo no aparece en la cuenta de resultados, y una reversión contable suma beneficio sin meter un euro. Por eso se lee también el <strong>estado de flujos de efectivo</strong>.</p></div>
+  <div class="split rev">
+    <div class="panel">
+      <div id="cashchart"></div>
+      <div class="legend"><span><i style="background:var(--ink)"></i>Resultado contable</span><span><i style="background:var(--s1)"></i>Caja que generó el día a día (flujo de explotación)</span></div>
+      <p class="note"><button class="src" data-ev="cce9f4e9">Flujos 23/24 · pág. 11</button> <button class="src" data-ev="5fc96105">Flujos 24/25</button></p>
+    </div>
+    <div class="prose">
+      <p><strong>23/24:</strong> un club que ingresa 107 M terminó el año con <strong>1,7 M en el banco</strong>. Pidió 26,1 M a los bancos para devolver 27,1 M: no pagaba su deuda, la refinanciaba.</p>
+      <p><strong>24/25:</strong> el día a día consumió 27,3 M. La caja saltó a 213 M, pero <strong>180,4 M son del fondo del estadio</strong> y están obligados a ir a la obra. La caja propia rondaba los 33 M.</p>
+      <p><strong>22/23:</strong> el día a día consumió 28,4 M. Se salvaron con 73 M cobrados por ventas, 34,5 M prestados por el dueño y 17,7 M de ampliación de capital.</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Flujos (M€)</th><th class="n">23/24</th><th class="n">24/25</th></tr></thead>
+        <tbody>
+          <tr><td>A · Explotación</td><td class="n neg">−3,9</td><td class="n neg">−27,3</td></tr>
+          <tr><td>B · Inversión</td><td class="n neg">−5,3</td><td class="n neg">−31,2</td></tr>
+          <tr><td>C · Financiación</td><td class="n neg">−1,0</td><td class="n">+269,9</td></tr>
+          <tr><td>&nbsp;&nbsp;Emisión de deuda</td><td class="n">26,1</td><td class="n">471,3</td></tr>
+          <tr><td>&nbsp;&nbsp;Devolución</td><td class="n neg">−27,1</td><td class="n neg">−201,3</td></tr>
+          <tr><td><strong>Caja al cierre</strong></td><td class="n"><strong>1,7</strong></td><td class="n"><strong>213,2</strong></td></tr>
+        </tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. DEUDA ============ -->
+<section class="ch" id="deuda">
+  <div class="ch-head"><span class="num">VII</span><h2>La deuda cambió de forma, no de tamaño</h2>
+  <p class="lede">Casi todos los clubes tienen deuda. Lo que importa es para qué la usas, cuánto pesa frente a lo que ingresas, cuánto cuesta y a quién se la debes.</p></div>
+  <div class="split">
+    <div class="prose">
+      <p><strong>Junio de 2024.</strong> Deuda neta de 283,5 M, unas 2,7 veces los ingresos. Seis préstamos que vencían entre 2026 y 2029, con Mestalla hipotecado. <button class="src" data-ev="5f176dd2">Informe de gestión 23/24</button> <button class="src" data-ev="d25a5d30">Nota 8.2.1</button></p>
+      <p><strong>31 de octubre de 2024.</strong> Una financiación corporativa de 121,3 M con aseguradoras y fondos de pensiones, al 6,6% y vencimiento medio de 7,5 años, más un puente de 65 M de Goldman Sachs. Con eso pagaron a CaixaBank, Rights and Media Funding y un Profit Sharing Agreement de 61 M, y <strong>liberaron la hipoteca de Mestalla</strong>. <button class="src" data-ev="ad66df25">Nota 8.2.1 · 24/25</button></p>
+      <p><strong>El puente se pagó con dinero del fondo del estadio.</strong> Parte de la operación del Nou Mestalla terminó pagando deuda vieja, no ladrillos.</p>
+      <p>Los pasivos financieros a largo plazo pasaron de 175 M a 471 M en un año. El tipo medio con bancos fue del 7,3% en 24/25, frente al 6% del año anterior. <button class="src" data-ev="d85d8e31">Tipos y garantías</button></p>
+      <figure style="margin:0"><div class="plate"><img src="img/libro.jpg" alt="Acuarela de un libro de cuentas con monedas" width="900" height="600"></div></figure>
+    </div>
+    <div class="panel">
+      <h3 class="ui" style="font-size:1rem;font-weight:700">Contra lo que se considera sano</h3>
+      <div id="bullets"></div>
+      <p class="note">EBITDA = resultado de explotación + amortización. Deuda neta / EBITDA con datos de 23/24 (283,5 ÷ 29,0). Cobertura con datos de 24/25 (36,4 ÷ 22,4). Los ratios que exigen los prestamistas (covenants) no son públicos; la nota solo dice que se cumplieron al cierre. <span class="est">cálculo propio</span></p>
+      <hr class="rule">
+      <h3 class="ui" style="font-size:1rem;font-weight:700">Quién le presta al Valencia (junio 2025)</h3>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Acreedor</th><th class="n">M€</th><th>Coste</th><th>Hasta</th></tr></thead>
+        <tbody>
+          <tr><td>Bonos del fondo Nou Mestalla</td><td class="n">237,0</td><td>5,82% fijo</td><td>2052</td></tr>
+          <tr><td>Financiación corporativa</td><td class="n">121,3</td><td>6,6%</td><td>≈2034</td></tr>
+          <tr><td>Crédito del fondo</td><td class="n">85,0<br><span class="note">21,25 dispuesto</span></td><td>Euribor + 3,5%</td><td>≈2030</td></tr>
+          <tr><td>Préstamo participativo LaLiga (CVC)</td><td class="n">64,0</td><td>—</td><td>—</td></tr>
+          <tr><td>Empresas del grupo (dueño)</td><td class="n">40,2</td><td>—</td><td>2030</td></tr>
+        </tbody></table></div>
+      <p class="note"><button class="src" data-ev="9bf16820">Bonos y crédito</button> <button class="src" data-ev="85137b5a">Nota 8.2.4</button> <button class="src" data-ev="eba1365a">Vencimientos</button></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. DUEÑOS DE CADA EURO ============ -->
+<section class="ch" id="duenos">
+  <div class="ch-head"><span class="num">VIII</span><h2>¿De quién es cada euro?</h2>
+  <p class="lede">Hay dos deudas distintas con dos acreedores distintos, y cada una tiene su garantía. El fondo del estadio <strong>no puede tocar la TV</strong>; los prestamistas corporativos <strong>no cobran del estadio</strong>. Se conectan de forma indirecta: si el estadio rinde poco, el club tiene menos caja y le cuesta más cumplir los ratios del préstamo corporativo.</p></div>
+  <div class="tiers">
+    <div class="tier t1"><span class="pill bad">Cobra primero, siempre</span><h3>Cedido al fondo hasta 2052</h3><p class="who">Bonistas y crédito del fondo, gestionado por BEKA Titulización</p>
+      <ul><li>Entradas y taquilla de ambos estadios</li><li>Hospitality y palcos</li><li>Naming del estadio</li><li>Eventos y alquileres</li><li>Hipoteca de hasta 300 M sobre el Nou Mestalla</li></ul>
+      <p><button class="src" data-ev="c6541aa2">Nota 1.3</button> <button class="src" data-ev="b3206971">Nota 5.2</button></p></div>
+    <div class="tier t2"><span class="pill wa">Solo si el club incumple</span><h3>En prenda</h3><p class="who">Aseguradoras y fondos de pensiones de la financiación corporativa</p>
+      <ul><li>Todos los derechos audiovisuales (TV)</li><li>Las ayudas al descenso</li><li>Los contratos comerciales relevantes</li><li>Además, hay que cumplir ratios financieros</li></ul>
+      <p><button class="src" data-ev="d85d8e31">Nota 8.2.1</button></p></div>
+    <div class="tier t3"><span class="pill ok">Del club</span><h3>Libre</h3><p class="who">Lo que no aparece comprometido en las notas</p>
+      <ul><li>Venta de jugadores</li><li>Tienda oficial (no se menciona)</li></ul>
+      <p class="note">Por eso el club depende tanto de vender: es de los pocos ingresos sin otro dueño delante.</p></div>
+  </div>
+  <div class="panel" style="margin-top:1.5rem">
+    <h3 class="ui" style="font-size:1rem;font-weight:700">Ingresos de 24/25 según quién tiene derecho sobre ellos (M€)</h3>
+    <div id="ownbar"></div>
+    <p class="note">Aproximación: se asume que competiciones y abonos entran en los ingresos del estadio cedidos al fondo, que es lo que sugiere la nota 1.3 sin desglosarlo. Comercial y publicidad se asigna a la prenda por los «contratos comerciales relevantes». <span class="est">asignación propia</span></p>
+  </div>
+</section>
+
+<!-- ============ 9. ESTADIO ============ -->
+<section class="ch" id="estadio">
+  <div class="ch-head"><span class="num">IX</span><h2>El Nou Mestalla: la apuesta</h2>
+  <p class="lede">El club vendió los ingresos futuros de sus estadios a un fondo creado para esto. Los inversores no confiarían en el Valencia, pero sí en las rentas de un estadio. El fondo retiene cada año lo necesario para pagar su deuda y <strong>el resto va al club</strong>, desde el primer año que el estadio opere.</p></div>
+  <figure style="margin:0 0 2rem"><div class="plate"><img src="img/estadios.jpg" alt="Acuarela: la grada recta del Mestalla actual y la cubierta curva del estadio nuevo" width="1400" height="560"></div>
+  <figcaption>El Mestalla actual se derribará y su terreno se venderá para viviendas y comercios una vez que el Nou Mestalla entre en funcionamiento. En libros vale ≈105 M: 90,4 M el terreno y 14,9 M las construcciones. <button class="src" data-ev="20882bfa">Nota 5.1</button></figcaption></figure>
+
+  <div class="split">
+    <div class="panel sim">
+      <h3 class="ui" style="font-size:1rem;font-weight:700">Simulador: ¿cuánto le queda al club?</h3>
+      <label class="note" for="st">Lo que genera el estadio en un año: <b id="st-v" class="tab" style="color:var(--ink)"></b></label>
+      <input type="range" id="st" min="10" max="80" step="1" value="26">
+      <div class="seg" role="group" aria-label="Periodo" id="st-per">
+        <button type="button" data-p="g" aria-pressed="false">2025–2028 · solo intereses</button>
+        <button type="button" data-p="a" aria-pressed="true">Desde 2028 · intereses + capital</button>
+      </div>
+      <label class="tog"><input type="checkbox" id="st-cred"> Sumar intereses del crédito de 85 M</label>
+      <div class="splitbar" id="st-bar"></div>
+      <div class="sim-out">
+        <div><b id="st-fondo"></b><span>Se queda el fondo</span></div>
+        <div><b id="st-club"></b><span>Recibe el club</span></div>
+      </div>
+      <p class="note" id="st-msg"></p>
+      <p class="note">Cuota estimada de los bonos: 237 M al 5,82% amortizados en ≈25 años ≈ 18,2 M/año; antes de 2028, solo intereses ≈ 13,8 M. Crédito: 85 M a ≈5,5% ≈ 4,7 M/año, a pagar con la venta de Mestalla. Hoy, abonos y competiciones suman ≈ 26 M. <span class="est">cálculo propio</span></p>
+    </div>
+    <div>
+      <h3 class="ui" style="font-size:1rem;font-weight:700;margin-bottom:1rem">Calendario</h3>
+      <div class="tl" id="tl"></div>
+    </div>
+  </div>
+
+  <div class="cards" style="margin-top:2rem">
+    <div class="card"><span class="pill wa">Fuente 1</span><h3>Fondo de titulización</h3><p>237 M en bonos a 28 años al 5,82% fijo, más un crédito de 85 M. Los bonos empiezan a devolver capital en septiembre de 2028. <button class="src" data-ev="9bf16820">Nota 1.3</button></p></div>
+    <div class="card"><span class="pill wa">Fuente 2</span><h3>Préstamo de LaLiga (CVC)</h3><p>80 M destinados al estadio. Ya se pagaron 26,5 M por adelantado a la constructora FCC con ese dinero. <button class="src" data-ev="20882bfa">Nota 5.1</button></p></div>
+    <div class="card"><span class="pill wa">Fuente 3</span><h3>Edificio comercial</h3><p>Venta de una parcela terciaria junto al estadio, sujeta a condiciones. Parte irá al fondo para cubrir contingencias de la obra. <button class="src" data-ev="b3206971">Nota 5.2</button></p></div>
+  </div>
+</section>
+
+<!-- ============ 10. PRESUPUESTO ============ -->
+<section class="ch" id="presupuesto">
+  <div class="ch-head"><span class="num">X</span><h2>Lo prometido contra lo que pasó</h2>
+  <p class="lede">El presupuesto se presenta a LaLiga, que con él fija cuánto puede gastar el club en plantilla. Cada euro de beneficio presupuestado es un euro que no se gasta en el equipo, así que <strong>los clubes presupuestan a cero</strong>. Lo importante es qué línea hace cuadrar ese cero.</p></div>
+  <div class="split rev">
+    <div class="panel">
+      <div id="dumb"></div>
+      <div class="legend"><span><i style="background:var(--muted);border-radius:50%"></i>Presupuesto 24/25</span><span><i style="background:var(--azul);border-radius:50%"></i>Real 24/25</span></div>
+      <p class="note"><button class="src" data-ev="eb8f6a3d">Presupuesto 24/25</button> <button class="src" data-ev="2219b155">PyG 24/25</button> El presupuesto usa definiciones de LaLiga y la cuenta las contables, así que las líneas no son idénticas.</p>
+    </div>
+    <div class="prose">
+      <p>El resultado «se cumplió»: 0 previsto, +0,3 M real. Pero <strong>el gasto en personal se pasó en unos 20 M</strong> y la deuda costó 8 M más. El club lo explica por el despido del entrenador y por fichajes para cubrir lesiones largas.</p>
+      <p>El hueco se tapó con más ventas y con la reversión del estadio.</p>
+      <p class="callout warn">Para 25/26 presupuestaron <strong>37,2 M en ventas de jugadores</strong> desde el inicio para cuadrar a cero, con personal en ≈ 86% de los ingresos. En vez de controlar el gasto, presupuestan vender más. <button class="src" data-ev="ca85c68c">Presupuesto 25/26</button></p>
+    </div>
+  </div>
+
+  <div class="split" style="margin-top:2.5rem" id="reversion">
+    <div class="prose">
+      <h3 style="font-size:1.6rem">La reversión de 16,8 M</h3>
+      <p>Mientras la obra estuvo parada, el club rebajó su valor en libros. En 24/25, con licencia, plan urbanístico y contrato con FCC, un tasador independiente la revaluó y el club deshizo parte del castigo: <strong>+16,8 M de beneficio en papel, sin un euro de caja</strong>. Sin ella, 24/25 habría sido una pérdida de unos 16,5 M.</p>
+      <p>¿Casualidad que quede justo en positivo? Hubo hechos reales que la justifican y no revirtieron todo, pero es un número de criterio. El auditor lo marcó como el aspecto más delicado de las cuentas. <button class="src" data-ev="f2424df8">Nota 5.1</button> <button class="src" data-ev="98b6ef6e">Auditoría</button></p>
+    </div>
+    <div class="panel">
+      <div id="detchart"></div>
+      <p class="note">Deterioro acumulado del Nou Mestalla en libros (M€).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11. REGLAS Y AUDITORÍA ============ -->
+<section class="ch" id="reglas">
+  <div class="ch-head"><span class="num">XI</span><h2>Las reglas y el auditor</h2></div>
+  <div class="split">
+    <div class="prose">
+      <h3 style="font-size:1.6rem">La regla del resultado del fútbol</h3>
+      <p>LaLiga no mira la pérdida contable de un año, sino la suma de varias temporadas de un «resultado del fútbol» que excluye algunos gastos. En Primera se permite un déficit de hasta 5 M; más, si el dueño lo cubre con capital. Si un club la incumple, LaLiga le recorta el límite de plantilla y no puede inscribir fichajes.</p>
+      <p>En 24/25 el Valencia tuvo déficit (−3,4 M) y pasó gracias al superávit de 23/24. <strong>Si 25/26 fue deficitaria, ese colchón sale de la ventana.</strong> <button class="src" data-ev="577ef56c">Nota 16.4</button></p>
+    </div>
+    <div class="panel"><div id="rule"></div><p class="note">Ingresos menos gastos relevantes según el reglamento de LaLiga (M€).</p></div>
+  </div>
+  <div class="cards" style="margin-top:2rem">
+    <div class="card"><span class="pill ok">Opinión limpia</span><h3>Los números son fiables</h3><p>El auditor dice que las cuentas expresan la imagen fiel del grupo, sin salvedades.</p><p><button class="src" data-ev="efaf80ba">Informe de auditoría</button></p></div>
+    <div class="card"><span class="pill wa">Aspecto más relevante</span><h3>La valoración del estadio</h3><blockquote>«valores estimados y otras variables con alto nivel de incertidumbre»</blockquote><p>Se revisó con especialistas en valoración inmobiliaria. El segundo aspecto es la refinanciación y sus derivados.</p><p><button class="src" data-ev="98b6ef6e">Aspectos relevantes</button></p></div>
+    <div class="card"><span class="pill bad">Párrafo de énfasis</span><h3>Depende del dueño</h3><p>Fondo de maniobra negativo de 19,9 M (−94,3 M un año antes). La continuidad se apoya en el <strong>compromiso formal del accionista mayoritario</strong> de dar apoyo financiero.</p><p><button class="src" data-ev="6c12c19b">Énfasis</button></p></div>
+  </div>
+</section>
+
+<!-- ============ 12. RIESGOS ============ -->
+<section class="ch" id="riesgos">
+  <div class="ch-head"><span class="num">XII</span><h2>Tres riesgos conectados</h2>
+  <p class="lede">Cada uno empeora a los otros dos. Esta es la base para las tres decisiones del memo de presidente.</p></div>
+  <div class="risks">
+    <div class="risk"><span class="eyebrow">Deportivo</span><h3>Descender</h3><div class="chain"><span>Cae la TV, que es la garantía de la deuda corporativa</span><span>Cae la asistencia y el VIP, que son del fondo</span><span>El castigo dura cinco años en el reparto de TV</span><span>Hoy: 19.º tras 7 jornadas</span></div></div>
+    <div class="risk"><span class="eyebrow">Estadio</span><h3>Que no llegue a tiempo</h3><div class="chain"><span>Fin previsto: verano de 2027</span><span>Bonos empiezan a pagar capital en septiembre de 2028</span><span>Sin mudanza no se vende Mestalla para pagar el crédito de 85 M</span><span>Si rinde poco, el club no ve un euro de su gran apuesta</span></div></div>
+    <div class="risk"><span class="eyebrow">Propiedad</span><h3>Que el dueño se canse</h3><div class="chain"><span>El auditor ata la continuidad al apoyo de Peter Lim</span><span>40,2 M debidos a empresas del grupo</span><span>34,5 M prestados y 17,7 M de capital en 22/23</span></div></div>
+  </div>
+</section>
+
+<!-- ============ 13. CÓMO LEER ============ -->
+<section class="ch" id="leer">
+  <div class="ch-head"><span class="num">XIII</span><h2>Lo que aprendí a leer</h2>
+  <p class="lede">El orden para abrir unas cuentas anuales en España: balance, cuenta de pérdidas y ganancias, cambios en el patrimonio, flujos de efectivo y memoria. Para la cuenta de resultados, de abajo hacia arriba y luego de arriba hacia abajo.</p></div>
+  <div class="steps">
+    <div><b>El resultado final</b><p>La última línea. ¿Ganó o perdió? Ese es el titular; lo demás lo explica.</p></div>
+    <div><b>Los subtotales</b><p>Explotación (el negocio), financiero (la deuda), antes de impuestos.</p></div>
+    <div><b>Los ingresos</b><p>Cuánto entra y de dónde. ¿Cuál es el más grande, cuál sube, cuál baja?</p></div>
+    <div><b>Los gastos grandes</b><p>Dos o tres líneas, cada una dividida entre los ingresos.</p></div>
+    <div><b>Lo extraordinario</b><p>Venta de jugadores, deterioros, otros resultados. ¿Cómo queda sin eso?</p></div>
+    <div><b>Compara columnas</b><p>Cada cambio grande es una pregunta, y la respuesta está en su nota.</p></div>
+  </div>
+  <div class="panel" style="margin-top:1.5rem">
+    <div class="ctrls"><span class="note"><strong>Truco de lectura.</strong> En España el punto separa miles: «60.111» en una tabla «en miles de euros» son 60,1 millones. Los paréntesis significan resta.</span></div>
+  </div>
+
+  <h3 style="font-size:1.6rem;margin:2.5rem 0 1rem">Glosario</h3>
+  <div class="gl-tools"><label class="note" for="glq">Buscar término</label><input id="glq" type="search" placeholder="EBITDA, prenda, deterioro…" autocomplete="off"></div>
+  <div class="gl" id="gl"></div>
+
+  <h3 style="font-size:1.6rem;margin:2.5rem 0 .4rem">Fe de erratas</h3>
+  <p class="note" style="margin-bottom:.6rem">Lo que dije mal durante el análisis y cómo quedó corregido al leer las notas.</p>
+  <div class="errata" id="errata"></div>
+</section>
+
+<!-- ============ 14. FUENTES ============ -->
+<section class="ch" id="fuentes">
+  <div class="ch-head"><span class="num">XIV</span><h2>Fuentes y evidencia</h2>
+  <p class="lede">Los documentos completos y cada recorte que usamos, con la página o nota de donde salió.</p></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Documento</th><th>Lo que sacamos</th><th>Enlace</th></tr></thead>
+    <tbody id="docs"></tbody>
+  </table></div>
+
+  <h3 style="font-size:1.6rem;margin:2.5rem 0 1rem">Recortes de los documentos</h3>
+  <div class="filters" id="gal-f" role="group" aria-label="Filtrar recortes"></div>
+  <div class="gal" id="gal" style="margin-top:1rem"></div>
+
+  <h3 style="font-size:1.6rem;margin:2.5rem 0 .6rem">Lo que sigue</h3>
+  <p class="note" style="margin-bottom:.4rem">Se guarda en este navegador.</p>
+  <div class="chk" id="chk"></div>
+</section>
+
+<footer>
+  <span>Análisis de práctica, no asesoría financiera. Cifras de las cuentas anuales auditadas del Valencia CF salvo las marcadas como fuente externa o cálculo propio.</span>
+  <span>Ilustraciones en acuarela generadas para este documento. Última actualización: 10 de octubre de 2026.</span>
+</footer>
+</div>
+
+<div id="tip" role="tooltip"></div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lb-t">
+  <div class="lb-in">
+    <div class="lb-head"><div><h3 id="lb-t"></h3><p id="lb-s"></p></div><button class="lb-close" id="lb-x" type="button">Cerrar</button></div>
+    <div class="lb-img"><img id="lb-img" alt=""></div>
+    <div class="lb-foot" id="lb-f"></div>
+  </div>
+</div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const f1=(v,d=1)=>(v<0?'−':'')+Math.abs(v).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
+const sgn=(v,d=1)=>(v>0?'+':'')+f1(v,d);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------------- documents & evidence ---------------- */
+const DOCS={
+ C2425:{t:'Cuentas anuales consolidadas 2024/25',u:'https://www.valenciacf.com/public/Attachment/2026/2/grupo_vcf_ccaa_2024-2025.pdf',what:'PyG, flujos, notas 1.3, 5, 8.2, 16, informe de gestión y auditoría 24/25; presupuesto 25/26'},
+ I2425:{t:'Cuentas anuales individuales 2024/25',u:'https://www.valenciacf.com/public/Attachment/2026/2/vcf_ccaa_2024-2025.pdf',what:'Presupuesto (sección 17.3) y retribución de directivos (sección 16)'},
+ C2324:{t:'Cuentas anuales consolidadas 2023/24',u:'https://www.valenciacf.com/public/Attachment/2025/2/grupo_vcf_ccaa_2023-2024.pdf',local:'docs/vcf_cuentas_consolidadas_2023-24.pdf',what:'PyG (pág. 9), flujos (pág. 11), nota 12 (págs. 52–53), informe de gestión (pág. 62), presupuesto 24/25'},
+ TRANS:{t:'Ley de Transparencia del Valencia CF',u:'https://www.valenciacf.com/ley-de-transparencia',what:'Índice oficial de las cuentas y presupuestos'},
+ AV2425:{t:'Avance de cuentas 2024/25 (club)',u:'https://www.valenciacf.com/en/17633688971022080',what:'Resumen del club: beneficio 2,2 M antes de impuestos, explotación 23,8 M'},
+ AV2324:{t:'Avance de cuentas 2023/24 (club)',u:'https://www.valenciacf.com/avance-de-las-cuentas-anuales-del-valencia-cf-en-el-ejercicio-economico-23-24',what:'Resumen del club del ejercicio 23/24'},
+ LLTV:{t:'LaLiga · Reparto de derechos de TV',u:'https://www.laliga.com/en-GB/transparency/economic-management/tv-rights',what:'Criterios y documentos de reparto por temporada'},
+ BOE:{t:'Real Decreto-ley 5/2015 (BOE)',u:'https://www.boe.es/buscar/act.php?id=BOE-A-2015-4780',what:'50% igual, 25% resultados (5 temporadas, 35/20/15/15/15), 25% implantación social'},
+ LLREP:{t:'LaLiga · Informe económico-financiero',u:'https://www.laliga.com/en-GB/transparency/economic-management/economic-report',what:'Ingresos y gastos agregados de la liga 22/23'},
+ TOT:{t:'Matchday Finance · Tottenham',u:'https://www.matchdayfinance.com/post/tottenham-hotspur-financial-results-2024-25',what:'Ingresos de día de partido y deuda del estadio (fuente externa)'},
+ CAP:{t:'Capology · salarios Valencia 23/24',u:'https://www.capology.com/club/valencia/salaries/2023-2024/',what:'Estimación externa de salarios de jugadores; no oficial'}
+};
+const EV=[
+ ['b7728926','Cuenta de pérdidas y ganancias 2023/24','C2324','Pág. 9 del PDF','PyG'],
+ ['2219b155','Cuenta de pérdidas y ganancias 2024/25','C2425','Cuenta de PyG consolidada','PyG'],
+ ['6f36431c','Nota 12.1 · Importe neto de la cifra de negocios','C2324','Pág. 52 del PDF','Ingresos'],
+ ['9b1c531e','Informe de gestión 23/24 · evolución del negocio','C2324','Pág. ~62 del PDF','Informe'],
+ ['5f176dd2','Informe de gestión 23/24 · deuda neta y servicio de la deuda','C2324','Informe de gestión','Deuda'],
+ ['7274f344','Datos de afición: abonos, entradas, asistencia y tienda','C2324','Captura de datos de afición 23/24','Ingresos'],
+ ['cce9f4e9','Estado de flujos de efectivo 2023/24','C2324','Pág. 11 del PDF','Caja'],
+ ['5fc96105','Estado de flujos de efectivo 2024/25','C2425','Estado de flujos de efectivo','Caja'],
+ ['d25a5d30','Nota 8.2.1 · Deudas con entidades de crédito (junio 2024)','C2324','Memoria, pág. 31 del documento','Deuda'],
+ ['ad66df25','Nota 8.2.1 · Reestructuración de la deuda (octubre 2024)','C2425','Memoria consolidada','Deuda'],
+ ['d85d8e31','Nota 8.2.1 · Puente, tipos de interés y prenda sobre la TV','C2425','Memoria consolidada','Deuda'],
+ ['eba1365a','Calendario de vencimientos de la deuda','C2425','Memoria consolidada','Deuda'],
+ ['85137b5a','Nota 8.2.4 · Otros pasivos financieros (fondo, LaLiga)','C2425','Memoria consolidada','Deuda'],
+ ['c6541aa2','Nota 1.3 · El fondo de titulización Nou Mestalla','C2425','Memoria consolidada','Estadio'],
+ ['9bf16820','Nota 1.3 · Bonos de 237 M al 5,82% y crédito de 85 M','C2425','Memoria consolidada','Estadio'],
+ ['cbc668a0','Nota 8.6.1 · Riesgo de crédito: la caja del fondo','C2425','Memoria consolidada','Caja'],
+ ['20882bfa','Nota 5.1 · Mestalla en libros y fuentes de financiación del estadio','C2425','Memoria consolidada','Estadio'],
+ ['f2424df8','Nota 5.1 · Reversión del deterioro del Nou Mestalla','C2425','Memoria consolidada','Estadio'],
+ ['b3206971','Nota 5.2 · Cargas, hipoteca al fondo y obras con FCC','C2425','Memoria consolidada','Estadio'],
+ ['165a1fa4','Informe de gestión 24/25 · refinanciación y estadio','C2425','Informe de gestión','Informe'],
+ ['2c4757d4','Informe de gestión 24/25 · evolución del negocio','C2425','Informe de gestión','Informe'],
+ ['eb8f6a3d','Nota 16.3 · Presupuesto LFP 2024/25','C2324','Memoria consolidada 23/24','Presupuesto'],
+ ['ca85c68c','Nota 16.3 · Presupuesto LFP 2025/26','C2425','Memoria consolidada','Presupuesto'],
+ ['577ef56c','Nota 16.4 · Cálculo del resultado agregado del fútbol','C2425','Memoria consolidada','Presupuesto'],
+ ['efaf80ba','Informe de auditoría · opinión','C2425','Inicio del documento','Auditoría'],
+ ['98b6ef6e','Informe de auditoría · aspectos más relevantes','C2425','Inicio del documento','Auditoría'],
+ ['6c12c19b','Informe de auditoría · párrafo de énfasis','C2425','Inicio del documento','Auditoría'],
+ ['8fa6609d','Nota 12.6 · Gastos financieros 2023/24','C2324','Pág. 55 del PDF','Deuda'],
+ ['cc949f3e','Nota 16.1 · Personal empleado (427 personas)','C2425','Memoria consolidada','Otros'],
+ ['3262f2a2','Nota 17 · Periodo medio de pago a proveedores','C2425','Memoria consolidada','Otros'],
+ ['43510d1c','LaLiga · evolución de los ingresos totales','LLREP','Table 1','LaLiga'],
+ ['d124ee47','LaLiga · gastos totales 22/23','LLREP','Figure 12','LaLiga'],
+ ['7ec746bf','Posiciones del Valencia en liga, 21/22–24/25','LLTV','Gráfica de LaLiga','LaLiga']
+];
+const EVM=Object.fromEntries(EV.map(e=>[e[0],{id:e[0],t:e[1],d:e[2],loc:e[3],cat:e[4]}]));
+
+/* lightbox */
+const lb=$('#lb'); let lastFocus=null;
+function openEv(id){
+  const e=EVM[id]; if(!e) return; const d=DOCS[e.d];
+  lastFocus=document.activeElement;
+  $('#lb-t').textContent=e.t; $('#lb-s').textContent=d.t+' · '+e.loc;
+  $('#lb-img').src='ev/'+id+'.jpg'; $('#lb-img').alt='Recorte: '+e.t;
+  $('#lb-f').innerHTML=`<a href="${d.u}" target="_blank" rel="noopener">Abrir documento original ↗</a>`+(d.local?`<a href="${d.local}" target="_blank" rel="noopener">Copia guardada (PDF)</a>`:'')+`<span class="note">${d.what}</span>`;
+  lb.hidden=false; $('#lb-x').focus();
+}
+function closeLb(){lb.hidden=true; if(lastFocus) lastFocus.focus();}
+$('#lb-x').onclick=closeLb; lb.addEventListener('click',e=>{if(e.target===lb) closeLb()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!lb.hidden) closeLb()});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ev]'); if(b){e.preventDefault(); openEv(b.dataset.ev)}});
+$$('.src').forEach(b=>{if(b.dataset.ev&&EVM[b.dataset.ev]) b.title=EVM[b.dataset.ev].t});
+
+/* tooltip */
+const tip=$('#tip');
+document.addEventListener('pointermove',e=>{
+  const t=e.target.closest('[data-tip]');
+  if(!t){tip.classList.remove('on');return}
+  tip.innerHTML=t.dataset.tip; tip.classList.add('on');
+  const r=tip.getBoundingClientRect(); let x=e.clientX+14,y=e.clientY+14;
+  if(x+r.width>innerWidth-8) x=e.clientX-r.width-14; if(y+r.height>innerHeight-8) y=e.clientY-r.height-14;
+  tip.style.left=x+'px'; tip.style.top=y+'px';
+});
+
+/* ---------------- 2. waterfall ---------------- */
+const PL={
+ '22/23':{ing:118.662,aprov:-3.018,pers:-83.706,otros:-27.411,amort:-17.879,varios:0.089,ventas:19.933,det:3.051,fin:-10.914,imp:-5.769,ev:'b7728926',
+   story:'Perdió 7,0 M. Ojo: más de la mitad de la pérdida fueron impuestos (−5,8 M). Pero sin los 23 M de ventas, el negocio habría perdido 13,3 M operando. Salarios: 71% de los ingresos.'},
+ '23/24':{ing:106.883,aprov:-4.645,pers:-70.172,otros:-23.378,amort:-12.969,varios:3.606,ventas:16.957,det:-0.250,fin:-14.021,imp:-1.843,ev:'b7728926',
+   story:'El año del ajuste: ingresaron 12 M menos pero recortaron 13,5 M de salarios (66% de los ingresos). Sin ventas, casi cuadra (−0,7 M). La deuda se come casi todo: de 16 M de explotación, 14 M van a resultado financiero.'},
+ '24/25':{ing:103.708,aprov:-4.551,pers:-84.019,otros:-25.242,amort:-12.597,varios:4.926,ventas:24.763,det:16.809,fin:-21.589,imp:-1.930,ev:'2219b155',
+   story:'Gana 0,3 M, pero los salarios saltan al 81% y el resultado financiero empeora a −21,6 M. Lo que cuadra la cuenta: 24,8 M de ventas y 16,8 M de reversión del estadio, que no es dinero. Quita las dos y mira.'},
+ 'P 25/26':{ing:102.173,aprov:-3.777,pers:-87.940,otros:-25.350,amort:-14.213,varios:2.514,ventas:37.239,det:0,fin:-10.646,imp:0,ev:'ca85c68c',
+   story:'Presupuesto, no resultado. Hecho para dar exactamente cero: el resultado de explotación (10,646) es igual al financiero. La pieza que lo cuadra son 37,2 M de ventas de jugadores. Sin ellas, −26,6 M.'}
+};
+const WF_ROWS=[
+ ['ing','Ingresos','total0'],['aprov','Aprovisionamientos y otros ingresos'],['pers','Gastos de personal'],['otros','Otros gastos de explotación'],['amort','Amortización'],['varios','Subvenciones y otros resultados'],['ventas','Venta de jugadores'],['det','Deterioros y reversiones'],
+ ['=expl','Resultado de explotación','tot'],['fin','Resultado financiero'],['imp','Impuestos'],['=res','Resultado del ejercicio','tot']
+];
+const DOM=[-45,125];
+let wfY='24/25';
+const segY=$('#wf-year');
+Object.keys(PL).forEach(y=>{const b=document.createElement('button');b.type='button';b.textContent=y==='P 25/26'?'Presup. 25/26':y;b.setAttribute('aria-pressed',y===wfY);b.onclick=()=>{wfY=y;$$('#wf-year button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawWF()};segY.appendChild(b)});
+$('#wf-noventas').onchange=drawWF; $('#wf-norev').onchange=drawWF;
+const X=v=>(v-DOM[0])/(DOM[1]-DOM[0])*100;
+// axis
+(()=>{const a=$('#wf-axis');[-40,0,40,80,120].forEach(v=>{const s=document.createElement('span');s.style.left=X(v)+'%';s.textContent=v;a.appendChild(s)})})();
+function drawWF(){
+  const d=PL[wfY], noV=$('#wf-noventas').checked, noR=$('#wf-norev').checked;
+  const val={...d}; if(noV) val.ventas=0; if(noR) val.det=0;
+  let run=0; const rows=[];
+  for(const [k,lab,kind] of WF_ROWS){
+    if(kind==='total0'){run=val.ing; rows.push({lab,from:0,to:run,v:run,tot:1});continue}
+    if(kind==='tot'){rows.push({lab,from:0,to:run,v:run,tot:1});continue}
+    const v=val[k]; const off=(k==='ventas'&&noV)||(k==='det'&&noR);
+    rows.push({lab,from:run,to:run+v,v:off?d[k]:v,off}); run+=v;
+  }
+  const g=css('--gain'),l=css('--loss'),ink=css('--ink');
+  const wf=$('#wf');
+  if(!wf.children.length){rows.forEach(()=>{const r=document.createElement('div');r.className='wf-row';r.innerHTML='<span class="lab"></span><div class="wf-track"><span class="wf-zero"></span><span class="wf-bar"></span><span class="wf-val"></span></div>';wf.appendChild(r)})}
+  rows.forEach((r,i)=>{
+    const el=wf.children[i]; el.className='wf-row'+(r.tot?' tot':'')+(r.off?' off':'');
+    el.querySelector('.lab').textContent=r.lab;
+    const lo=Math.min(r.from,r.to),hi=Math.max(r.from,r.to);
+    const bar=el.querySelector('.wf-bar'); bar.style.left=X(lo)+'%'; bar.style.width=Math.max(.4,X(hi)-X(lo))+'%';
+    bar.style.background=r.tot?(r.v<0?l:ink):(r.v>=0?g:l);
+    el.querySelector('.wf-zero').style.left=X(0)+'%';
+    const vv=el.querySelector('.wf-val'); vv.textContent=r.off?'quitado ('+sgn(r.v)+')':(r.tot?f1(r.v):sgn(r.v));
+    const rightRoom=X(hi)<82; vv.style.left=rightRoom?`calc(${X(hi)}% + 6px)`:`calc(${X(lo)}% - 6px)`; vv.style.transform=rightRoom?'none':'translateX(-100%)';
+    el.querySelector('.wf-track').dataset.tip=`<b>${r.lab}</b><br>${r.tot?f1(r.v):sgn(r.v)} M€`+(r.off?'<br>(quitado en esta vista)':'');
+  });
+  const res=rows[rows.length-1].v, expl=rows[8].v;
+  let s=d.story;
+  if(noV||noR) s=`Sin ${[noV?'ventas de jugadores':'',noR?'la reversión del estadio':''].filter(Boolean).join(' ni ')}: resultado de explotación de <strong>${f1(expl)} M</strong> y resultado del ejercicio de <strong>${f1(res)} M</strong>. `+(res<0?'El club perdería dinero.':'');
+  $('#wf-story').innerHTML=s;
+  $('#wf-src').innerHTML=`Fuente: <button class="src" data-ev="${d.ev}">${EVM[d.ev].t}</button>`;
+}
+drawWF();
+
+/* ---------------- 3. small multiples ---------------- */
+const YRS=['22/23','23/24','24/25','P 25/26'];
+function mini({id,title,sub,vals,unit,fmt,ref,refLab,dom,colorFn,ev}){
+  const W=320,H=190,ml=34,mr=8,mt=26,mb=24,iw=W-ml-mr,ih=H-mt-mb;
+  const y=v=>mt+ih-(v-dom[0])/(dom[1]-dom[0])*ih, y0=y(Math.max(dom[0],0));
+  const bw=iw/vals.length*0.56;
+  let s=`<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="${title}">`;
+  const ticks=[]; const step=(dom[1]-dom[0])/4; for(let i=0;i<=4;i++) ticks.push(dom[0]+step*i);
+  ticks.forEach(t=>{s+=`<line class="axl" x1="${ml}" x2="${W-mr}" y1="${y(t)}" y2="${y(t)}" stroke-dasharray="2 3"/><text class="ax" x="${ml-6}" y="${y(t)+4}" text-anchor="end">${Math.round(t)}</text>`});
+  if(ref!=null){s+=`<line x1="${ml}" x2="${W-mr}" y1="${y(ref)}" y2="${y(ref)}" stroke="${css('--loss')}" stroke-width="1.5" stroke-dasharray="5 3"/>`}
+  vals.forEach((v,i)=>{ if(v==null) return;
+    const cx=ml+iw/vals.length*(i+.5), x=cx-bw/2, top=Math.min(y(v),y0), h=Math.max(1,Math.abs(y(v)-y0));
+    const c=colorFn(v,i), pat=i===3;
+    s+=`<rect x="${x}" y="${top}" width="${bw}" height="${h}" rx="2" fill="${pat?'url(#hatch-'+id+')':c}" ${pat?`stroke="${c}" stroke-width="1.2"`:''}/>`;
+    s+=`<text class="lbl" x="${cx}" y="${v>=0?top-6:top+h+13}" text-anchor="middle">${fmt(v)}</text>`;
+    s+=`<rect class="hit" x="${cx-iw/vals.length/2}" y="${mt}" width="${iw/vals.length}" height="${ih}" data-tip="<b>${YRS[i]==='P 25/26'?'Presupuesto 25/26':YRS[i]}</b><br>${title}: ${fmt(v)}${unit}"/>`;
+    s+=`<text class="ax" x="${cx}" y="${H-6}" text-anchor="middle">${YRS[i]==='P 25/26'?'P 25/26':YRS[i]}</text>`;
+  });
+  s+=`<line class="base" x1="${ml}" x2="${W-mr}" y1="${y0}" y2="${y0}"/>`;
+  s+=`<defs><pattern id="hatch-${id}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="${css('--paper-2')}"/><line x1="0" y1="0" x2="0" y2="6" stroke="${colorFn(vals[3]??0,3)}" stroke-width="2"/></pattern></defs></svg>`;
+  return `<figure><h3>${title}</h3><span class="sub">${sub} <button class="src" data-ev="${ev}">fuente</button></span>${s}</figure>`;
+}
+function drawMult(){
+  const ink=css('--ink'),loss=css('--loss'),az=css('--s1'),mu=css('--muted');
+  $('#mult').innerHTML=[
+    mini({id:'a',title:'Salarios / ingresos',sub:'%. La línea marca 70%, zona de riesgo.',vals:[70.5,65.7,81.0,86.1],unit:'%',fmt:v=>f1(v,0)+'%',ref:70,refLab:'70%',dom:[0,100],colorFn:(v)=>v>=70?loss:ink,ev:'2219b155'}),
+    mini({id:'b',title:'Explotación sin vender jugadores',sub:'M€. Resultado de explotación menos la línea 11.',vals:[-13.3,-0.7,-17.8,-26.6],unit:' M€',fmt:v=>f1(v),dom:[-30,10],colorFn:v=>v<0?loss:ink,ev:'2219b155'}),
+    mini({id:'c',title:'Ingresos por TV',sub:'M€. Tercer año seguido a la baja.',vals:[67.8,60.1,53.2,55.3],unit:' M€',fmt:v=>f1(v),dom:[0,80],colorFn:()=>az,ev:'6f36431c'}),
+    mini({id:'d',title:'Gastos financieros',sub:'M€. Intereses y costes de la deuda.',vals:[15.4,17.5,22.4,null],unit:' M€',fmt:v=>f1(v),dom:[0,24],colorFn:()=>mu,ev:'8fa6609d'})
+  ].join('');
+}
+drawMult();
+
+/* ---------------- 4. revenue mix ---------------- */
+const CATS=[['TV','--s1'],['Comercial y publicidad','--s2'],['Abonados y socios','--s3'],['Competiciones','--s4'],['Tiendas','--s5']];
+const MIX={'22/23':[67.755,17.567,15.183,12.329,5.828],'23/24':[60.111,16.480,16.282,7.291,6.719],'24/25':[53.247,17.969,16.821,9.544,6.127]};
+$('#mix-legend').innerHTML=CATS.map(c=>`<span><i style="background:var(${c[1]})"></i>${c[0]}</span>`).join('');
+function drawMix(){
+  const W=460,H=Object.keys(MIX).length*58+30,ml=46,mr=46,iw=W-ml-mr,max=120,x=v=>ml+v/max*iw;
+  let s=`<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Ingresos por tipo y temporada">`;
+  [0,40,80,120].forEach(t=>{s+=`<line class="axl" x1="${x(t)}" x2="${x(t)}" y1="6" y2="${H-22}" stroke-dasharray="2 3"/><text class="ax" x="${x(t)}" y="${H-6}" text-anchor="middle">${t}</text>`});
+  Object.entries(MIX).forEach(([yr,vals],i)=>{
+    const y=12+i*58; let acc=0; const tot=vals.reduce((a,b)=>a+b,0);
+    s+=`<text class="lbl" x="${ml-8}" y="${y+21}" text-anchor="end">${yr}</text>`;
+    vals.forEach((v,j)=>{const x0=x(acc),w=x(acc+v)-x0-2;
+      s+=`<rect x="${x0}" y="${y}" width="${Math.max(1,w)}" height="32" rx="2" fill="${css(CATS[j][1])}" data-tip="<b>${yr} · ${CATS[j][0]}</b><br>${f1(v)} M€ · ${f1(v/tot*100,0)}%"/>`;
+      if(j===0) s+=`<text x="${x0+8}" y="${y+21}" style="fill:#fff;font-size:12px;font-weight:700">TV ${f1(v/tot*100,0)}%</text>`;
+      acc+=v});
+    s+=`<text class="lbl" x="${x(tot)+6}" y="${y+21}">${f1(tot)}</text>`;
+  });
+  $('#mix').innerHTML=s+'</svg>';
+}
+drawMix();
+
+function drawVsLiga(){
+  const rows=[['TV',57.1,40.4],['Día de partido',23.2,18.0],['Comercial y tienda',19.7,32.0],['Otros',0,9.6]];
+  const W=520,rowH=54,H=rows.length*rowH+24,ml=130,mr=40,iw=W-ml-mr,x=v=>ml+v/60*iw;
+  let s=`<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Valencia contra LaLiga, % de ingresos">`;
+  [0,20,40,60].forEach(t=>{s+=`<line class="axl" x1="${x(t)}" x2="${x(t)}" y1="0" y2="${H-20}" stroke-dasharray="2 3"/><text class="ax" x="${x(t)}" y="${H-5}" text-anchor="middle">${t}%</text>`});
+  rows.forEach((r,i)=>{const y=6+i*rowH;
+    s+=`<text class="lbl" x="${ml-10}" y="${y+22}" text-anchor="end">${r[0]}</text>`;
+    s+=`<rect x="${ml}" y="${y}" width="${Math.max(1,x(r[1])-ml)}" height="18" rx="2" fill="${css('--azul')}" data-tip="<b>Valencia · ${r[0]}</b><br>${f1(r[1])}% de los ingresos"/><text class="lbl-m" x="${x(r[1])+5}" y="${y+13}">${f1(r[1],0)}%</text>`;
+    s+=`<rect x="${ml}" y="${y+20}" width="${Math.max(1,x(r[2])-ml)}" height="18" rx="2" fill="${css('--muted')}" data-tip="<b>LaLiga · ${r[0]}</b><br>${f1(r[2])}% de los ingresos"/><text class="lbl-m" x="${x(r[2])+5}" y="${y+33}">${f1(r[2],0)}%</text>`;
+  });
+  $('#vsliga').innerHTML=s+'</svg>';
+}
+drawVsLiga();
+
+function drawTV(){
+  const parts=[['50% a partes iguales',50,'--muted'],['25% resultados',25,'--s1'],['25% implantación social',25,'--s3']];
+  $('#tvsplit').innerHTML=`<div class="stack" role="img" aria-label="Reparto de la TV">${parts.map(p=>`<div style="flex:${p[1]};background:var(${p[2]})" data-tip="${p[0]}">${p[0]}</div>`).join('')}</div>`;
+  const win=[['20/21',15,null],['21/22',15,9],['22/23',15,16],['23/24',20,9],['24/25',35,12]];
+  const W=520,H=150,ml=10,mr=10,iw=W-ml-mr,bw=iw/win.length;
+  let s=`<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Peso de cada temporada en el reparto por resultados 25/26">`;
+  s+=`<text class="lbl-m" x="${ml}" y="14">Peso de cada temporada en el 25% por resultados de la TV de 25/26</text>`;
+  win.forEach((w,i)=>{const cx=ml+bw*(i+.5),h=w[1]/35*80,y=118-h;
+    s+=`<rect x="${cx-bw*.3}" y="${y}" width="${bw*.6}" height="${h}" rx="2" fill="${css('--s1')}" opacity="${.45+w[1]/35*.55}" data-tip="<b>${w[0]}</b><br>Pesa ${w[1]}%${w[2]?' · Valencia '+w[2]+'.º':''}"/>`;
+    s+=`<text class="lbl" x="${cx}" y="${y-6}" text-anchor="middle">${w[1]}%</text><text class="ax" x="${cx}" y="${134}" text-anchor="middle">${w[0]}</text><text class="ax" x="${cx}" y="${148}" text-anchor="middle">${w[2]?w[2]+'.º':'—'}</text>`});
+  $('#tvwin').innerHTML=s+'</svg>';
+}
+drawTV();
+
+/* ---------------- 5. fan sim ---------------- */
+const fan=$('#fan');
+function drawFan(){const p=+fan.value,tot=43640*19*p/1e6,diff=tot-22.3;
+  $('#fan-v').textContent=p+' €'; $('#fan-tot').textContent=f1(tot)+' M'; $('#fan-diff').textContent=sgn(diff)+' M';
+  $('#fan-diff').style.color=diff>=0?'var(--gain)':'var(--loss)';}
+fan.oninput=drawFan; drawFan();
+
+/* ---------------- 6. cash chart ---------------- */
+function drawCash(){
+  const d=[['22/23',-6.962,-28.4],['23/24',0.168,-3.919],['24/25',0.278,-27.258]];
+  const W=520,H=230,ml=40,mr=10,mt=16,mb=28,iw=W-ml-mr,ih=H-mt-mb,dom=[-30,5],y=v=>mt+(dom[1]-v)/(dom[1]-dom[0])*ih,gw=iw/d.length,bw=gw*.28;
+  let s=`<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Resultado contable contra flujo de caja de explotación">`;
+  [-30,-20,-10,0].forEach(t=>{s+=`<line class="axl" x1="${ml}" x2="${W-mr}" y1="${y(t)}" y2="${y(t)}" stroke-dasharray="2 3"/><text class="ax" x="${ml-6}" y="${y(t)+4}" text-anchor="end">${t}</text>`});
+  d.forEach((r,i)=>{const cx=ml+gw*(i+.5);
+    [[r[1],css('--ink'),-1,'Resultado contable'],[r[2],css('--s1'),1,'Flujo de explotación']].forEach(([v,c,o,lab])=>{
+      const x=cx+o*(bw/2+1)-bw/2, top=Math.min(y(v),y(0)), h=Math.max(1.5,Math.abs(y(v)-y(0)));
+      s+=`<rect x="${x}" y="${top}" width="${bw}" height="${h}" rx="2" fill="${c}" data-tip="<b>${r[0]} · ${lab}</b><br>${f1(v)} M€"/>`;
+      s+=`<text class="lbl" x="${x+bw/2}" y="${v>=0?top-5:top+h+13}" text-anchor="middle">${f1(v)}</text>`});
+    s+=`<text class="ax" x="${cx}" y="${H-6}" text-anchor="middle" style="font-weight:700">${r[0]}</text>`});
+  s+=`<line class="base" x1="${ml}" x2="${W-mr}" y1="${y(0)}" y2="${y(0)}"/>`;
+  $('#cashchart').innerHTML=s+'</svg>';
+}
+drawCash();
+
+/* ---------------- 7. bullets ---------------- */
+function drawBullets(){
+  const B=[
+    {t:'Deuda neta / EBITDA',v:9.8,max:12,good:3,bad:5,fmt:v=>f1(v)+'×',note:'Sano: menos de 3×. Preocupante: más de 5×.',inv:false},
+    {t:'Cobertura de intereses (EBITDA / intereses)',v:1.6,max:5,good:3,bad:1.5,fmt:v=>f1(v)+'×',note:'Sano: más de 3×. Preocupante: menos de 1,5×. Sin ventas ni reversión, el EBITDA de 24/25 sería ≈ −5 M.',inv:true},
+    {t:'Servicio de la deuda / ingresos',v:37,max:50,good:15,bad:30,fmt:v=>f1(v,0)+'%',note:'Intereses más devolución de préstamos, 23/24.',inv:false}
+  ];
+  const W=520,H=64;
+  $('#bullets').innerHTML=B.map(b=>{const x=v=>8+v/b.max*(W-16);
+    const zones=b.inv?[[0,b.bad,'--loss-soft'],[b.bad,b.good,'--paper'],[b.good,b.max,'--gain-soft']]:[[0,b.good,'--gain-soft'],[b.good,b.bad,'--paper'],[b.bad,b.max,'--loss-soft']];
+    let s=`<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="${b.t}: ${b.fmt(b.v)}">`;
+    zones.forEach(z=>{s+=`<rect x="${x(z[0])}" y="8" width="${x(z[1])-x(z[0])}" height="26" fill="${css(z[2])}"/>`});
+    s+=`<rect x="8" y="16" width="${x(b.v)-8}" height="10" rx="2" fill="${css('--ink')}" data-tip="<b>${b.t}</b><br>Valencia: ${b.fmt(b.v)}"/>`;
+    s+=`<line x1="${x(b.inv?b.good:b.good)}" x2="${x(b.good)}" y1="4" y2="38" stroke="${css('--gain')}" stroke-width="2"/>`;
+    s+=`<text class="lbl" x="${Math.min(x(b.v)+6,W-40)}" y="${x(b.v)+6>W-40?50:25}">${b.fmt(b.v)}</text>`;
+    [0,b.max/2,b.max].forEach(t=>{s+=`<text class="ax" x="${x(t)}" y="${H-6}" text-anchor="${t===0?'start':t===b.max?'end':'middle'}">${b.fmt(t)}</text>`});
+    return `<div style="display:grid;gap:.2rem"><b class="ui" style="font-size:.88rem">${b.t}</b>${s}</svg><span class="note">${b.note}</span></div>`}).join('');
+}
+drawBullets();
+
+/* ---------------- 8. ownership bar ---------------- */
+function drawOwn(){
+  const parts=[['Estadio (abonos + competiciones) · fondo',26.4,'--loss'],['TV · prenda',53.2,'--s4'],['Comercial · prenda',18.0,'--s4'],['Tienda · libre',6.1,'--gain'],['Ventas de jugadores · libre',24.8,'--gain']];
+  const tot=parts.reduce((a,p)=>a+p[1],0);
+  $('#ownbar').innerHTML=`<div class="stack" style="height:44px">${parts.map(p=>`<div style="flex:${p[1]};background:var(${p[2]})" data-tip="<b>${p[0]}</b><br>${f1(p[1])} M€ · ${f1(p[1]/tot*100,0)}%">${p[1]>15?f1(p[1],0):''}</div>`).join('')}</div>
+  <div class="legend" style="margin-top:.6rem"><span><i style="background:var(--loss)"></i>Cedido al fondo · 26,4</span><span><i style="background:var(--s4)"></i>En prenda · 71,2</span><span><i style="background:var(--gain)"></i>Libre · 30,9</span></div>`;
+}
+drawOwn();
+
+/* ---------------- 9. stadium sim + timeline ---------------- */
+let per='a';
+$$('#st-per button').forEach(b=>b.onclick=()=>{per=b.dataset.p;$$('#st-per button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawSt()});
+$('#st').oninput=drawSt; $('#st-cred').onchange=drawSt;
+function drawSt(){
+  const rev=+$('#st').value, cuota=(per==='a'?18.2:13.8)+($('#st-cred').checked?4.7:0);
+  const fondo=Math.min(rev,cuota), club=Math.max(0,rev-cuota), falta=Math.max(0,cuota-rev);
+  $('#st-v').textContent=rev+' M€'; $('#st-fondo').textContent=f1(fondo)+' M'; $('#st-club').textContent=f1(club)+' M';
+  const tot=Math.max(rev,cuota);
+  $('#st-bar').innerHTML=`<div style="width:${fondo/tot*100}%;background:var(--loss)" data-tip="Fondo: ${f1(fondo)} M€">${fondo/tot>.15?'Fondo':''}</div>`+(club>0?`<div style="width:${club/tot*100}%;background:var(--gain)" data-tip="Club: ${f1(club)} M€">${club/tot>.15?'Club':''}</div>`:'')+(falta>0?`<div style="width:${falta/tot*100}%;background:repeating-linear-gradient(135deg,var(--loss) 0 3px,transparent 3px 7px)" data-tip="Falta: ${f1(falta)} M€"></div>`:'');
+  $('#st-msg').innerHTML=falta>0?`<strong style="color:var(--loss)">No alcanza:</strong> faltan ${f1(falta)} M para la cuota. El club no recibe nada del estadio y el fondo tiene una hipoteca de hasta 300 M sobre él.`:club<6?`El club recibe muy poco de su principal fuente de crecimiento.`:`Cada euro por encima de la cuota es del club. El estadio tiene que generar bastante más que el Mestalla actual para que esto valga la pena.`;
+}
+drawSt();
+const TL=[
+ ['2009','Las obras del Nou Mestalla se paran.',''],
+ ['2014','Peter Lim (Meriton) compra el club.',''],
+ ['12 jul 2024','Licencia de construcción del Ayuntamiento.','key','20882bfa'],
+ ['31 oct 2024','Reestructuración: 121,3 M corporativos + puente de 65 M. Se libera la hipoteca de Mestalla.','key','ad66df25'],
+ ['10 ene 2025','Se reanudan las obras con FCC.','key','b3206971'],
+ ['28 may 2025','Nace el fondo de titulización: 237 M en bonos al 5,82%.','key','9bf16820'],
+ ['30 jun 2025','Cierre 24/25: +0,3 M de beneficio, 213 M en caja (180 del fondo).','','5fc96105'],
+ ['Oct 2026','19.º tras 7 jornadas.','now'],
+ ['Verano 2027','Terminación prevista del Nou Mestalla.','fut'],
+ ['Sep 2028','Los bonos empiezan a devolver capital.','fut'],
+ ['≈ 2030','Vence el crédito de 85 M, a pagar con la venta del Mestalla actual.','fut'],
+ ['≈ 2034','Vence la financiación corporativa.','fut'],
+ ['30 sep 2052','Vencen los bonos y termina la cesión de ingresos del estadio.','fut','c6541aa2']
+];
+$('#tl').innerHTML=TL.map(t=>`<div class="tl-item ${t[2]}"><span class="tl-date">${t[0]}</span><p>${t[1]} ${t[3]?`<button class="src" data-ev="${t[3]}">ver</button>`:''}</p></div>`).join('');
+
+/* ---------------- 10. dumbbell ---------------- */
+function drawDumb(){
+  const R=[['Ingresos',99.105,103.708],['TV',54.656,53.247],['Comercial y tienda',21.167,24.096],['Gastos de personal',63.828,84.019,1],['Venta de jugadores y deterioros',16.944,41.572],['Resultado de explotación',13.378,23.797],['Resultado financiero',-13.378,-21.589,1],['Resultado del ejercicio',0,0.278]];
+  const W=560,rowH=40,H=R.length*rowH+28,ml=190,mr=20,iw=W-ml-mr,dom=[-30,110],x=v=>ml+(v-dom[0])/(dom[1]-dom[0])*iw;
+  let s=`<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Presupuesto contra real 24/25">`;
+  [-20,0,20,40,60,80,100].forEach(t=>{s+=`<line class="axl" x1="${x(t)}" x2="${x(t)}" y1="0" y2="${H-22}" ${t?'stroke-dasharray="2 3"':''}/><text class="ax" x="${x(t)}" y="${H-6}" text-anchor="middle">${t}</text>`});
+  R.forEach((r,i)=>{const y=14+i*rowH,dv=r[2]-r[1],bad=r[3]?dv<0||r[0]==='Gastos de personal':false;
+    const worse=(r[0]==='Gastos de personal'&&dv>0)||(r[0]==='Resultado financiero'&&dv<0);
+    s+=`<text class="lbl" x="${ml-10}" y="${y+4}" text-anchor="end">${r[0]}</text>`;
+    s+=`<line x1="${x(r[1])}" x2="${x(r[2])}" y1="${y}" y2="${y}" stroke="${worse?css('--loss'):css('--rule')}" stroke-width="3"/>`;
+    s+=`<circle cx="${x(r[1])}" cy="${y}" r="5.5" fill="${css('--muted')}" stroke="${css('--paper-2')}" stroke-width="2"/><circle cx="${x(r[2])}" cy="${y}" r="5.5" fill="${css('--azul')}" stroke="${css('--paper-2')}" stroke-width="2"/>`;
+    s+=`<text class="lbl-m" x="${x(Math.max(r[1],r[2]))+10}" y="${y+4}" style="${worse?'fill:'+css('--loss')+';font-weight:700':''}">${sgn(dv)}</text>`;
+    s+=`<rect class="hit" x="0" y="${y-rowH/2}" width="${W}" height="${rowH}" data-tip="<b>${r[0]}</b><br>Presupuesto ${f1(r[1])} · Real ${f1(r[2])}<br>Diferencia ${sgn(dv)} M€"/>`;});
+  $('#dumb').innerHTML=s+'</svg>';
+}
+drawDumb();
+
+function drawDet(){
+  const d=[['30 jun 2024',26.084],['Reversión 24/25',-16.809],['30 jun 2025',9.275]];
+  const W=520,H=170,ml=10,mr=10,mt=20,mb=26,iw=W-ml-mr,ih=H-mt-mb,y=v=>mt+ih-v/30*ih,gw=iw/3,bw=gw*.5;
+  let s=`<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Deterioro acumulado del Nou Mestalla">`;
+  const pts=[[0,26.084],[9.275,26.084],[0,9.275]];
+  pts.forEach((p,i)=>{const cx=ml+gw*(i+.5),top=y(p[1]),h=y(p[0])-y(p[1]);const c=i===1?css('--gain'):css('--ink');
+    s+=`<rect x="${cx-bw/2}" y="${top}" width="${bw}" height="${h}" rx="2" fill="${c}" data-tip="<b>${d[i][0]}</b><br>${i===1?'+16,8 M€ de beneficio en papel':f1(d[i][1])+' M€ de deterioro'}"/>`;
+    s+=`<text class="lbl" x="${cx}" y="${top-6}" text-anchor="middle">${i===1?'−16,8':f1(d[i][1])}</text><text class="ax" x="${cx}" y="${H-6}" text-anchor="middle">${d[i][0]}</text>`});
+  s+=`<line class="base" x1="${ml}" x2="${W-mr}" y1="${y(0)}" y2="${y(0)}"/>`;
+  $('#detchart').innerHTML=s+'</svg>';
+}
+drawDet();
+
+function drawRule(){
+  const d=[['23/24',11.259],['24/25',-3.415],['Agregado',7.844]];
+  const W=520,H=190,ml=34,mr=10,mt=18,mb=26,iw=W-ml-mr,ih=H-mt-mb,dom=[-10,14],y=v=>mt+(dom[1]-v)/(dom[1]-dom[0])*ih,gw=iw/3,bw=gw*.46;
+  let s=`<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Resultado del fútbol según LaLiga">`;
+  [-5,0,5,10].forEach(t=>{s+=`<line class="axl" x1="${ml}" x2="${W-mr}" y1="${y(t)}" y2="${y(t)}" stroke-dasharray="2 3"/><text class="ax" x="${ml-6}" y="${y(t)+4}" text-anchor="end">${t}</text>`});
+  s+=`<line x1="${ml}" x2="${W-mr}" y1="${y(-5)}" y2="${y(-5)}" stroke="${css('--loss')}" stroke-dasharray="5 3" stroke-width="1.5"/><text class="lbl-m" x="${W-mr}" y="${y(-5)-5}" text-anchor="end" style="fill:${css('--loss')}">Déficit máximo permitido: −5 M</text>`;
+  d.forEach((r,i)=>{const cx=ml+gw*(i+.5),top=Math.min(y(r[1]),y(0)),h=Math.abs(y(r[1])-y(0));
+    s+=`<rect x="${cx-bw/2}" y="${top}" width="${bw}" height="${h}" rx="2" fill="${r[1]<0?css('--loss'):i===2?css('--azul'):css('--ink')}" data-tip="<b>${r[0]}</b><br>${sgn(r[1])} M€"/>`;
+    s+=`<text class="lbl" x="${cx}" y="${r[1]>=0?top-6:top+h+14}" text-anchor="middle">${sgn(r[1])}</text><text class="ax" x="${cx}" y="${H-6}" text-anchor="middle">${r[0]}</text>`});
+  s+=`<line class="base" x1="${ml}" x2="${W-mr}" y1="${y(0)}" y2="${y(0)}"/>`;
+  $('#rule').innerHTML=s+'</svg>';
+}
+drawRule();
+
+/* ---------------- 13. glossary + errata ---------------- */
+const GL=[
+ ['Ingresos vs. beneficio','Ingresos es todo lo que entra (TV, abonos, patrocinio). Beneficio es lo que queda después de pagar todo. El Valencia ingresa ≈104 M y gana ≈0,3 M.'],
+ ['Importe neto de la cifra de negocios','El nombre contable de los ingresos del club.'],
+ ['Resultado de explotación','Lo que gana o pierde el negocio (fútbol, tienda, TV) antes de pagar la deuda y los impuestos.'],
+ ['Resultado financiero','Lo que se gana o se paga por dinero prestado. En el Valencia es casi todo pago de intereses.'],
+ ['Inmovilizado','Lo que el club compra para usar varios años: jugadores, estadio, ciudad deportiva.'],
+ ['Amortización','El costo de esas compras repartido entre los años que duran. Un fichaje de 20 M a 5 años son 4 M al año. No es dinero saliendo este año.'],
+ ['Enajenaciones','Ventas de inmovilizado. En un club, casi siempre venta de jugadores.'],
+ ['Deterioro y reversión','Deterioro: reconocer que algo vale menos que en libros. Reversión: deshacer ese castigo si recupera valor, nunca por encima de su coste. Ninguno mueve caja.'],
+ ['Valor contable vs. de mercado','Un jugador formado en casa está en libros casi a cero aunque valga 30 M. Esa diferencia solo aparece al venderlo.'],
+ ['Aprovisionamientos','Compras de cosas físicas que el club gasta o revende: merch de la tienda, material deportivo.'],
+ ['Margen bruto','Ingreso de algo menos su coste directo. Tienda 23/24: 6,7 M de ventas menos 3,9 M de mercaderías ≈ 42%.'],
+ ['EBITDA','Ganancias antes de intereses, impuestos, depreciación y amortización. En la PyG: resultado de explotación + amortización.'],
+ ['Deuda neta','Deuda total menos la caja y otros activos líquidos.'],
+ ['Intereses vs. capital','Los intereses son gasto y están en la PyG. Devolver el préstamo (capital) no es gasto; aparece en el flujo de efectivo.'],
+ ['Flujo de efectivo','De dónde vino y a dónde se fue el dinero: explotación, inversión y financiación.'],
+ ['Fondo de maniobra','Lo que tienes disponible a corto plazo menos lo que debes a corto plazo. Negativo significa vivir apretado de caja.'],
+ ['Titulización','Pedir prestado contra ingresos futuros: los vendes a un fondo que emite bonos y cobra primero de esos ingresos.'],
+ ['Prenda','Una garantía. El dinero sigue llegando al club mientras pague; si incumple, el acreedor puede cobrarlo directamente.'],
+ ['Covenants','Ratios financieros que el prestamista exige mantener, aunque se pague a tiempo.'],
+ ['Presupuesto LFP','El presupuesto que el club presenta a LaLiga. Con él se calcula el límite de coste de plantilla.'],
+ ['Regla del resultado del fútbol','Control de LaLiga: la suma de resultados de varias temporadas no puede tener un déficit mayor a 5 M en Primera.'],
+ ['Empresa en funcionamiento','Supuesto de que el club seguirá operando. Si el auditor lo destaca en un párrafo de énfasis, está levantando la mano.'],
+ ['Préstamo participativo','Préstamo cuya remuneración depende de los resultados. El del Valencia es de LaLiga, por el acuerdo con CVC.'],
+ ['Rolar la deuda','Pedir un préstamo nuevo para pagar el viejo. Funciona mientras alguien quiera seguir prestando.']
+];
+const gl=$('#gl');
+function drawGl(q=''){q=q.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'');
+  const hit=GL.filter(g=>(g[0]+' '+g[1]).toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').includes(q));
+  gl.innerHTML=hit.length?hit.map(g=>`<details${q?' open':''}><summary>${g[0]}</summary><p>${g[1]}</p></details>`).join(''):`<p class="note" style="padding:.8rem 0">Ningún término coincide con «${q}».</p>`}
+$('#glq').oninput=e=>drawGl(e.target.value); drawGl();
+const ERR=[
+ ['Margen de la tienda ≈ 27%','≈ 42%. La línea completa de aprovisionamientos incluye material deportivo; la nota 12.2 deja el coste de mercaderías en 3,9 M.'],
+ ['La TV «ya tiene dueño de los primeros euros»','La TV está en prenda: solo se ejecuta si el club incumple. Quien cobra siempre primero es el fondo, y solo del estadio.'],
+ ['La financiación del estadio es «sin recurso» y el club no arriesga','Legalmente no pueden ir contra el resto del club, pero hay una hipoteca de hasta 300 M sobre el Nou Mestalla y el auditor considera que el riesgo y el beneficio son del club.'],
+ ['La reestructuración abarató la deuda','La nueva financiación cuesta 6,6% frente al 6% medio anterior; el tipo medio del año fue 7,3%.'],
+ ['213 M de caja en 2025','180,4 M son del fondo y están obligados a ir a la obra. La caja propia rondaba los 33 M.'],
+ ['≈22 M de capital devueltos en 23/24','El flujo exacto: pidieron 26,1 M y devolvieron 27,1 M. La deuda se refinanciaba.'],
+ ['El patrocinio de camiseta queda libre','Los contratos comerciales relevantes también están en prenda.'],
+ ['El préstamo participativo de 64 M es del dueño','Es de LaLiga, dentro del acuerdo con CVC; 80 M van al estadio.']
+];
+$('#errata').innerHTML=ERR.map(e=>`<div><p><s>${e[0]}</s><br>${e[1]}</p></div>`).join('');
+
+/* ---------------- 14. docs, gallery, checklist ---------------- */
+$('#docs').innerHTML=Object.values(DOCS).map(d=>`<tr><td><strong>${d.t}</strong></td><td>${d.what}</td><td style="white-space:nowrap"><a href="${d.u}" target="_blank" rel="noopener">Original ↗</a>${d.local?`<br><a href="${d.local}" target="_blank" rel="noopener">Copia guardada</a>`:''}</td></tr>`).join('');
+const cats=['Todos',...new Set(EV.map(e=>e[4]))]; let gcat='Todos';
+$('#gal-f').innerHTML=cats.map(c=>`<button type="button" aria-pressed="${c===gcat}" data-c="${c}">${c}</button>`).join('');
+$('#gal-f').onclick=e=>{const b=e.target.closest('button');if(!b)return;gcat=b.dataset.c;$$('#gal-f button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawGal()};
+function drawGal(){$('#gal').innerHTML=EV.filter(e=>gcat==='Todos'||e[4]===gcat).map(e=>`<button type="button" data-ev="${e[0]}"><span class="th"><img src="ev/${e[0]}.jpg" alt="" loading="lazy"></span><b>${e[1]}</b><span>${DOCS[e[2]].t} · ${e[3]}</span></button>`).join('')}
+drawGal();
+const TODO=['Escribir la tesis con mis palabras','Paso 2 · Historia: compra de Lim en 2014, protestas, estadio parado desde 2009','Paso 3 · Villarreal con los mismos ratios','Paso 3 · Real Sociedad o Atlético (antes y después del estadio)','Paso 4 · Memo de presidente con 3 decisiones','Leer «hechos posteriores al cierre» de las cuentas 24/25','Noviembre 2026 · cuentas 25/26: presupuesto contra realidad'];
+let done={}; try{done=JSON.parse(localStorage.getItem('vcf-todo')||'{}')}catch(e){}
+$('#chk').innerHTML=TODO.map((t,i)=>`<label><input type="checkbox" id="todo-${i}" ${done[i]?'checked':''}><span>${t}</span></label>`).join('');
+$('#chk').onchange=e=>{const i=e.target.id.split('-')[1];done[i]=e.target.checked;try{localStorage.setItem('vcf-todo',JSON.stringify(done))}catch(_){}};
+
+/* nav highlight */
+const links=$$('#chap a'); const secs=links.map(a=>$(a.getAttribute('href')));
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id));const on=links.find(l=>l.classList.contains('on'));if(on){const c=$('#chap');c.scrollLeft=on.offsetLeft-c.offsetLeft-24}}})},{rootMargin:'-40% 0px -55% 0px'});
+secs.forEach(s=>s&&io.observe(s));
+
+/* redraw on theme change */
+const mq=matchMedia('(prefers-color-scheme: dark)');
+const redraw=()=>{drawWF();drawMult();drawMix();drawVsLiga();drawTV();drawCash();drawBullets();drawDumb();drawDet();drawRule()};
+mq.addEventListener?.('change',redraw);
+new MutationObserver(redraw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+})();
+</script>
+
+</body></html>

@@ -7,6 +7,12 @@ import { getPosts, fullTitle } from '../posts';
 import { SECTIONS, href } from '../sections';
 import { EMAIL } from '../consts';
 const [latest] = await getPosts();
+// Notes preview per analysis for the home hero; falls back to Villarreal's.
+const COVERS: Record<string, { lg: string; sm: string }> = {
+  'villarreal-cf-24-25': { lg: '/writing/villarreal-24-25/notes-yellow.jpg', sm: '/writing/villarreal-24-25/notes-yellow-sm.jpg' },
+  'valencia-cf-24-25': { lg: '/writing/valencia-24-25/notes.jpg', sm: '/writing/valencia-24-25/notes-sm.jpg' },
+};
+const cover = (latest && COVERS[latest.id]) || COVERS['villarreal-cf-24-25'];
 // What I do or can do, shortened from /work-with-me. Instead of prices, a no-risk way to pay for each.
 const work = [
   { t: 'Finish your AI-built MVP', d: 'Deploy, fix and wire up auth, payments and the database so real users can use it.', p: 'Pay when it’s live' },
@@ -27,9 +33,9 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
         <p class="mt-4 hidden text-sm font-medium text-stone-600 transition-colors group-hover:text-accent sm:block dark:text-stone-300 dark:group-hover:text-accent-dark">Read the analysis →</p>
       </div>
       <picture>
-        {/* Trying the yellow legal-pad version of the notes (from "MBA yellow.pdf") */}
-        <source media="(min-width: 900px)" srcset="/writing/villarreal-24-25/notes-yellow.jpg" />
-        <img src="/writing/villarreal-24-25/notes-yellow-sm.jpg" alt={`Preview of the notes for “${fullTitle(latest)}”`} width="2550" height="1650" class="w-full rounded-xl border border-stone-200 bg-white transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-lg dark:border-stone-800" />
+        {/* The latest analysis's notes image (Villarreal: the yellow legal-pad version, from "MBA yellow.pdf") */}
+        <source media="(min-width: 900px)" srcset={cover.lg} />
+        <img src={cover.sm} alt={`Preview of the notes for “${fullTitle(latest)}”`} width="2550" height="1650" class="w-full rounded-xl border border-stone-200 bg-white transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-lg dark:border-stone-800" />
       </picture>
     </a>
   )}
