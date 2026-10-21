@@ -45,6 +45,7 @@ const MOVIE_INFO: Record<string, { title: string; series?: boolean; doc?: boolea
   'marty-supreme': { title: 'Marty Supreme' },
   'office-romance': { title: 'Office Romance' },
   'people-we-meet-on-vacation': { title: 'People We Meet on Vacation' },
+  'players': { title: 'Players' },
   'rafa': { title: 'Rafa', series: true, doc: true },
   'rockstar-duki': { title: 'Rockstar: Duki desde el fin del mundo', doc: true },
   'springsteen': { title: 'Springsteen: Deliver Me from Nowhere' },

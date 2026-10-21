@@ -240,6 +240,12 @@
     "img": "/img/resources/movies/people-we-meet-on-vacation.webp"
   },
   {
+    "id": "players",
+    "name": "players",
+    "rating": 0,
+    "img": "/img/resources/movies/players.webp"
+  },
+  {
     "id": "rafa",
     "name": "rafa",
     "rating": 0,
