@@ -1,0 +1,182 @@
+---
+// Demo: Ruta Café, a coffee roaster (fictional). Render: roasted coffee beans tumbling through warm, smoky light.
+import Demo from '../layouts/Demo.astro';
+const coffees = [
+  ['Chiapas', 'Finca La Concordia', 'Chocolate amargo, nuez, panela', 3, '245', '#7a4a2a'],
+  ['Veracruz', 'Coatepec, 1,350 m', 'Mandarina, caramelo, miel', 2, '265', '#b5713a'],
+  ['Oaxaca', 'Pluma Hidalgo', 'Flor de jamaica, cacao, vino tinto', 2, '290', '#8c3b2e'],
+] as const;
+---
+<Demo title="Ruta Café · Tostado en Puebla" description="Café de especialidad mexicano, tostado cada semana en Puebla." fonts="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,500&family=DM+Sans:wght@400;500;700&display=swap" bg="#1c1410" color="#f1e4d1">
+  <div class="rc">
+    <section class="hero">
+      <canvas id="rc-gl" aria-label="Granos de café"></canvas>
+      <header class="nav">
+        <a href="#" class="logo">RUTA<span>café</span></a>
+        <nav><a href="#cafes">Cafés</a><a href="#proceso">Proceso</a><a href="#club">Club</a></nav>
+        <a href="#cafes" class="cart">Carrito (0)</a>
+      </header>
+      <div class="copy">
+        <p class="kicker">Lote 24 · Tostado el lunes</p>
+        <h1>Tostado en Puebla.<br /><em>Servido en tu casa.</em></h1>
+        <p class="lead">Café de especialidad de productores de Chiapas, Veracruz y Oaxaca. Tostamos cada semana y te llega en menos de 7 días.</p>
+        <a href="#cafes" class="btn">Comprar café</a>
+      </div>
+      <div class="ticker" aria-hidden="true"><div>Chiapas ● Veracruz ● Oaxaca ● Tueste medio ● Molido a tu gusto ● Envío gratis desde $600 ● Chiapas ● Veracruz ● Oaxaca ● Tueste medio ● Molido a tu gusto ● Envío gratis desde $600 ●</div></div>
+    </section>
+
+    <section id="cafes" class="coffees">
+      <div class="head"><h2>Los cafés de <em>este mes</em></h2><p>Bolsas de 250 g, en grano o molido.</p></div>
+      <div class="grid">
+        {coffees.map(([n, farm, notes, roast, price, c]) => (
+          <article style={`--c:${c}`}>
+            <div class="bag"><span class="bag-name">{n}</span><span class="bag-sub">Ruta Café · 250 g</span></div>
+            <h3>{n}</h3>
+            <p class="farm">{farm}</p>
+            <p class="notes">{notes}</p>
+            <div class="roast">Tueste <span>{[1, 2, 3, 4].map((k) => <i class:list={[k <= roast && 'on']}></i>)}</span></div>
+            <div class="buy"><b>${price}</b><button type="button">Agregar</button></div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section id="proceso" class="process">
+      <h2>Del grano a la taza</h2>
+      <ol>
+        <li><span>01</span><b>Origen</b>Compramos directo a 9 productores, pagando arriba del precio justo.</li>
+        <li><span>02</span><b>Tueste</b>Lotes pequeños de 12 kg, cada lunes, perfilados para cada origen.</li>
+        <li><span>03</span><b>Reposo</b>48 horas para que el café suelte el gas y se abra el sabor.</li>
+        <li><span>04</span><b>Tu casa</b>Lo empacamos con válvula y te llega en menos de una semana.</li>
+      </ol>
+    </section>
+
+    <section id="club" class="club">
+      <div>
+        <h2>Club <em>Ruta</em></h2>
+        <p>Cada mes un café distinto en tu puerta, con notas de cata y la historia del productor. Cancela cuando quieras.</p>
+      </div>
+      <div class="price"><b>$520</b><span>/ mes · 2 bolsas</span><a href="#" class="btn">Unirme al club</a></div>
+    </section>
+
+    <footer><span>Ruta Café — 3 Sur 1104, Puebla</span><span>@rutacafe.mx</span></footer>
+  </div>
+</Demo>
+
+<script>
+  import * as THREE from 'three';
+  import { stage } from '../demos/stage';
+
+  // A coffee bean: a squashed sphere, flatter on one side, with the S-shaped groove down the middle.
+  const bean = new THREE.SphereGeometry(1, 48, 32);
+  const p = bean.attributes.position as THREE.BufferAttribute;
+  for (let i = 0; i < p.count; i++) {
+    let x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+    x *= 0.72; y *= 1; z *= 0.55;
+    if (z > 0) {
+      z *= 0.55;
+      const cx = 0.08 * Math.sin(y * 2.6);
+      z -= 0.2 * Math.exp(-((x - cx) ** 2) / 0.006) * (1 - Math.abs(y) * 0.6);
+    }
+    p.setXYZ(i, x, y, z);
+  }
+  bean.computeVertexNormals();
+  const N = 150;
+  const mat = new THREE.MeshPhysicalMaterial({ color: 0x4a2a16, roughness: 0.38, clearcoat: 0.7, clearcoatRoughness: 0.3, sheen: 0.4, sheenColor: new THREE.Color(0xb06a3a) });
+  const beans = new THREE.InstancedMesh(bean, mat, N);
+  let seed = 3;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const data = Array.from({ length: N }, () => ({
+    x: (rnd() - 0.5) * 30, y: (rnd() - 0.5) * 18, z: -rnd() * 16 + 2, s: 0.28 + rnd() * 0.32,
+    rx: rnd() * 6, ry: rnd() * 6, vx: (rnd() - 0.5) * 0.6, vy: (rnd() - 0.5) * 0.6, up: 0.15 + rnd() * 0.35,
+  }));
+  const o = new THREE.Object3D();
+  const s = stage(document.getElementById('rc-gl') as HTMLCanvasElement, { fov: 40, exposure: 1.1 }, (t, s) => {
+    data.forEach((d, i) => {
+      const y = ((d.y + t * d.up + 9) % 18 + 18) % 18 - 9;
+      o.position.set(d.x + Math.sin(t * 0.3 + i) * 0.4, y, d.z);
+      o.rotation.set(d.rx + t * d.vx, d.ry + t * d.vy, 0);
+      o.scale.setScalar(d.s);
+      o.updateMatrix();
+      beans.setMatrixAt(i, o.matrix);
+    });
+    beans.instanceMatrix.needsUpdate = true;
+    s.camera.position.x += (s.pointer.x * 1.2 - s.camera.position.x) * 0.04;
+    s.camera.position.y += (-s.pointer.y * 0.8 - s.camera.position.y) * 0.04;
+    s.camera.lookAt(0, 0, -4);
+  });
+  s.camera.position.set(0, 0, 10);
+  s.scene.add(beans);
+  s.scene.fog = new THREE.Fog(0x1c1410, 9, 26);
+  s.scene.environmentIntensity = 0.35;
+  const key = new THREE.DirectionalLight(0xffc48a, 2.4);
+  key.position.set(-6, 8, 6);
+  const rim = new THREE.DirectionalLight(0xff8a3d, 3);
+  rim.position.set(8, -2, -6);
+  s.scene.add(key, rim, new THREE.AmbientLight(0x3a2418, 1));
+</script>
+
+<style>
+  .rc { font-family: "DM Sans", sans-serif; --cream: #f1e4d1; --caramel: #c8873d; --bg: #1c1410; }
+  h1, h2, h3, .logo { font-family: "Playfair Display", Georgia, serif; }
+  em { color: var(--caramel); font-style: italic; font-weight: 500; }
+  .hero { position: relative; min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(28, 20, 16, 0.92) 0%, rgba(28, 20, 16, 0.55) 45%, rgba(28, 20, 16, 0) 75%); pointer-events: none; }
+  .nav, .copy, .ticker { position: relative; z-index: 1; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 24px clamp(20px, 5vw, 64px); }
+  .logo { font-size: 26px; font-weight: 800; letter-spacing: 0.08em; text-decoration: none; }
+  .logo span { font-style: italic; font-weight: 500; letter-spacing: 0; color: var(--caramel); margin-left: 6px; text-transform: lowercase; }
+  .nav nav { display: flex; gap: 32px; font-size: 15px; }
+  .nav a { text-decoration: none; }
+  .cart { border: 1px solid rgba(241, 228, 209, 0.35); border-radius: 999px; padding: 9px 16px; font-size: 14px; }
+  .copy { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 clamp(20px, 5vw, 64px) 40px; max-width: 760px; }
+  .kicker { text-transform: uppercase; letter-spacing: 0.25em; font-size: 12px; color: var(--caramel); margin: 0; }
+  h1 { font-size: clamp(3rem, 6.6vw, 6.4rem); line-height: 1; letter-spacing: -0.03em; font-weight: 700; margin: 20px 0 0; }
+  .lead { font-size: 18px; line-height: 1.65; opacity: 0.8; max-width: 32em; margin: 26px 0 34px; }
+  .btn { align-self: flex-start; display: inline-block; background: var(--caramel); color: var(--bg); padding: 16px 30px; border-radius: 4px; font-weight: 700; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase; font-size: 14px; }
+  .ticker { border-top: 1px solid rgba(241, 228, 209, 0.15); padding: 16px 0; overflow: hidden; white-space: nowrap; font-size: 14px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.7; }
+  .ticker div { display: inline-block; animation: tick 40s linear infinite; }
+  @keyframes tick { to { transform: translateX(-50%); } }
+
+  .coffees, .process { padding: 110px clamp(20px, 5vw, 64px); max-width: 1280px; margin: 0 auto; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 50px; }
+  h2 { font-size: clamp(2.4rem, 4.6vw, 4.4rem); letter-spacing: -0.03em; margin: 0; font-weight: 700; }
+  .head p { opacity: 0.6; margin: 0; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  article { background: #261b15; border: 1px solid rgba(241, 228, 209, 0.08); padding: 22px; border-radius: 6px; }
+  .bag { position: relative; aspect-ratio: 4 / 4.4; border-radius: 4px 4px 14px 14px; background: linear-gradient(160deg, color-mix(in srgb, var(--c) 85%, #fff) 0%, var(--c) 45%, color-mix(in srgb, var(--c) 60%, #000) 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; box-shadow: inset 0 18px 0 rgba(0, 0, 0, 0.18); }
+  .bag::before { content: ''; position: absolute; top: 18px; left: 0; right: 0; height: 10px; background: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0 3px, transparent 3px 7px); }
+  .bag-name { font-family: "Playfair Display", serif; font-size: 44px; font-style: italic; }
+  .bag-sub { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; opacity: 0.75; margin-top: 6px; }
+  article h3 { font-size: 30px; margin: 22px 0 2px; }
+  .farm { opacity: 0.55; margin: 0 0 14px; font-size: 14px; }
+  .notes { margin: 0 0 18px; line-height: 1.5; }
+  .roast { display: flex; align-items: center; gap: 12px; font-size: 13px; opacity: 0.8; }
+  .roast span { display: flex; gap: 4px; }
+  .roast i { width: 26px; height: 6px; border-radius: 3px; background: rgba(241, 228, 209, 0.15); }
+  .roast i.on { background: var(--caramel); }
+  .buy { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(241, 228, 209, 0.1); }
+  .buy b { font-size: 22px; }
+  .buy button { background: transparent; border: 1px solid var(--cream); border-radius: 4px; padding: 10px 16px; cursor: pointer; font-weight: 700; }
+  .buy button:hover { background: var(--cream); color: var(--bg); }
+
+  .process ol { list-style: none; padding: 0; margin: 50px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(241, 228, 209, 0.15); }
+  .process li { padding: 28px 24px 0 0; line-height: 1.6; opacity: 0.85; display: flex; flex-direction: column; gap: 6px; }
+  .process li span { font-family: "Playfair Display", serif; font-style: italic; font-size: 46px; color: var(--caramel); }
+  .process li b { font-size: 20px; }
+
+  .club { margin: 0 clamp(20px, 5vw, 64px) 100px; padding: 60px; border-radius: 8px; background: radial-gradient(ellipse at 80% 20%, #5a3418, #2c1e16 70%); display: flex; justify-content: space-between; align-items: center; gap: 30px; flex-wrap: wrap; }
+  .club p { max-width: 30em; line-height: 1.6; opacity: 0.85; }
+  .price { display: grid; gap: 6px; justify-items: start; }
+  .price b { font-family: "Playfair Display", serif; font-size: 56px; }
+  .price .btn { margin-top: 14px; }
+  footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 30px clamp(20px, 5vw, 64px) 70px; border-top: 1px solid rgba(241, 228, 209, 0.1); font-size: 14px; opacity: 0.7; }
+
+  @media (max-width: 900px) {
+    .nav nav { display: none; }
+    .grid { grid-template-columns: 1fr; }
+    .process ol { grid-template-columns: 1fr 1fr; }
+    .hero::after { background: linear-gradient(180deg, rgba(28, 20, 16, 0.4), rgba(28, 20, 16, 0.85)); }
+  }
+</style>

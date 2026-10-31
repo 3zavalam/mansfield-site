@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "photos": "node scripts/import-disposables.mjs",
     "movies": "node scripts/import-movies.mjs",
-    "resources": "node scripts/import-obsidian.mjs"
+    "resources": "node scripts/import-obsidian.mjs",
+    "images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

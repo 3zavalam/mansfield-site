@@ -1,0 +1,187 @@
+---
+// Demo: Forma, a strength gym (fictional). Render: a black cast-iron kettlebell turning in neon light over a lime grid.
+import Demo from '../layouts/Demo.astro';
+const plans = [
+  ['Básico', '690', ['Acceso 6:00 – 22:00', 'Zona de pesas libre', 'App con rutinas'], false],
+  ['Pro', '1,190', ['Todo lo de Básico', 'Clases grupales ilimitadas', 'Evaluación corporal mensual', 'Acceso 24/7'], true],
+  ['Élite', '2,490', ['Todo lo de Pro', '8 sesiones con coach al mes', 'Plan de nutrición', 'Toalla y locker'], false],
+] as const;
+const week = [
+  ['06:00', 'Fuerza', 'HIIT', 'Fuerza', 'HIIT', 'Fuerza', 'Open box'],
+  ['08:00', 'Movilidad', 'Glúteo', 'Movilidad', 'Glúteo', 'Core', '—'],
+  ['19:00', 'Halterofilia', 'Fuerza', 'Halterofilia', 'Fuerza', 'HIIT', '—'],
+  ['20:30', 'HIIT', 'Box', 'HIIT', 'Box', '—', '—'],
+];
+---
+<Demo title="FORMA · Entrena en serio" description="Gimnasio de fuerza en Guadalajara. Pesas, clases y coaches." fonts="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" bg="#0b0b0b" color="#f2f2f2">
+  <div class="forma">
+    <header class="nav">
+      <a href="#" class="logo">FORMA<span>®</span></a>
+      <nav><a href="#planes">Planes</a><a href="#clases">Clases</a><a href="#ubicacion">Ubicación</a></nav>
+      <a href="#planes" class="btn">Semana gratis</a>
+    </header>
+
+    <section class="hero">
+      <div class="copy">
+        <h1>ENTRENA<br /><span>EN SERIO.</span></h1>
+        <p>1,200 m² de fierro, plataformas y coaches que sí te corrigen la técnica.</p>
+        <div class="cta"><a href="#planes" class="btn big">Primera semana gratis</a><span>Sin inscripción en noviembre</span></div>
+      </div>
+      <div class="art">
+        <canvas id="forma-gl" aria-label="Pesa rusa"></canvas>
+        <span class="tag t1">24 KG</span>
+        <span class="tag t2">HIERRO FUNDIDO</span>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true"><div>FUERZA ✦ HIIT ✦ HALTEROFILIA ✦ BOX ✦ MOVILIDAD ✦ OPEN BOX ✦ FUERZA ✦ HIIT ✦ HALTEROFILIA ✦ BOX ✦ MOVILIDAD ✦ OPEN BOX ✦</div></div>
+
+    <section id="planes" class="plans">
+      <h2>PLANES</h2>
+      <div class="grid">
+        {plans.map(([n, p, items, hot]) => (
+          <article class:list={[hot && 'hot']}>
+            {hot && <span class="badge">Más elegido</span>}
+            <h3>{n}</h3>
+            <p class="price"><b>${p}</b>/mes</p>
+            <ul>{items.map((i) => <li>{i}</li>)}</ul>
+            <a href="#" class="btn">Empezar</a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section id="clases" class="classes">
+      <h2>CLASES</h2>
+      <div class="table">
+        <table>
+          <thead><tr><th></th><th>LUN</th><th>MAR</th><th>MIÉ</th><th>JUE</th><th>VIE</th><th>SÁB</th></tr></thead>
+          <tbody>{week.map((r) => <tr>{r.map((c, i) => (i ? <td class:list={[c === '—' && 'off']}>{c}</td> : <th>{c}</th>))}</tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="ubicacion" class="end">
+      <h2>AV. CHAPULTEPEC 480<br /><span>GUADALAJARA</span></h2>
+      <p>Lun – Vie 5:00 – 23:00 · Sáb 7:00 – 15:00 · Estacionamiento gratis</p>
+    </section>
+    <footer><span>FORMA® 2026</span><span>@forma.gdl</span></footer>
+  </div>
+</Demo>
+
+<script>
+  import * as THREE from 'three';
+  import { stage } from '../demos/stage';
+
+  const bell = new THREE.Group();
+  const s = stage(document.getElementById('forma-gl') as HTMLCanvasElement, { fov: 30, exposure: 1.1 }, (t, s) => {
+    bell.rotation.y = t * 0.45 + s.pointer.x * 0.5;
+    bell.rotation.z = Math.sin(t * 0.6) * 0.06;
+    bell.position.y = -0.2 + Math.sin(t * 1.1) * 0.1;
+    grid.position.z = (t * 0.8) % 1;
+  });
+  s.camera.position.set(0, 1.6, 9);
+  s.camera.lookAt(0, 0.6, 0);
+  s.scene.environmentIntensity = 0.5;
+  s.scene.fog = new THREE.Fog(0x0b0b0b, 9, 22);
+
+  // Body: a lathe with a flat base; handle: half a torus on two short posts.
+  const pts: THREE.Vector2[] = [new THREE.Vector2(0, -1.18)];
+  for (let i = 0; i <= 40; i++) {
+    const a = -Math.PI / 2 + (i / 40) * Math.PI * 0.86;
+    pts.push(new THREE.Vector2(Math.max(0.0001, 1.3 * Math.cos(a)), Math.max(-1.18, 1.3 * Math.sin(a))));
+  }
+  pts.push(new THREE.Vector2(0.55, 1.32), new THREE.Vector2(0, 1.36));
+  const iron = new THREE.MeshPhysicalMaterial({ color: 0x1a1a1a, metalness: 0.65, roughness: 0.42, clearcoat: 0.4, clearcoatRoughness: 0.5 });
+  bell.add(new THREE.Mesh(new THREE.LatheGeometry(pts, 96), iron));
+  const handle = new THREE.Mesh(new THREE.TorusGeometry(0.88, 0.17, 24, 64, Math.PI), iron);
+  handle.position.y = 1.75;
+  bell.add(handle);
+  for (const x of [-0.88, 0.88]) {
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.24, 0.7, 24), iron);
+    post.position.set(x, 1.45, 0);
+    bell.add(post);
+  }
+  // A lime band, like a weight marking.
+  const band = new THREE.Mesh(new THREE.TorusGeometry(1.29, 0.035, 12, 96), new THREE.MeshStandardMaterial({ color: 0xe4ff3a, emissive: 0xe4ff3a, emissiveIntensity: 0.8 }));
+  band.rotation.x = Math.PI / 2;
+  band.position.y = 0.05;
+  bell.add(band);
+  bell.scale.setScalar(0.72);
+  s.scene.add(bell);
+
+  const grid = new THREE.GridHelper(40, 40, 0xe4ff3a, 0xe4ff3a);
+  (grid.material as THREE.Material).transparent = true;
+  (grid.material as THREE.Material).opacity = 0.22;
+  grid.position.y = -1.4;
+  s.scene.add(grid);
+  const rim1 = new THREE.PointLight(0xe4ff3a, 60, 20);
+  rim1.position.set(-4, 2, -3);
+  const rim2 = new THREE.PointLight(0x8c7bff, 40, 20);
+  rim2.position.set(4, 3, -2);
+  const key = new THREE.DirectionalLight(0xffffff, 1.2);
+  key.position.set(3, 5, 6);
+  s.scene.add(rim1, rim2, key);
+</script>
+
+<style>
+  .forma { font-family: Inter, sans-serif; --lime: #e4ff3a; }
+  h1, h2, h3, .logo, .marquee, .price b, .tag, .badge { font-family: Unbounded, sans-serif; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 20px clamp(20px, 4vw, 48px); border-bottom: 1px solid #222; }
+  .logo { font-weight: 900; font-size: 24px; letter-spacing: 0.02em; text-decoration: none; }
+  .logo span { color: var(--lime); font-size: 14px; vertical-align: top; }
+  .nav nav { display: flex; gap: 30px; font-size: 14px; font-weight: 500; }
+  .nav nav a { text-decoration: none; color: #9a9a9a; }
+  .btn { display: inline-block; background: var(--lime); color: #0b0b0b; font-weight: 700; text-decoration: none; padding: 12px 20px; border-radius: 999px; font-size: 14px; }
+  .btn.big { padding: 18px 30px; font-size: 16px; }
+
+  .hero { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; min-height: 86vh; padding: 0 clamp(20px, 4vw, 48px); background: radial-gradient(ellipse 50% 60% at 75% 50%, #1d2105, #0b0b0b 70%); }
+  h1 { font-size: clamp(3.4rem, 8.4vw, 8.6rem); font-weight: 900; line-height: 0.9; letter-spacing: -0.04em; margin: 0; }
+  h1 span { color: transparent; -webkit-text-stroke: 2px var(--lime); }
+  .copy p { font-size: 19px; color: #a8a8a8; max-width: 26em; line-height: 1.55; margin: 26px 0 34px; }
+  .cta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; font-size: 14px; color: #8a8a8a; }
+  .art { position: relative; height: 80vh; min-height: 420px; }
+  .art canvas { width: 100%; height: 100%; }
+  .tag { position: absolute; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; border: 1px solid var(--lime); color: var(--lime); padding: 8px 12px; border-radius: 999px; }
+  .t1 { top: 22%; right: 6%; }
+  .t2 { bottom: 20%; left: 4%; }
+  .marquee { background: var(--lime); color: #0b0b0b; overflow: hidden; white-space: nowrap; padding: 18px 0; font-weight: 900; font-size: clamp(1.4rem, 3vw, 2.4rem); transform: rotate(-1.5deg); margin: 20px -10px; }
+  .marquee div { display: inline-block; animation: m 22s linear infinite; }
+  @keyframes m { to { transform: translateX(-50%); } }
+
+  .plans, .classes { padding: 110px clamp(20px, 4vw, 48px); max-width: 1300px; margin: 0 auto; }
+  h2 { font-size: clamp(2.6rem, 6vw, 5.4rem); font-weight: 900; letter-spacing: -0.04em; margin: 0 0 40px; }
+  h2 span { color: var(--lime); }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  article { position: relative; border: 1px solid #2a2a2a; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; background: #121212; }
+  article.hot { background: var(--lime); color: #0b0b0b; border-color: var(--lime); transform: translateY(-12px); }
+  article.hot .btn { background: #0b0b0b; color: var(--lime); }
+  .badge { position: absolute; top: 22px; right: 22px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: #0b0b0b; color: var(--lime); padding: 6px 10px; border-radius: 999px; }
+  article h3 { font-size: 22px; margin: 0; }
+  .price { margin: 28px 0 20px; }
+  .price b { font-size: 48px; font-weight: 900; letter-spacing: -0.04em; }
+  article ul { list-style: none; padding: 0; margin: 0 0 30px; flex: 1; }
+  article li { padding: 10px 0; border-top: 1px solid rgba(128, 128, 128, 0.25); font-size: 15px; }
+  article li::before { content: '✦ '; color: var(--lime); }
+  article.hot li::before { color: #0b0b0b; }
+  article .btn { text-align: center; }
+
+  .table { overflow-x: auto; }
+  table { width: 100%; border-collapse: separate; border-spacing: 6px; min-width: 720px; }
+  th { font-family: Unbounded, sans-serif; font-size: 12px; color: #8a8a8a; text-align: left; font-weight: 500; padding: 8px; }
+  tbody th { color: var(--lime); font-size: 15px; }
+  td { background: #161616; border-radius: 12px; padding: 18px 14px; font-weight: 600; font-size: 15px; transition: background 0.2s, color 0.2s; }
+  td:hover { background: var(--lime); color: #0b0b0b; }
+  td.off { background: transparent; color: #444; }
+  .end { padding: 120px clamp(20px, 4vw, 48px); border-top: 1px solid #222; }
+  .end p { color: #8a8a8a; }
+  footer { display: flex; justify-content: space-between; padding: 24px clamp(20px, 4vw, 48px) 70px; border-top: 1px solid #222; color: #6a6a6a; font-size: 14px; }
+
+  @media (max-width: 900px) {
+    .nav nav { display: none; }
+    .hero { grid-template-columns: 1fr; padding-top: 40px; }
+    .art { height: 56vh; }
+    .grid { grid-template-columns: 1fr; }
+    article.hot { transform: none; }
+  }
+</style>

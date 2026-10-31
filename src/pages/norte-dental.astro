@@ -1,0 +1,143 @@
+---
+// Demo: Norte Dental, a dental clinic (fictional). Photo-led hero: the clinic in a tall rounded frame, a smile inset and floating badges.
+// Photos: Unsplash (free licence), ids Fdku_oMrDvk, glPVwPr1FKo.
+import Demo from '../layouts/Demo.astro';
+import { pic } from '../demos/pic';
+const services = [
+  ['Limpieza y revisión', 'Diagnóstico completo con radiografía digital incluida.', '650', '45 min'],
+  ['Ortodoncia invisible', 'Alineadores transparentes con plan 3D antes de empezar.', '28,000', '6–12 meses'],
+  ['Blanqueamiento', 'Hasta 8 tonos más blanco, sin sensibilidad.', '3,500', '1 sesión'],
+  ['Implantes', 'Corona de zirconia y garantía de 10 años.', '18,500', '3 citas'],
+];
+const faq = [
+  ['¿Atienden urgencias?', 'Sí. Todos los días tenemos espacios para dolor o golpes; escríbenos por WhatsApp y te damos hora el mismo día.'],
+  ['¿Aceptan seguros?', 'Trabajamos con las principales aseguradoras de gastos médicos y te ayudamos con el trámite.'],
+  ['¿Puedo pagar a meses?', 'Sí, hasta 12 meses sin intereses con tarjetas participantes.'],
+];
+---
+<Demo title="Norte Dental · Sonríe sin miedo" description="Clínica dental en Monterrey: limpieza, ortodoncia invisible, blanqueamiento e implantes." fonts="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" bg="#f4f8fb" color="#0f2a3a">
+  <div class="nd">
+    <header class="nav">
+      <a href="#" class="logo"><span class="mark"></span>Norte Dental</a>
+      <nav><a href="#servicios">Servicios</a><a href="#proceso">Cómo funciona</a><a href="#faq">Preguntas</a></nav>
+      <a href="#cita" class="btn">Agendar cita</a>
+    </header>
+
+    <section class="hero">
+      <div class="copy">
+        <p class="pill"><span></span>Agenda abierta esta semana</p>
+        <h1>Sonríe<br /><span>sin miedo.</span></h1>
+        <p class="lead">Odontología sin dolor y sin sorpresas: te explicamos todo con tu escaneo 3D y te damos el precio antes de empezar.</p>
+        <div class="card" id="cita">
+          <label>Tratamiento<select><option>Limpieza y revisión</option><option>Ortodoncia invisible</option><option>Blanqueamiento</option><option>Implantes</option></select></label>
+          <label>Día<input type="date" /></label>
+          <button class="btn" type="button">Ver horarios</button>
+        </div>
+        <ul class="proof"><li><b>4.9</b> en Google</li><li><b>+3,200</b> pacientes</li><li><b>12</b> especialistas</li></ul>
+      </div>
+      <div class="art">
+        <img class="main" {...pic('/img/demos/dental/clinica', '(max-width: 960px) 80vw, 40vw', true)} alt="Consultorio dental blanco y luminoso" />
+        <img class="inset" {...pic('/img/demos/dental/sonrisa', '(max-width: 960px) 34vw, 17vw', true)} alt="Sonrisa con dientes blancos" />
+        <div class="float f1"><b>Sin dolor</b><span>Anestesia computarizada</span></div>
+        <div class="float f2"><b>Escaneo 3D</b><span>Ve tu resultado antes</span></div>
+      </div>
+    </section>
+
+    <section id="servicios" class="services">
+      <h2>Tratamientos con <span>precio claro</span></h2>
+      <div class="grid">
+        {services.map(([t, d, p, time], i) => (
+          <article>
+            <span class="num">0{i + 1}</span>
+            <h3>{t}</h3>
+            <p>{d}</p>
+            <div class="row"><span>desde <b>${p}</b></span><span class="time">{time}</span></div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section id="proceso" class="steps">
+      <h2>Tu primera visita</h2>
+      <ol>
+        <li><b>Escaneo 3D</b><span>Sin moldes ni pasta: en 5 minutos tenemos tu boca en pantalla.</span></li>
+        <li><b>Plan y precio</b><span>Te mostramos opciones y lo que cuesta cada una, por escrito.</span></li>
+        <li><b>Tratamiento</b><span>Empezamos cuando tú decidas, en el horario que te acomode.</span></li>
+      </ol>
+    </section>
+
+    <section id="faq" class="faq">
+      <h2>Preguntas frecuentes</h2>
+      {faq.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+
+    <footer>
+      <div><b>Norte Dental</b><br />Av. Vasconcelos 210, San Pedro Garza García</div>
+      <div>Lun – Sáb · 8:00 – 20:00<br />81 1234 5678</div>
+    </footer>
+  </div>
+</Demo>
+
+
+<style>
+  .nd { font-family: "Plus Jakarta Sans", sans-serif; --navy: #0f2a3a; --blue: #2a9bd1; --ice: #f4f8fb; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 20px clamp(20px, 5vw, 64px); }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; text-decoration: none; letter-spacing: -0.02em; }
+  .mark { width: 26px; height: 26px; border-radius: 9px 9px 13px 13px; background: linear-gradient(135deg, #5cc3f2, var(--blue)); box-shadow: inset 0 -6px 0 rgba(255, 255, 255, 0.35); }
+  .nav nav { display: flex; gap: 30px; font-weight: 500; font-size: 15px; }
+  .nav nav a { text-decoration: none; opacity: 0.75; }
+  .btn { background: var(--navy); color: #fff; border: 0; border-radius: 14px; padding: 13px 22px; font-weight: 600; text-decoration: none; cursor: pointer; }
+
+  .hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 20px; align-items: center; padding: 30px clamp(20px, 5vw, 64px) 70px; background: radial-gradient(ellipse 60% 70% at 78% 45%, #dcefff 0%, rgba(244, 248, 251, 0) 70%); }
+  .pill { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #dbe8f0; border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 600; margin: 0; }
+  .pill span { width: 8px; height: 8px; border-radius: 50%; background: #2fcf8a; box-shadow: 0 0 0 4px rgba(47, 207, 138, 0.18); }
+  h1 { font-size: clamp(3.4rem, 7.5vw, 7.2rem); line-height: 0.95; letter-spacing: -0.05em; font-weight: 800; margin: 22px 0 0; }
+  h1 span { background: linear-gradient(90deg, var(--blue), #7d6bff 70%, #e48fd8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { font-size: 18px; line-height: 1.6; color: #3d5666; max-width: 30em; margin: 22px 0 28px; }
+  .card { display: grid; grid-template-columns: 1.3fr 1fr auto; gap: 10px; align-items: end; background: #fff; border-radius: 20px; padding: 14px; box-shadow: 0 20px 50px rgba(15, 42, 58, 0.1); max-width: 620px; }
+  .card label { display: grid; gap: 4px; font-size: 12px; font-weight: 600; color: #6b8494; }
+  .card select, .card input { border: 1px solid #dbe8f0; border-radius: 12px; padding: 11px 12px; background: var(--ice); font-weight: 500; color: var(--navy); }
+  .proof { display: flex; gap: 28px; list-style: none; padding: 0; margin: 26px 0 0; font-size: 14px; color: #3d5666; }
+  .proof b { color: var(--navy); font-size: 18px; }
+  .art { position: relative; aspect-ratio: 1; }
+  .art .main { position: absolute; inset: 4% 8% 4% 14%; width: 78%; height: 92%; object-fit: cover; border-radius: 240px 240px 28px 28px; box-shadow: 0 40px 80px rgba(15, 42, 58, 0.15); }
+  .art .inset { position: absolute; left: 0; bottom: 8%; width: 34%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 8px solid #fff; box-shadow: 0 20px 40px rgba(15, 42, 58, 0.15); }
+  .float { position: absolute; display: grid; gap: 2px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); border: 1px solid #fff; border-radius: 16px; padding: 12px 16px; font-size: 13px; box-shadow: 0 12px 30px rgba(15, 42, 58, 0.08); animation: up 5s ease-in-out infinite; }
+  .float span { color: #6b8494; }
+  .f1 { left: 0; top: 16%; }
+  .f2 { right: 4%; bottom: 18%; animation-delay: -2.5s; }
+  @keyframes up { 50% { transform: translateY(-10px); } }
+
+  .services, .steps, .faq { padding: 100px clamp(20px, 5vw, 64px); max-width: 1240px; margin: 0 auto; }
+  h2 { font-size: clamp(2.2rem, 4vw, 3.6rem); letter-spacing: -0.04em; font-weight: 800; margin: 0 0 44px; }
+  h2 span { color: var(--blue); }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  article { background: #fff; border-radius: 22px; padding: 26px; display: flex; flex-direction: column; border: 1px solid #e3edf3; transition: transform 0.25s, box-shadow 0.25s; }
+  article:hover { transform: translateY(-6px); box-shadow: 0 24px 50px rgba(15, 42, 58, 0.1); }
+  .num { font-size: 13px; font-weight: 700; color: var(--blue); }
+  article h3 { font-size: 20px; margin: 30px 0 8px; letter-spacing: -0.02em; }
+  article p { color: #5a7282; line-height: 1.55; margin: 0 0 24px; flex: 1; font-size: 15px; }
+  .row { display: flex; justify-content: space-between; border-top: 1px solid #e3edf3; padding-top: 14px; font-size: 14px; }
+  .time { color: #6b8494; }
+
+  .steps ol { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: s; }
+  .steps li { counter-increment: s; background: var(--navy); color: #fff; border-radius: 22px; padding: 28px; display: grid; gap: 8px; }
+  .steps li::before { content: counter(s); width: 36px; height: 36px; border-radius: 50%; background: var(--blue); display: grid; place-items: center; font-weight: 700; margin-bottom: 18px; }
+  .steps li b { font-size: 20px; }
+  .steps li span { color: #a9c3d2; line-height: 1.55; }
+
+  details { border-bottom: 1px solid #dbe8f0; padding: 20px 0; }
+  summary { font-weight: 700; font-size: 18px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; }
+  summary::after { content: '+'; color: var(--blue); font-size: 24px; line-height: 1; }
+  details[open] summary::after { content: '–'; }
+  details p { color: #5a7282; line-height: 1.6; margin: 12px 0 0; max-width: 44em; }
+  footer { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 40px clamp(20px, 5vw, 64px) 70px; background: #e8f1f7; line-height: 1.6; font-size: 14px; }
+
+  @media (max-width: 960px) {
+    .nav nav { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .card { grid-template-columns: 1fr; }
+    .grid, .steps ol { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) { .grid, .steps ol { grid-template-columns: 1fr; } }
+</style>

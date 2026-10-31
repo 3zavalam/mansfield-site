@@ -1,0 +1,210 @@
+---
+// Demo: Casa Olivo, a seasonal restaurant (fictional). Render: a glazed ceramic bowl of olives with leaves drifting around it.
+import Demo from '../layouts/Demo.astro';
+const menu: [string, [string, string, string][]][] = [
+  ['Entradas', [['Tostada de atún', 'aguacate tatemado, chile morita, limón real', '185'], ['Burrata de Tlaxcala', 'jitomate de huerto, aceite de olivo, albahaca', '210'], ['Crema de flor de calabaza', 'elote tierno, epazote, queso fresco', '140']]],
+  ['Fuertes', [['Pesca del día', 'mantequilla de hierbas, verduras a la leña', '340'], ['Mole de olla', 'chambarete, xoconostle, verduras de temporada', '295'], ['Risotto de huitlacoche', 'queso añejo, brotes, aceite de olivo', '260']]],
+  ['Postres', [['Pan de elote', 'helado de nata, piloncillo', '120'], ['Tarta de olivo y limón', 'merengue tostado', '135']]],
+];
+---
+<Demo title="Casa Olivo · Cocina de temporada" description="Restaurante de cocina de temporada en Puebla." fonts="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Work+Sans:wght@400;500;600&display=swap" bg="#f3eee4" color="#2f3a2a">
+  <div class="olivo">
+    <header class="nav">
+      <a href="#" class="logo">Casa <em>Olivo</em></a>
+      <nav><a href="#menu">Menú</a><a href="#historia">Historia</a><a href="#visita">Visítanos</a></nav>
+      <a href="#reservar" class="btn small">Reservar</a>
+    </header>
+
+    <section class="hero">
+      <div class="copy">
+        <p class="kicker">Puebla · Desde 2019</p>
+        <h1>Cocina de <em>temporada</em>, hecha sin prisa.</h1>
+        <p class="lead">Lo que llega del huerto esta semana, cocinado a la leña y servido en barro. Un menú corto que cambia con el campo.</p>
+        <div class="actions">
+          <a href="#reservar" class="btn">Reservar mesa</a>
+          <a href="#menu" class="link">Ver el menú →</a>
+        </div>
+      </div>
+      <div class="art">
+        <div class="sun"></div>
+        <canvas id="olivo-gl" aria-label="Bowl de cerámica con aceitunas"></canvas>
+        <p class="stamp"><span>Menú de<br /><em>otoño</em></span></p>
+      </div>
+    </section>
+
+    <section class="strip" aria-hidden="true">
+      <span>Huerto propio</span><i>✦</i><span>Cocina a la leña</span><i>✦</i><span>Vinos mexicanos</span><i>✦</i><span>Pan de la casa</span>
+    </section>
+
+    <section id="menu" class="menu">
+      <h2>El menú de <em>esta semana</em></h2>
+      <div class="cols">
+        {menu.map(([cat, items]) => (
+          <div>
+            <h3>{cat}</h3>
+            <ul>
+              {items.map(([n, d, p]) => (
+                <li><span class="n">{n}</span><span class="dots"></span><span class="p">${p}</span><span class="d">{d}</span></li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section id="historia" class="story">
+      <blockquote>“Cocinamos como en casa de mi abuela: con lo que hay, con tiempo y para que alcance para todos.”</blockquote>
+      <p>— Lucía Ortega, chef y fundadora</p>
+    </section>
+
+    <section id="visita" class="visit">
+      <div><h3>Dónde</h3><p>Calle 5 de Mayo 412<br />Centro, Puebla</p></div>
+      <div><h3>Cuándo</h3><p>Mar – Sáb · 13:00 – 23:00<br />Dom · 13:00 – 18:00</p></div>
+      <div><h3>Contacto</h3><p>222 123 4567<br />hola@casaolivo.mx</p></div>
+    </section>
+
+    <section id="reservar" class="cta">
+      <h2>Guárdate una <em>mesa</em>.</h2>
+      <form onsubmit="return false">
+        <input type="date" aria-label="Fecha" />
+        <select aria-label="Personas"><option>2 personas</option><option>4 personas</option><option>6 personas</option></select>
+        <button class="btn light" type="submit">Reservar</button>
+      </form>
+    </section>
+
+    <footer>Casa Olivo © 2026 · Cocina de temporada</footer>
+  </div>
+</Demo>
+
+<script>
+  import * as THREE from 'three';
+  import { stage } from '../demos/stage';
+
+  const leaves: THREE.Mesh[] = [];
+  const group = new THREE.Group();
+  const s = stage(document.getElementById('olivo-gl') as HTMLCanvasElement, { fov: 28, shadows: true, exposure: 1.05 }, (t, s) => {
+    group.rotation.y = t * 0.12 + s.pointer.x * 0.35;
+    group.rotation.x = s.pointer.y * 0.06;
+    leaves.forEach((l, i) => {
+      l.position.y = l.userData.y + Math.sin(t * 0.7 + i) * 0.18;
+      l.rotation.z = l.userData.r + Math.sin(t * 0.5 + i * 2) * 0.25;
+      l.rotation.y = t * 0.2 + i;
+    });
+  });
+  s.camera.position.set(0, 7.2, 15.5);
+  s.camera.lookAt(0, 0.9, 0);
+  s.scene.add(group);
+
+  // Bowl: one lathe profile out along the outside, over the lip and back down the inside.
+  const prof = [[0, 0], [1.3, 0], [1.45, 0.1], [1.6, 0.28], [2.3, 0.85], [2.85, 1.5], [3.02, 1.66], [2.95, 1.72], [2.8, 1.6], [2.25, 1.0], [1.55, 0.45], [0, 0.36]].map(([x, y]) => new THREE.Vector2(x, y));
+  const ceramic = new THREE.MeshPhysicalMaterial({ color: 0xece4d4, roughness: 0.42, clearcoat: 0.6, clearcoatRoughness: 0.25 });
+  const bowl = new THREE.Mesh(new THREE.LatheGeometry(prof, 96), ceramic);
+  bowl.castShadow = bowl.receiveShadow = true;
+  group.add(bowl);
+  // A ring of terracotta glaze on the rim.
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(2.98, 0.05, 12, 96), new THREE.MeshPhysicalMaterial({ color: 0xb8643f, roughness: 0.35, clearcoat: 0.8 }));
+  rim.rotation.x = Math.PI / 2;
+  rim.position.y = 1.68;
+  group.add(rim);
+
+  // Olives, piled in the bowl.
+  const green = new THREE.MeshPhysicalMaterial({ color: 0x6b7a2c, roughness: 0.28, clearcoat: 1, clearcoatRoughness: 0.1 });
+  const purple = new THREE.MeshPhysicalMaterial({ color: 0x3b2433, roughness: 0.25, clearcoat: 1, clearcoatRoughness: 0.1 });
+  const olive = new THREE.SphereGeometry(0.34, 32, 24);
+  olive.scale(1, 0.78, 0.78);
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  for (let i = 0; i < 34; i++) {
+    const r = Math.sqrt(rnd()) * 1.9, a = rnd() * Math.PI * 2;
+    const m = new THREE.Mesh(olive, rnd() > 0.4 ? green : purple);
+    m.position.set(Math.cos(a) * r, 0.62 + (r / 2.4) ** 2 * 0.75 + (i > 20 ? 0.42 : 0) * (1 - r / 2), Math.sin(a) * r);
+    m.rotation.set(rnd() * 3, rnd() * 3, rnd() * 3);
+    m.castShadow = true;
+    group.add(m);
+  }
+
+  // Olive leaves drifting around.
+  const leafShape = new THREE.Shape();
+  leafShape.moveTo(0, 0);
+  leafShape.quadraticCurveTo(0.32, 0.7, 0, 1.5);
+  leafShape.quadraticCurveTo(-0.32, 0.7, 0, 0);
+  const leafMat = new THREE.MeshStandardMaterial({ color: 0x8a9767, roughness: 0.55, side: THREE.DoubleSide });
+  for (let i = 0; i < 9; i++) {
+    const l = new THREE.Mesh(new THREE.ShapeGeometry(leafShape, 12), leafMat);
+    const a = (i / 9) * Math.PI * 2;
+    l.position.set(Math.cos(a) * (3.9 + (i % 3) * 0.5), 0, Math.sin(a) * (3.9 + (i % 3) * 0.5));
+    l.userData = { y: 1.2 + (i % 4) * 0.7, r: a };
+    l.castShadow = true;
+    group.add(l);
+    leaves.push(l);
+  }
+
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({ opacity: 0.16 }));
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  s.scene.add(ground);
+  const sun = new THREE.DirectionalLight(0xfff0d8, 2.2);
+  sun.position.set(5, 10, 6);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8 });
+  s.scene.add(sun, new THREE.HemisphereLight(0xfff6e8, 0xd9c9ad, 0.6));
+</script>
+
+<style>
+  .olivo { font-family: "Work Sans", sans-serif; --olive: #2f3a2a; --leaf: #6b7f3a; --clay: #b8643f; --cream: #f3eee4; }
+  em { font-style: italic; color: var(--leaf); }
+  h1, h2, h3, .logo, blockquote, .stamp { font-family: Fraunces, Georgia, serif; font-weight: 400; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 22px clamp(20px, 5vw, 64px); }
+  .logo { font-size: 26px; text-decoration: none; letter-spacing: -0.02em; }
+  .nav nav { display: flex; gap: 32px; font-size: 15px; }
+  .nav nav a { text-decoration: none; opacity: 0.8; }
+  .btn { display: inline-block; background: var(--olive); color: var(--cream); padding: 15px 26px; border-radius: 999px; text-decoration: none; font-weight: 500; border: 0; cursor: pointer; }
+  .btn.small { padding: 10px 18px; font-size: 14px; }
+  .btn.light { background: var(--cream); color: var(--olive); }
+  .link { text-decoration: none; font-weight: 500; }
+
+  .hero { display: grid; grid-template-columns: 1fr 1.1fr; align-items: center; gap: 24px; padding: 20px clamp(20px, 5vw, 64px) 40px; min-height: 82vh; }
+  .kicker { text-transform: uppercase; letter-spacing: 0.2em; font-size: 12px; color: var(--clay); margin: 0 0 18px; }
+  h1 { font-size: clamp(3rem, 6.4vw, 6.4rem); line-height: 0.98; letter-spacing: -0.035em; margin: 0; }
+  .lead { font-size: 18px; line-height: 1.6; max-width: 30em; opacity: 0.8; margin: 26px 0 32px; }
+  .actions { display: flex; align-items: center; gap: 26px; }
+  .art { position: relative; aspect-ratio: 1; }
+  .art canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .sun { position: absolute; inset: 9% 9% 14%; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #e9b48f, #d98c62 60%, #c9764f); opacity: 0.85; }
+  .stamp { position: absolute; right: 2%; top: 4%; width: 110px; height: 110px; border-radius: 50%; border: 1px solid var(--olive); display: grid; place-items: center; text-align: center; font-size: 17px; line-height: 1.1; transform: rotate(12deg); margin: 0; background: var(--cream); }
+
+  .strip { display: flex; gap: 34px; justify-content: center; align-items: center; flex-wrap: wrap; background: var(--olive); color: var(--cream); padding: 20px; font-family: Fraunces, serif; font-size: 22px; font-style: italic; }
+  .strip i { color: #c9b27a; font-style: normal; font-size: 14px; }
+
+  .menu { padding: 110px clamp(20px, 5vw, 64px); max-width: 1240px; margin: 0 auto; }
+  .menu h2, .cta h2 { font-size: clamp(2.4rem, 4.6vw, 4.2rem); letter-spacing: -0.03em; margin: 0 0 56px; }
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+  .cols h3 { font-size: 26px; border-bottom: 1px solid currentColor; padding-bottom: 12px; margin: 0 0 18px; }
+  .cols ul { list-style: none; margin: 0; padding: 0; }
+  .cols li { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: 8px; padding: 14px 0; }
+  .n { font-weight: 600; }
+  .dots { border-bottom: 1px dotted rgba(47, 58, 42, 0.4); transform: translateY(-4px); }
+  .p { font-family: Fraunces, serif; font-size: 18px; }
+  .d { grid-column: 1 / -1; font-size: 14px; opacity: 0.65; }
+
+  .story { background: #e8dfcf; padding: 110px clamp(20px, 8vw, 140px); text-align: center; }
+  blockquote { font-size: clamp(1.8rem, 3.4vw, 3rem); line-height: 1.2; letter-spacing: -0.02em; margin: 0 auto; max-width: 22em; font-style: italic; }
+  .story p { margin-top: 24px; opacity: 0.7; }
+
+  .visit { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; padding: 90px clamp(20px, 5vw, 64px); max-width: 1240px; margin: 0 auto; }
+  .visit h3 { font-size: 22px; margin: 0 0 10px; color: var(--clay); }
+  .visit p { margin: 0; line-height: 1.7; }
+
+  .cta { background: var(--olive); color: var(--cream); padding: 100px clamp(20px, 5vw, 64px); text-align: center; }
+  .cta em { color: #c9b27a; }
+  .cta form { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .cta input, .cta select { background: transparent; border: 1px solid rgba(243, 238, 228, 0.4); border-radius: 999px; padding: 14px 20px; color: var(--cream); color-scheme: dark; }
+  footer { text-align: center; padding: 30px; font-size: 13px; opacity: 0.6; }
+
+  @media (max-width: 860px) {
+    .nav nav { display: none; }
+    .hero { grid-template-columns: 1fr; min-height: 0; }
+    .cols, .visit { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,631 @@
+---
+// The home page scene. A 3D laptop (three.js) opens as you scroll, the camera flies into its screen,
+// thousands of dots stream in and build each website's thumbnail, and the screen ends as a desktop:
+// one icon per web (webs.ts), a menu bar and a dock. Clicking an icon opens it in a window.
+// Debug: add ?p=0.5 to the URL to freeze the scroll progress.
+import { webs } from '../webs';
+import { EMAIL, GITHUB_URL, LINKEDIN_URL } from '../consts';
+// Where each icon sits on the desktop: its center, in % of the screen, in webs.ts order.
+const SPOTS: [number, number][] = [[50, 46], [19, 22], [48, 14], [80, 22], [11, 52], [30, 50], [70, 50], [89, 56], [28, 80], [72, 80], [50, 82]];
+// The same for tall screens (phones): the featured one in the middle, the rest in two columns.
+const TALL: [number, number][] = [[50, 43], [27, 9], [73, 12], [27, 25], [73, 28], [27, 60], [73, 63], [27, 77], [73, 80], [27, 93], [73, 96]];
+---
+<section id="mac" class="mac" aria-label="Websites I've built">
+  <div class="stage">
+    <p class="tag tag-top">Websites, designed &amp; built</p>
+    <h1 class="word">Portfolio</h1>
+    <p class="tag tag-l">Mansfield™</p>
+    <p class="tag tag-r">Web design ©</p>
+    <canvas class="gl" aria-hidden="true"></canvas>
+    <p class="hint" aria-hidden="true">Scroll</p>
+
+    <div class="desk">
+      <canvas class="dots" aria-hidden="true"></canvas>
+      <div class="menubar">
+        <span class="mb-logo">M.</span>
+        <span class="mb-strong">Mansfield</span>
+        <span>Websites</span>
+        <a href={`mailto:${EMAIL}`}>Contact</a>
+        <span class="mb-clock" data-clock></span>
+      </div>
+      <ul class="icons">
+        {webs.map((w, i) => {
+          const [x, y] = SPOTS[i % SPOTS.length], [tx, ty] = TALL[i % TALL.length];
+          return (
+            <li style={`--x:${x}%;--y:${y}%;--tx:${tx}%;--ty:${ty}%`}>
+              <button type="button" class:list={['icon', !w.soon && !w.concept && 'real']} data-i={i}>
+                <span class="frame"><img src={w.img.replace('-1200.webp', '-480.webp')} alt="" width="480" height="300" decoding="async" /></span>
+                <span class="label">{w.t}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <nav class="dock" aria-label="Contact">
+        <a href={`mailto:${EMAIL}`} aria-label="Email" class="app app-mail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></a>
+        <a href={GITHUB_URL} aria-label="GitHub" class="app app-gh"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.4 1.1 3 .8.1-.6.4-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.6 9.6 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7.9.7 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg></a>
+        <a href={LINKEDIN_URL} aria-label="LinkedIn" class="app app-in"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.5 8.8H3.6V20h2.9V8.8zM5 4a1.7 1.7 0 1 0 0 3.4A1.7 1.7 0 0 0 5 4zm15.4 9.6c0-3-1.6-4.9-4.3-4.9-1.4 0-2.4.8-2.8 1.5V8.8H10.4V20h2.9v-5.6c0-1.5.3-2.9 2.1-2.9 1.8 0 1.9 1.7 1.9 3V20h3.1v-6.4z"/></svg></a>
+        <span class="sep"></span>
+        <a href={`mailto:${EMAIL}?subject=I%20need%20a%20website`} class="app app-new" aria-label="Start a website with me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></a>
+      </nav>
+
+      <div class="win" role="dialog" aria-modal="false" aria-labelledby="win-title" hidden>
+        <div class="win-bar">
+          <button type="button" class="win-close" aria-label="Close"></button>
+          <span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span id="win-title" class="win-title"></span>
+        </div>
+        <img class="win-img" alt="" />
+        <div class="win-body">
+          <p class="win-client"></p>
+          <p class="win-d"></p>
+          <a class="win-link" target="_blank" rel="noopener">Visit site ↗</a>
+          <span class="win-soon">In progress</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import * as THREE from 'three';
+  import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+    import { webs } from '../webs';
+
+  const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const seg = (p: number, a: number, b: number) => clamp((p - a) / (b - a));
+  const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+  const sec = document.getElementById('mac')!;
+  const stage = sec.querySelector<HTMLElement>('.stage')!;
+  const glCanvas = sec.querySelector<HTMLCanvasElement>('canvas.gl')!;
+  const desk = sec.querySelector<HTMLElement>('.desk')!;
+  const dots = sec.querySelector<HTMLCanvasElement>('canvas.dots')!;
+  const icons = [...sec.querySelectorAll<HTMLButtonElement>('.icon')];
+  const fixedP = new URLSearchParams(location.search).get('p');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) sec.classList.add('still');
+
+  // Scroll timeline (0..1 across the section).
+  const T = { open: [0, 0.24], zoom: [0.26, 0.47], desk: [0.42, 0.47], build: [0.43, 0.72], reveal: [0.64, 0.78], chrome: [0.74, 0.82] } as const;
+  const progress = () => {
+    if (reduced) return 1;
+    if (fixedP !== null) return clamp(parseFloat(fixedP));
+    const r = sec.getBoundingClientRect();
+    return clamp(-r.top / (sec.offsetHeight - innerHeight));
+  };
+
+  /* ---------- The laptop (a 14" MacBook Pro, in cm) ---------- */
+  const renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  const scene = new THREE.Scene();
+
+  // A photo studio for the reflections: a big softbox overhead, two strip lights and a dim floor.
+  const studio = new THREE.Scene();
+  studio.background = new THREE.Color(0x3a3b3f);
+  const panel = (w: number, h: number, k: number, pos: [number, number, number]) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(k, k, k), side: THREE.DoubleSide }));
+    m.position.set(...pos);
+    m.lookAt(0, 0, 0);
+    studio.add(m);
+  };
+  panel(70, 50, 6, [0, 40, -4]);
+  panel(8, 60, 9, [-42, 16, 6]);
+  panel(8, 60, 5, [42, 16, -10]);
+  panel(60, 6, 4, [0, 30, 30]);
+  panel(160, 160, 0.5, [0, -30, 0]);
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(studio, 0.02).texture;
+
+  const camera = new THREE.PerspectiveCamera(30, 1, 0.5, 400);
+  const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+  sun.position.set(-8, 42, 26);
+  sun.castShadow = true;
+  sun.shadow.mapSize.setScalar(innerWidth < 700 ? 1024 : 2048);
+  Object.assign(sun.shadow.camera, { left: -30, right: 30, top: 30, bottom: -30, near: 1, far: 90 });
+  sun.shadow.radius = 6;
+  sun.shadow.bias = -0.0004;
+  scene.add(sun);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x9a9ca2, 0.35));
+
+  const W = 31.26, D = 22.12, BASE_H = 0.95, LID_H = 21.1, LID_T = 0.6;
+  // Bead-blasted silver aluminium.
+  const alu = new THREE.MeshPhysicalMaterial({ color: 0xe3e4e7, metalness: 1, roughness: 0.3, clearcoat: 0.2, clearcoatRoughness: 0.35 });
+  const black = (rough = 0.5) => new THREE.MeshStandardMaterial({ color: 0x0b0b0c, roughness: rough, envMapIntensity: 0.3 });
+  const laptop = new THREE.Group();
+  scene.add(laptop);
+
+  const roundShape = (w: number, h: number, r: number) => {
+    const s = new THREE.Shape();
+    s.moveTo(-w / 2 + r, -h / 2);
+    s.lineTo(w / 2 - r, -h / 2); s.absarc(w / 2 - r, -h / 2 + r, r, -Math.PI / 2, 0, false);
+    s.lineTo(w / 2, h / 2 - r); s.absarc(w / 2 - r, h / 2 - r, r, 0, Math.PI / 2, false);
+    s.lineTo(-w / 2 + r, h / 2); s.absarc(-w / 2 + r, h / 2 - r, r, Math.PI / 2, Math.PI, false);
+    s.lineTo(-w / 2, -h / 2 + r); s.absarc(-w / 2 + r, -h / 2 + r, r, Math.PI, Math.PI * 1.5, false);
+    return s;
+  };
+  const roundRect = (w: number, h: number, r: number) => new THREE.ShapeGeometry(roundShape(w, h, r), 12);
+  // A slab with rounded corners in plan and softly rounded edges, thickness along z.
+  const slab = (w: number, h: number, t: number, r: number, bevel: number) => {
+    const g = new THREE.ExtrudeGeometry(roundShape(w - bevel * 2, h - bevel * 2, r), { depth: t - bevel * 2, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 5, curveSegments: 20 });
+    g.center();
+    return g;
+  };
+  const add = (parent: THREE.Object3D, m: THREE.Mesh, x: number, y: number, z: number, cast = false) => {
+    m.position.set(x, y, z);
+    m.castShadow = cast;
+    m.receiveShadow = true;
+    parent.add(m);
+    return m;
+  };
+
+  // Base
+  const baseGeo = slab(W, D, BASE_H, 1.05, 0.3);
+  baseGeo.rotateX(-Math.PI / 2);
+  add(laptop, new THREE.Mesh(baseGeo, alu), 0, BASE_H / 2, 0, true);
+  const TOP = BASE_H + 0.002;
+
+  // Keyboard: the real layout, widths in key units.
+  const U = 1.83, GAP = 0.2, KEY_H = 0.1;
+  const rows: [string, number][][] = [
+    [['esc', 1.5], ...Array.from({ length: 12 }, (_, i) => [`F${i + 1}`, 12.5 / 12] as [string, number]), ['', 1]],
+    [['`', 1], ...'1234567890-='.split('').map((c) => [c, 1] as [string, number]), ['delete', 2]],
+    [['tab', 1.5], ...'QWERTYUIOP[]'.split('').map((c) => [c, 1] as [string, number]), ['\\', 1.5]],
+    [['caps lock', 1.75], ...'ASDFGHJKL;\''.split('').map((c) => [c, 1] as [string, number]), ['return', 2.25]],
+    [['shift', 2.25], ...'ZXCVBNM,./'.split('').map((c) => [c, 1] as [string, number]), ['shift', 2.75]],
+    [['fn', 1], ['control', 1], ['option', 1], ['command', 1.25], ['', 5.5], ['command', 1.25], ['option', 1], ['arrows', 3]],
+  ];
+  const rowPitch = [1.0, U, U, U, U, U];
+  const KB_W = 15 * U, KB_D = rowPitch.reduce((a, b) => a + b, 0);
+  const KB_Z0 = -D / 2 + 1.75;
+  const kb = new THREE.Group();
+  laptop.add(kb);
+  add(kb, new THREE.Mesh(roundRect(KB_W + 0.3, KB_D + 0.3, 0.3), black(0.8)), 0, TOP + 0.001, KB_Z0 + KB_D / 2).rotation.x = -Math.PI / 2;
+  const keyMat = new THREE.MeshPhysicalMaterial({ color: 0x060607, roughness: 0.75, specularIntensity: 0.3, envMapIntensity: 0.25 });
+  const keyGeos = new Map<string, THREE.BufferGeometry>();
+  const keyGeo = (w: number, d: number) => {
+    const k = `${w.toFixed(2)}x${d.toFixed(2)}`;
+    if (!keyGeos.has(k)) keyGeos.set(k, new RoundedBoxGeometry(w, KEY_H, d, 2, 0.06));
+    return keyGeos.get(k)!;
+  };
+  // The legends go on one transparent canvas laid over the keys.
+  const PX = 90;
+  const lc = document.createElement('canvas');
+  lc.width = Math.round(KB_W * PX); lc.height = Math.round(KB_D * PX);
+  const lx = lc.getContext('2d')!;
+  lx.fillStyle = 'rgba(235,235,238,.9)';
+  lx.textAlign = 'center';
+  lx.textBaseline = 'middle';
+  const legend = (t: string, x: number, z: number, w: number, d: number) => {
+    if (!t) return;
+    const cx = (x + KB_W / 2) * PX, cz = (z - KB_Z0) * PX;
+    const big = t.length === 1;
+    lx.font = `${big ? 500 : 400} ${big ? 0.42 * PX : 0.2 * PX}px -apple-system, "Helvetica Neue", Arial, sans-serif`;
+    if (big || t.startsWith('F') || t === 'esc') lx.fillText(t, cx, cz + (t.startsWith('F') ? 0 : -0.05 * PX));
+    else { lx.textAlign = x > 0 ? 'right' : 'left';
+      lx.fillText(t, lx.textAlign === 'right' ? cx + (w / 2 - 0.2) * PX : cx - (w / 2 - 0.2) * PX, cz + (d / 2 - 0.25) * PX);
+      lx.textAlign = 'center'; }
+  };
+  let z = KB_Z0;
+  rows.forEach((row, ri) => {
+    const pitch = rowPitch[ri];
+    let x = -KB_W / 2;
+    for (const [label, wu] of row) {
+      const w = wu * U, kw = w - GAP, kd = pitch - GAP, cx = x + w / 2, cz = z + pitch / 2;
+      if (label === 'arrows') {
+        const hd = (kd - 0.08) / 2;
+        const arrows: [string, number, number][] = [['◀', 0, 1], ['▲', 1, 0], ['▼', 1, 1], ['▶', 2, 1]];
+        for (const [a, i, half] of arrows) {
+          const ax = x + U * i + U / 2, az = z + GAP / 2 + hd / 2 + half * (hd + 0.08);
+          add(kb, new THREE.Mesh(keyGeo(U - GAP, hd), keyMat), ax, TOP + KEY_H / 2, az, true);
+          lx.font = `${0.2 * PX}px -apple-system, Arial, sans-serif`;
+          lx.fillText(a, (ax + KB_W / 2) * PX, (az - KB_Z0) * PX);
+        }
+      } else if (ri === 0 && label === '') {
+        // Touch ID: glossy black with a thin ring.
+        add(kb, new THREE.Mesh(keyGeo(kw, kd), new THREE.MeshPhysicalMaterial({ color: 0x050506, roughness: 0.12, clearcoat: 1 })), cx, TOP + KEY_H / 2, cz, true);
+      } else {
+        add(kb, new THREE.Mesh(keyGeo(kw, kd), keyMat), cx, TOP + KEY_H / 2, cz, true);
+        legend(label, cx, cz, kw, kd);
+      }
+      x += w;
+    }
+    z += pitch;
+  });
+  const legendTex = new THREE.CanvasTexture(lc);
+  legendTex.colorSpace = THREE.SRGBColorSpace;
+  legendTex.anisotropy = 8;
+  const legends = new THREE.Mesh(new THREE.PlaneGeometry(KB_W, KB_D), new THREE.MeshBasicMaterial({ map: legendTex, transparent: true, depthWrite: false, opacity: 0.85 }));
+  legends.rotation.x = -Math.PI / 2;
+  add(kb, legends, 0, TOP + KEY_H + 0.003, KB_Z0 + KB_D / 2);
+
+  // Speaker grilles either side of the keyboard: a field of tiny holes.
+  const gc = document.createElement('canvas');
+  gc.width = 120; gc.height = 1000;
+  const gx = gc.getContext('2d')!;
+  gx.fillStyle = 'rgba(30,30,34,.9)';
+  for (let yy = 6; yy < 1000; yy += 11) for (let xx = 6 + ((yy / 11) % 2) * 5; xx < 120; xx += 11) { gx.beginPath(); gx.arc(xx, yy, 2.6, 0, 7); gx.fill(); }
+  const grilleTex = new THREE.CanvasTexture(gc);
+  for (const side of [-1, 1]) {
+    const g = new THREE.Mesh(new THREE.PlaneGeometry(1.15, KB_D), new THREE.MeshStandardMaterial({ map: grilleTex, transparent: true, roughness: 0.6 }));
+    g.rotation.x = -Math.PI / 2;
+    add(laptop, g, side * (KB_W / 2 + 1.0), TOP + 0.001, KB_Z0 + KB_D / 2);
+  }
+
+  // Trackpad: a slightly smoother panel with a hairline gap around it.
+  const TP_W = 14.8, TP_D = 8.6, TP_Z = D / 2 - 1.1 - TP_D / 2;
+  add(laptop, new THREE.Mesh(roundRect(TP_W + 0.08, TP_D + 0.08, 0.5), black(0.7)), 0, TOP + 0.001, TP_Z).rotation.x = -Math.PI / 2;
+  add(laptop, new THREE.Mesh(roundRect(TP_W, TP_D, 0.46), new THREE.MeshPhysicalMaterial({ color: 0xcfd0d4, metalness: 0.85, roughness: 0.3, clearcoat: 0.6, clearcoatRoughness: 0.25 })), 0, TOP + 0.003, TP_Z).rotation.x = -Math.PI / 2;
+
+  // Ports: MagSafe, two Thunderbolt and the headphone jack on the left; SD, HDMI and Thunderbolt on the right.
+  const portMat = black(0.4);
+  const port = (side: number, zc: number, len: number, h: number, r: number) => {
+    const m = new THREE.Mesh(roundRect(len, h, r), portMat);
+    m.rotation.y = side * Math.PI / 2;
+    add(laptop, m, side * (W / 2 + 0.003), BASE_H / 2, zc);
+  };
+  port(-1, -6.6, 1.15, 0.24, 0.12); port(-1, -4.3, 0.85, 0.28, 0.14); port(-1, -2.9, 0.85, 0.28, 0.14); port(-1, 2.6, 0.36, 0.36, 0.18);
+  port(1, -6.0, 0.85, 0.28, 0.14); port(1, -3.4, 1.45, 0.4, 0.06); port(1, 2.4, 2.4, 0.12, 0.05);
+
+  // Soft contact shadow plus a real shadow from the light.
+  const sh = document.createElement('canvas');
+  sh.width = sh.height = 128;
+  const sx = sh.getContext('2d')!;
+  const sg = sx.createRadialGradient(64, 64, 8, 64, 64, 64);
+  sg.addColorStop(0, 'rgba(0,0,0,.5)');
+  sg.addColorStop(1, 'rgba(0,0,0,0)');
+  sx.fillStyle = sg;
+  sx.fillRect(0, 0, 128, 128);
+  const blob = new THREE.Mesh(new THREE.PlaneGeometry(W * 1.45, D * 1.5), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sh), transparent: true, depthWrite: false }));
+  blob.rotation.x = -Math.PI / 2;
+  blob.position.y = -0.02;
+  laptop.add(blob);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.ShadowMaterial({ opacity: 0.07 }));
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.01;
+  ground.receiveShadow = true;
+  laptop.add(ground);
+
+  // The lid turns on the hinge at the back edge. rotation.x: π/2 closed, 0 upright.
+  const hinge = new THREE.Group();
+  hinge.position.set(0, BASE_H, -D / 2 + 0.45);
+  laptop.add(hinge);
+  const hingeBar = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, W - 7.5, 24), black(0.35));
+  hingeBar.rotation.z = Math.PI / 2;
+  add(hinge, hingeBar, 0, 0.1, -0.05, true);
+  const LID_Y = 0.25 + LID_H / 2;
+  add(hinge, new THREE.Mesh(slab(W, LID_H, LID_T, 1.05, 0.2), alu), 0, LID_Y, 0, true);
+  // Front of the lid: one sheet of black glass edge to edge, the display behind it.
+  const FRONT = LID_T / 2 + 0.002;
+  add(hinge, new THREE.Mesh(roundRect(W - 0.25, LID_H - 0.25, 0.95), new THREE.MeshStandardMaterial({ color: 0x030304, roughness: 0.3, metalness: 0, envMapIntensity: 0.2 })), 0, LID_Y, FRONT);
+  // The display, the same color as the desktop so the hand-off is seamless.
+  const SCR_W = 29.9, SCR_H = 19.3, SCR_Y = LID_Y + LID_H / 2 - 0.5 - SCR_H / 2;
+  const DISP_Z = FRONT + 0.003;
+  const screen = add(hinge, new THREE.Mesh(roundRect(SCR_W, SCR_H, 0.35), new THREE.MeshBasicMaterial({ color: new THREE.Color('#18171c'), toneMapped: false })), 0, SCR_Y, DISP_Z);
+  const glow = new THREE.Mesh(new THREE.PlaneGeometry(SCR_W, SCR_H), new THREE.MeshBasicMaterial({ transparent: true, toneMapped: false, depthWrite: false, map: (() => {
+    const c = document.createElement('canvas');
+    c.width = 1536; c.height = 992;
+    const x = c.getContext('2d')!;
+    const g = x.createRadialGradient(768, 470, 10, 768, 470, 900);
+    g.addColorStop(0, 'rgba(120,110,160,.16)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    x.fillStyle = g; x.fillRect(0, 0, 1536, 992);
+    // A macOS-style menu bar, so the screen already looks like the desktop it turns into.
+    x.fillStyle = 'rgba(40,40,46,.7)'; x.fillRect(0, 0, 1536, 34);
+    x.fillStyle = 'rgba(255,255,255,.85)';
+    x.font = '600 18px -apple-system, "Helvetica Neue", Arial, sans-serif';
+    x.fillText('M.', 22, 23); x.fillText('Mansfield', 64, 23);
+    x.font = '400 18px -apple-system, "Helvetica Neue", Arial, sans-serif';
+    x.fillText('Websites', 170, 23); x.fillText('Contact', 262, 23);
+    x.textAlign = 'center';
+    x.font = '500 96px Futura, Jost, sans-serif';
+    x.fillText('Mansfield.', 768, 520);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    return t;
+  })() }));
+  add(hinge, glow, 0, SCR_Y, DISP_Z + 0.002);
+  // The notch, with its camera.
+  const notch = add(hinge, new THREE.Mesh(roundRect(3.1, 0.62, 0.18), black(0.2)), 0, SCR_Y + SCR_H / 2 - 0.27, DISP_Z + 0.004);
+  add(hinge, new THREE.Mesh(new THREE.CircleGeometry(0.1, 20), new THREE.MeshPhysicalMaterial({ color: 0x0d1a2a, roughness: 0.05, clearcoat: 1 })), 0, notch.position.y + 0.05, DISP_Z + 0.006);
+  // Reflections on the glass: a black mirror added on top, so only the highlights show. Fades as we fly in.
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x000000, roughness: 0.04, metalness: 0, specularIntensity: 0.6, envMapIntensity: 0.5, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  add(hinge, new THREE.Mesh(roundRect(W - 0.25, LID_H - 0.25, 0.95), glassMat), 0, LID_Y, DISP_Z + 0.008);
+
+  /* ---------- Camera path ---------- */
+  const v = new THREE.Vector3();
+  const target = new THREE.Vector3();
+  const sph = (r: number, elev: number, az: number, t: THREE.Vector3) =>
+    new THREE.Vector3(t.x + r * Math.cos(elev) * Math.sin(az), t.y + r * Math.sin(elev), t.z + r * Math.cos(elev) * Math.cos(az));
+  let fit = 90, screenDist = 40;
+  const screenCenter = new THREE.Vector3(0, BASE_H + SCR_Y, hinge.position.z + DISP_Z);
+
+  const resize = () => {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    const tv = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    // Distance that fits the whole laptop, and the one where the display covers the viewport.
+    fit = Math.max(23 / tv, (W * 0.95) / (tv * camera.aspect)) ;
+    screenDist = Math.min(SCR_H / 2 / tv, SCR_W / 2 / (tv * camera.aspect)) * 0.985;
+    sizeDots();
+  };
+
+  const placeLaptop = (p: number) => {
+    const o = ease(seg(p, ...T.open)), z = ease(seg(p, ...T.zoom));
+    hinge.rotation.x = lerp(lerp(1.22, -0.2, o), 0, z);
+    glassMat.opacity = 1 - z;
+    const t0 = new THREE.Vector3(0, 6, 1), t1 = new THREE.Vector3(0, 8.5, -3);
+    const a = sph(fit * 0.82, 0.24, -0.6, t0), b = sph(fit, 0.2, 0, t1);
+    const c = screenCenter.clone().add(new THREE.Vector3(0, 0, screenDist));
+    target.copy(t0).lerp(t1, o).lerp(screenCenter, z);
+    camera.position.copy(a).lerp(b, o).lerp(c, z);
+    camera.lookAt(target);
+  };
+
+  // The display's rectangle on the page, to clip the desktop to it while it fades in.
+  const screenRect = () => {
+    screen.updateWorldMatrix(true, false);
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const [sxn, syn] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
+      v.set((sxn * SCR_W) / 2, (syn * SCR_H) / 2, 0).applyMatrix4(screen.matrixWorld).project(camera);
+      const px = ((v.x + 1) / 2) * stage.clientWidth, py = ((1 - v.y) / 2) * stage.clientHeight;
+      x0 = Math.min(x0, px); x1 = Math.max(x1, px); y0 = Math.min(y0, py); y1 = Math.max(y1, py);
+    }
+    return { x0, y0, x1, y1 };
+  };
+
+  /* ---------- The dots ---------- */
+  const ctx = dots.getContext('2d')!;
+  type Dot = { hx: number; hy: number; u: number; v: number; icon: number; d: number; s: number; ph: number; sw: number };
+  let pts: Dot[] = [];
+  let rects: DOMRect[] = [];
+  let dw = 0, dh = 0, dpr = 1;
+  const imgs = icons.map((b) => b.querySelector('img')!);
+
+  function sizeDots() {
+    dpr = Math.min(devicePixelRatio, 2);
+    dw = stage.clientWidth; dh = stage.clientHeight;
+    dots.width = dw * dpr; dots.height = dh * dpr;
+    const s = stage.getBoundingClientRect();
+    rects = icons.map((b) => {
+      const r = b.querySelector('.frame')!.getBoundingClientRect();
+      return new DOMRect(r.left - s.left, r.top - s.top, r.width, r.height);
+    });
+  }
+
+  // Each icon gets a share of the dots, placed where its image is bright, so the dots draw the picture.
+  async function makeDots() {
+    const n = Math.round(clamp((innerWidth * innerHeight) / 170, 2600, 8000));
+    // Real webs are drawn bigger, so they get more dots.
+    const share = icons.map((b) => (b.classList.contains('real') ? 2 : 1));
+    const total = share.reduce((a, b) => a + b, 0);
+    const probe = document.createElement('canvas');
+    probe.width = 48; probe.height = 30;
+    const px = probe.getContext('2d', { willReadFrequently: true })!;
+    const out: Dot[] = [];
+    for (let i = 0; i < icons.length; i++) {
+      let lum: Float32Array | null = null;
+      try {
+        await imgs[i].decode();
+        px.clearRect(0, 0, 48, 30);
+        px.drawImage(imgs[i], 0, 0, 48, 30);
+        const data = px.getImageData(0, 0, 48, 30).data;
+        lum = new Float32Array(48 * 30);
+        let lo = 1, hi = 0;
+        for (let k = 0; k < lum.length; k++) {
+          lum[k] = (data[k * 4] * 0.3 + data[k * 4 + 1] * 0.59 + data[k * 4 + 2] * 0.11) / 255;
+          lo = Math.min(lo, lum[k]); hi = Math.max(hi, lum[k]);
+        }
+        for (let k = 0; k < lum.length; k++) lum[k] = (lum[k] - lo) / (hi - lo || 1);
+      } catch { /* no image data: spread the dots evenly */ }
+      const per = Math.floor((n * 0.8 * share[i]) / total);
+      for (let j = 0; j < per; j++) {
+        let u = Math.random(), w = Math.random();
+        for (let tries = 0; lum && tries < 24; tries++) {
+          const l = lum[Math.floor(w * 29.99) * 48 + Math.floor(u * 47.99)];
+          if (Math.random() < 0.12 + 0.88 * l) break;
+          u = Math.random(); w = Math.random();
+        }
+        out.push({ hx: Math.random(), hy: Math.random(), u, v: w, icon: i, d: Math.random() * 0.55 + i * 0.012, s: Math.random() * 0.9 + 0.7, ph: Math.random() * 6.28, sw: (Math.random() - 0.5) * 0.5 });
+      }
+    }
+    // The rest stay as a drifting starfield.
+    while (out.length < n) out.push({ hx: Math.random(), hy: Math.random(), u: 0, v: 0, icon: -1, d: 0, s: Math.random() * 1.1 + 0.5, ph: Math.random() * 6.28, sw: 0 });
+    pts = out;
+  }
+
+  function drawDots(p: number, time: number) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, dw, dh);
+    const q = seg(p, ...T.build);
+    const rev = icons.map((_, i) => seg(p, T.reveal[0] + i * 0.008, T.reveal[1] - 0.04 + i * 0.008));
+    const t = time / 1000;
+    ctx.fillStyle = '#fff';
+    for (const d of pts) {
+      // Home: a slowly drifting star.
+      const hx = ((d.hx + t * 0.004 * d.s) % 1) * dw, hy = (d.hy + Math.sin(t * 0.3 + d.ph) * 0.004) * dh;
+      let x = hx, y = hy, a = 0.22 + 0.25 * Math.sin(t * 1.4 + d.ph) ** 2;
+      if (d.icon >= 0) {
+        const c = clamp((q - d.d) / 0.45), e = ease(c), r = rects[d.icon];
+        const tx = r.x + d.u * r.width, ty = r.y + d.v * r.height;
+        // Curve the path a little so the dots swirl in instead of sliding.
+        const bend = Math.sin(c * Math.PI) * d.sw;
+        x = lerp(hx, tx, e) + (ty - hy) * bend * 0.35;
+        y = lerp(hy, ty, e) - (tx - hx) * bend * 0.35;
+        a = lerp(a, 0.95, e) * (1 - rev[d.icon] * 0.92);
+        if (a < 0.02) continue;
+      }
+      ctx.globalAlpha = a;
+      const s = d.icon >= 0 ? 1.05 : d.s;
+      ctx.fillRect(x, y, s, s);
+    }
+    ctx.globalAlpha = 1;
+    icons.forEach((b, i) => b.style.setProperty('--r', String(rev[i])));
+  }
+
+  /* ---------- Frame ---------- */
+  const word = sec.querySelectorAll<HTMLElement>('.word, .tag, .hint');
+  // The laptop only needs redrawing when the scroll moved or the size changed, and not once the desktop covers it.
+  let drawnP = -1;
+  function frame(time: number) {
+    const p = progress();
+    if (p !== drawnP && seg(p, ...T.desk) < 1) {
+      placeLaptop(p);
+      renderer.render(scene, camera);
+      drawnP = p;
+    }
+    const z = seg(p, ...T.zoom), dk = seg(p, ...T.desk);
+    word.forEach((el) => (el.style.opacity = String(clamp(1 - z * 2.5) * (el.classList.contains('hint') ? clamp(1 - p * 20) : 1))));
+    desk.style.opacity = String(dk);
+    desk.style.visibility = dk > 0 ? 'visible' : 'hidden';
+    if (dk > 0 && dk < 1) {
+      const r = screenRect();
+      desk.style.clipPath = `inset(${Math.max(0, r.y0)}px ${Math.max(0, dw - r.x1)}px ${Math.max(0, dh - r.y1)}px ${Math.max(0, r.x0)}px round 6px)`;
+    } else desk.style.clipPath = '';
+    desk.style.setProperty('--chrome', String(seg(p, ...T.chrome)));
+    desk.classList.toggle('live', p >= T.reveal[1]);
+    if (dk > 0) drawDots(p, time);
+  }
+
+  let on = false, raf = 0;
+  const loop = (t: number) => { frame(t); if (on) raf = requestAnimationFrame(loop); };
+  new IntersectionObserver(([e]) => {
+    on = e.isIntersecting;
+    cancelAnimationFrame(raf);
+    if (on) raf = requestAnimationFrame(loop);
+  }).observe(sec);
+  addEventListener('resize', () => { resize(); drawnP = -1; frame(performance.now()); });
+  resize();
+  makeDots().then(() => frame(performance.now()));
+  frame(performance.now());
+
+  /* ---------- Desktop: windows and clock ---------- */
+  const win = sec.querySelector<HTMLElement>('.win')!;
+  const $ = <E extends Element>(s: string) => win.querySelector<E>(s)!;
+  const close = () => { win.hidden = true; };
+  icons.forEach((b) => b.addEventListener('click', () => {
+    const w = webs[Number(b.dataset.i)];
+    $<HTMLElement>('.win-title').textContent = w.t;
+    $<HTMLImageElement>('.win-img').src = w.img;
+    $<HTMLElement>('.win-client').textContent = (w.concept ? 'Concept · ' : '') + w.client + (w.tags.length ? ' · ' + w.tags.join(', ') : '');
+    $<HTMLElement>('.win-d').textContent = w.d;
+    const a = $<HTMLAnchorElement>('.win-link');
+    a.hidden = !w.link;
+    if (w.link) a.href = w.link;
+    $<HTMLElement>('.win-soon').hidden = !w.soon;
+    win.hidden = false;
+    $<HTMLButtonElement>('.win-close').focus();
+  }));
+  $<HTMLButtonElement>('.win-close').addEventListener('click', close);
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  const clock = sec.querySelector<HTMLElement>('[data-clock]')!;
+  const tick = () => (clock.textContent = new Date().toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }));
+  tick();
+  setInterval(tick, 30000);
+</script>
+
+<style>
+  .mac { position: relative; height: 520vh; }
+  .mac.still { height: 100vh; height: 100svh; }
+  .stage {
+    position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
+    background: radial-gradient(ellipse 80% 70% at 50% 40%, #f5f5f6 0%, #dcdde0 55%, #b7b9be 100%);
+    color: #fff;
+  }
+  .gl, .dots { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  .word {
+    position: absolute; left: 50%; top: 41%; margin: 0; transform: translate(-50%, -50%) skewX(-12deg);
+    font-family: Jost, Futura, sans-serif; font-weight: 600; text-transform: uppercase; white-space: nowrap;
+    font-size: clamp(4.5rem, 21vw, 24rem); line-height: 1; letter-spacing: -0.045em;
+    color: transparent; background: linear-gradient(180deg, #fff 35%, rgba(255, 255, 255, 0.1) 100%);
+    -webkit-background-clip: text; background-clip: text;
+  }
+  .tag { position: absolute; margin: 0; font-size: clamp(1rem, 2.1vw, 1.9rem); font-weight: 500; letter-spacing: -0.02em; text-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+  .tag-top { left: 50%; top: 17%; transform: translateX(-50%); white-space: nowrap; }
+  .tag-l { left: 7%; top: 64%; }
+  .tag-r { right: 7%; top: 64%; }
+  .hint { position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%); margin: 0; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: #6b6d73; animation: bob 1.8s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translate(-50%, 6px); } }
+  @media (max-width: 640px) { .tag-l, .tag-r { top: 74%; } }
+
+  /* The desktop inside the screen */
+  .desk {
+    position: absolute; inset: 0; visibility: hidden; opacity: 0;
+    background: radial-gradient(ellipse 90% 80% at 50% 45%, #22212a 0%, #18171c 60%, #111014 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", sans-serif;
+    --chrome: 0;
+  }
+  .still .desk { visibility: visible; opacity: 1; --chrome: 1; }
+  .menubar {
+    position: absolute; inset: 0 0 auto; height: 28px; display: flex; align-items: center; gap: 18px; padding: 0 16px;
+    font-size: 13px; color: rgba(255, 255, 255, 0.85); background: rgba(30, 30, 36, 0.55); backdrop-filter: blur(20px);
+  }
+  .menubar a { color: inherit; text-decoration: none; }
+  .mb-logo { font-family: Jost, Futura, sans-serif; font-weight: 600; }
+  .mb-strong { font-weight: 600; }
+  .mb-clock { margin-left: auto; }
+  @media (max-width: 520px) { .menubar span:nth-child(3) { display: none; } }
+
+  .icons { list-style: none; margin: 0; padding: 0; position: absolute; inset: 28px 0 86px; }
+  .icons li { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%); }
+  @media (max-aspect-ratio: 4/5) { .icons li { left: var(--tx); top: var(--ty); } }
+  .icon { --r: 1; display: flex; flex-direction: column; align-items: center; gap: 7px; background: none; border: 0; padding: 4px; cursor: pointer; color: #fff; pointer-events: none; }
+  .live .icon, .still .icon { pointer-events: auto; }
+  .frame { display: block; width: clamp(78px, 10.5vw, 150px); aspect-ratio: 16 / 10; }
+  .real .frame { width: clamp(120px, 17vw, 240px); }
+  .frame img {
+    display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 4px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    opacity: var(--r); filter: blur(calc((1 - var(--r)) * 6px)); transition: transform 0.25s ease;
+  }
+  .icon:hover img, .icon:focus-visible img { transform: scale(1.08); }
+  .label {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; text-align: center; max-width: 140px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7); opacity: var(--r);
+  }
+  .icon:focus-visible { outline: 2px solid #5aa2ff; outline-offset: 2px; border-radius: 6px; }
+
+  .dock {
+    position: absolute; left: 50%; bottom: 14px; display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+    border-radius: 20px; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.18); backdrop-filter: blur(24px);
+    opacity: var(--chrome); transform: translate(-50%, calc((1 - var(--chrome)) * 140%));
+  }
+  .app { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; color: #fff; transition: transform 0.2s ease; }
+  .app svg { width: 24px; height: 24px; }
+  .app:hover { transform: translateY(-6px) scale(1.12); }
+  .app-mail { background: linear-gradient(#5ab0ff, #1f6fe5); }
+  .app-gh { background: linear-gradient(#3a3a40, #16161a); }
+  .app-in { background: linear-gradient(#2a8ad6, #0a5ea8); }
+  .app-new { background: linear-gradient(#f6f6f7, #d4d5d9); color: #18171c; }
+  .sep { width: 1px; height: 36px; background: rgba(255, 255, 255, 0.25); }
+
+  .win {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -52%); width: min(720px, 92vw);
+    border-radius: 12px; overflow: hidden; background: #26252c; color: #eee; border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  }
+  .win[hidden] { display: none; }
+  .win-bar { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; background: #2f2e36; }
+  .win-close, .dot { width: 12px; height: 12px; border-radius: 50%; border: 0; padding: 0; }
+  .win-close { background: #ff5f57; cursor: pointer; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  .win-title { flex: 1; text-align: center; font-size: 13px; font-weight: 600; margin-right: 52px; }
+  .win-img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+  .win-body { padding: 16px 20px 20px; font-size: 14px; line-height: 1.5; }
+  .win-client { margin: 0; color: #a5a4ad; font-size: 13px; }
+  .win-d { margin: 6px 0 14px; }
+  .win-link, .win-soon { display: inline-block; border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 600; }
+  .win-link { background: #fff; color: #18171c; text-decoration: none; }
+  .win-soon { background: rgba(255, 255, 255, 0.1); color: #c9c8cf; }
+  .win-link[hidden], .win-soon[hidden] { display: none; }
+</style>

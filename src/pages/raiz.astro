@@ -1,0 +1,128 @@
+---
+// Demo: Raíz, a real-estate agency in León (fictional). Photo-led: a house in the hero with price chips, and listings.
+// Photos: Unsplash (free licence), ids eWOgoFHlE8g, e8bstjLjUFU, GrmNIIId5LM, f5QahUP8PJ0.
+import Demo from '../layouts/Demo.astro';
+import { pic } from '../demos/pic';
+const homes = [
+  ['Casa Encino', 'El Campestre', '3 rec · 3.5 baños · 320 m²', '6,950,000', 'encino'],
+  ['Casa Nogal', 'Cumbres del Campestre', '4 rec · 4 baños · 410 m²', '8,400,000', 'nogal'],
+  ['Casa Mezquite', 'Lomas del Sol', '3 rec · 2.5 baños · 240 m²', '4,250,000', 'mezquite'],
+];
+---
+<Demo title="Raíz · Bienes raíces en León" description="Casas en venta en León, Guanajuato. Te acompañamos de la búsqueda a las escrituras." fonts="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" bg="#fbfaf7" color="#1e2b22">
+  <div class="raiz">
+    <header class="nav">
+      <a href="#" class="logo">raíz<span>.</span></a>
+      <nav><a href="#casas">Comprar</a><a href="#vender">Vender</a><a href="#zonas">Zonas</a></nav>
+      <a href="#vender" class="btn ghost">Habla con un asesor</a>
+    </header>
+
+    <section class="hero">
+      <div class="copy">
+        <h1>Tu casa<br />en <em>León.</em></h1>
+        <p>Casas revisadas por nosotros, con papeles en orden y precio justo. Te acompañamos de la primera visita a las escrituras.</p>
+        <form class="search" onsubmit="return false">
+          <label>Zona<select><option>El Campestre</option><option>Cumbres</option><option>Lomas del Sol</option><option>Centro</option></select></label>
+          <label>Tipo<select><option>Casa</option><option>Departamento</option><option>Terreno</option></select></label>
+          <label>Hasta<select><option>$5,000,000</option><option>$8,000,000</option><option>$12,000,000</option></select></label>
+          <button class="btn">Buscar</button>
+        </form>
+      </div>
+      <div class="art">
+        <img {...pic('/img/demos/raiz/hero', '(max-width: 900px) 100vw, 55vw', true)} alt="Casa moderna con ventanales y jardín" />
+        <div class="chip c1"><b>$6.95M</b><span>Casa Encino · El Campestre</span></div>
+        <div class="chip c2"><b>3</b> rec · <b>3.5</b> baños · <b>320</b> m²</div>
+      </div>
+    </section>
+
+    <section id="casas" class="homes">
+      <div class="head"><h2>Recién <em>llegadas</em></h2><a href="#">Ver las 48 casas →</a></div>
+      <div class="grid">
+        {homes.map(([n, z, specs, p, img]) => (
+          <article>
+            <div class="photo"><img {...pic(`/img/demos/raiz/${img}`, '(max-width: 900px) 100vw, 33vw')} alt={n} /><span>Nueva</span></div>
+            <h3>{n}</h3>
+            <p class="zone">{z}</p>
+            <p class="specs">{specs}</p>
+            <p class="price">${p}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section id="zonas" class="zones">
+      <h2>Conocemos cada <em>colonia</em></h2>
+      <div class="chips">{['El Campestre', 'Cumbres del Campestre', 'Lomas del Sol', 'Gran Jardín', 'Centro', 'Valle del Campestre', 'Jardines del Moral', 'Puerta de San Rafael'].map((z) => <span>{z}</span>)}</div>
+    </section>
+
+    <section id="vender" class="sell">
+      <div>
+        <h2>¿Vas a <em>vender?</em></h2>
+        <p>Valuamos tu casa gratis en 48 horas, la fotografiamos y la mostramos solo a compradores con crédito aprobado.</p>
+      </div>
+      <ol><li><b>Valuación</b>Gratis, con comparables reales de tu zona.</li><li><b>Publicación</b>Fotos, recorrido 3D y anuncio en portales.</li><li><b>Cierre</b>Revisamos papeles y te acompañamos a la notaría.</li></ol>
+    </section>
+    <footer><span>Raíz Bienes Raíces © 2026</span><span>Blvd. Campestre 1520, León, Gto. · 477 123 4567</span></footer>
+  </div>
+</Demo>
+
+
+<style>
+  .raiz { font-family: Manrope, sans-serif; --green: #1e2b22; --clay: #c45b3c; --paper: #fbfaf7; }
+  h1, h2, h3, .logo, .price { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; }
+  em { font-style: italic; color: var(--clay); }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 22px clamp(20px, 5vw, 64px); }
+  .logo { font-size: 34px; text-decoration: none; letter-spacing: -0.02em; }
+  .logo span { color: var(--clay); }
+  .nav nav { display: flex; gap: 32px; font-weight: 500; font-size: 15px; }
+  .nav nav a { text-decoration: none; opacity: 0.75; }
+  .btn { display: inline-block; background: var(--green); color: var(--paper); border: 0; border-radius: 10px; padding: 12px 20px; font-weight: 600; text-decoration: none; cursor: pointer; }
+  .btn.ghost { background: transparent; color: var(--green); border: 1px solid var(--green); }
+
+  .hero { display: grid; grid-template-columns: 1fr 1.15fr; align-items: center; gap: 10px; padding: 10px clamp(20px, 5vw, 64px) 60px; }
+  h1 { font-size: clamp(4rem, 9vw, 9rem); line-height: 0.9; letter-spacing: -0.03em; margin: 0; }
+  .copy > p { font-size: 18px; line-height: 1.6; color: #4b5a4f; max-width: 28em; margin: 24px 0 30px; }
+  .search { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 8px; align-items: end; background: #fff; border: 1px solid #e6e2d9; border-radius: 16px; padding: 10px; box-shadow: 0 18px 40px rgba(30, 43, 34, 0.08); }
+  .search label { display: grid; gap: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #8a9389; padding: 4px 8px; }
+  .search select { border: 0; background: transparent; font-size: 15px; font-weight: 600; color: var(--green); padding: 0; text-transform: none; letter-spacing: 0; }
+  .search .btn { padding: 15px 22px; }
+  .art { position: relative; aspect-ratio: 1.05; border-radius: 28px; overflow: hidden; background: linear-gradient(180deg, #f6dcc0 0%, #f3e6d3 55%, #e9e3d2 100%); }
+  .art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .chip { position: absolute; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border-radius: 14px; padding: 12px 16px; font-size: 13px; box-shadow: 0 10px 30px rgba(30, 43, 34, 0.12); }
+  .c1 { left: 18px; top: 18px; display: grid; }
+  .c1 b { font-family: "Instrument Serif", serif; font-size: 30px; font-weight: 400; }
+  .c1 span { color: #6b766d; }
+  .c2 { right: 18px; bottom: 18px; }
+
+  .homes, .zones { padding: 100px clamp(20px, 5vw, 64px); max-width: 1320px; margin: 0 auto; }
+  .head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 14px; margin-bottom: 40px; }
+  .head a { font-weight: 600; text-decoration: none; border-bottom: 1px solid; }
+  h2 { font-size: clamp(2.6rem, 5vw, 4.8rem); line-height: 1; margin: 0; letter-spacing: -0.02em; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .photo { position: relative; aspect-ratio: 4 / 3; border-radius: 18px; overflow: hidden; background: linear-gradient(180deg, #f6dcc0, #e9e3d2); }
+  .photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+  article:hover .photo img { transform: scale(1.05); }
+  .photo span { position: absolute; left: 12px; top: 12px; background: var(--clay); color: #fff; font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px; }
+  article h3 { font-size: 30px; margin: 16px 0 0; }
+  .zone { margin: 2px 0 8px; color: #6b766d; }
+  .specs { margin: 0; font-size: 14px; font-weight: 600; }
+  .price { font-size: 26px; margin: 10px 0 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+  .chips span { border: 1px solid #d9d4c8; border-radius: 999px; padding: 12px 20px; font-weight: 600; transition: background 0.2s, color 0.2s; cursor: default; }
+  .chips span:hover { background: var(--green); color: var(--paper); }
+  .sell { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; background: var(--green); color: var(--paper); padding: 100px clamp(20px, 5vw, 64px); }
+  .sell em { color: #e8a184; }
+  .sell p { line-height: 1.65; opacity: 0.85; max-width: 30em; }
+  .sell ol { list-style: none; margin: 0; padding: 0; counter-reset: n; }
+  .sell li { counter-increment: n; display: grid; gap: 4px; padding: 22px 0 22px 60px; border-bottom: 1px solid rgba(251, 250, 247, 0.2); position: relative; opacity: 0.9; }
+  .sell li::before { content: counter(n); position: absolute; left: 0; top: 16px; font-family: "Instrument Serif", serif; font-size: 40px; color: #e8a184; }
+  .sell li b { font-size: 18px; }
+  footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 26px clamp(20px, 5vw, 64px) 70px; font-size: 14px; color: #6b766d; }
+
+  @media (max-width: 900px) {
+    .nav nav, .nav .ghost { display: none; }
+    .hero, .sell { grid-template-columns: 1fr; }
+    .search { grid-template-columns: 1fr 1fr; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>

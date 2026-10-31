@@ -2,15 +2,19 @@
 import '../styles/global.css';
 import { SITE_TITLE, SITE_DESCRIPTION, EMAIL, GITHUB_URL, LINKEDIN_URL } from '../consts';
 import { NAV } from '../sections';
-interface Props { title?: string; description?: string; type?: string }
-const { title, description = SITE_DESCRIPTION, type = 'website' } = Astro.props;
+// Portfolio mode (Oct 2026): the personal sections are hidden (pages renamed to _*.astro, not deleted).
+// To bring them back, rename the pages and set this to false.
+const PORTFOLIO_ONLY = true;
+// bare: no header, and <main> goes full width (the home page's Mac scene).
+interface Props { title?: string; description?: string; type?: string; bare?: boolean }
+const { title, description = SITE_DESCRIPTION, type = 'website', bare = false } = Astro.props;
 const fullTitle = title ? `${title} · Mansfield` : `Mansfield · ${SITE_TITLE}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const og = new URL('/og.png', Astro.site);
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 // The header is the four sections; the rest of the site is linked from the footer.
-const nav = NAV;
-const more: [string, string][] = [['About', '/about'], ['Now', '/now'], ['Work with me', '/work-with-me']];
+const nav = PORTFOLIO_ONLY ? [] : NAV;
+const more: [string, string][] = PORTFOLIO_ONLY ? [] : [['About', '/about'], ['Now', '/now'], ['Work with me', '/work-with-me']];
 ---
 <!doctype html>
 <html lang="en">
@@ -23,7 +27,7 @@ const more: [string, string][] = [['About', '/about'], ['Now', '/now'], ['Work w
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="sitemap" href="/sitemap-index.xml" />
-  <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/rss.xml" />
+  {!PORTFOLIO_ONLY && <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/rss.xml" />}
   <meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)" />
   <meta property="og:type" content={type} />
@@ -49,7 +53,7 @@ const more: [string, string][] = [['About', '/about'], ['Now', '/now'], ['Work w
 </head>
 {/* .v3 sets the whole site in Futura (see global.css). */}
 <body class="v3 min-h-screen">
-  <div class="mx-auto max-w-3xl px-5 sm:px-8">
+  {!bare && <div class="mx-auto max-w-3xl px-5 sm:px-8">
     <header class="flex items-center justify-between gap-4 py-6 sm:py-8">
       <a href="/" class="serif text-lg leading-tight sm:text-xl">Mansfield<span class="text-accent dark:text-accent-dark">.</span></a>
       <div class="flex items-center gap-1 sm:gap-2">
@@ -60,7 +64,7 @@ const more: [string, string][] = [['About', '/about'], ['Now', '/now'], ['Work w
           <svg class="h-5 w-5 dark:hidden" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
           <svg class="hidden h-5 w-5 dark:block" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
         </button>
-        <button id="menu" aria-label="Open menu" aria-expanded="false" class="rounded-full p-2 sm:hidden">
+        <button id="menu" aria-label="Open menu" aria-expanded="false" class:list={['rounded-full p-2 sm:hidden', PORTFOLIO_ONLY && '!hidden']}>
           <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
       </div>
@@ -69,7 +73,9 @@ const more: [string, string][] = [['About', '/about'], ['Now', '/now'], ['Work w
       {nav.map(([l, h]) => <a href={h} class="block py-2">{l}</a>)}
       {more.map(([l, h]) => <a href={h} class="block py-2 text-stone-500 dark:text-stone-400">{l}</a>)}
     </nav>
-    <main class="pb-16 pt-6 sm:pt-10"><slot /></main>
+  </div>}
+  {bare ? <main><slot /></main> : <div class="mx-auto max-w-3xl px-5 sm:px-8"><main class="pb-16 pt-6 sm:pt-10"><slot /></main></div>}
+  <div class="mx-auto max-w-3xl px-5 sm:px-8">
     <footer class="flex flex-col gap-3 border-t border-stone-200 py-8 text-sm text-stone-500 sm:flex-row sm:justify-between dark:border-stone-800 dark:text-stone-400">
       <div class="flex flex-wrap gap-x-4 gap-y-2">
         {more.map(([l, h]) => <a class="hover:text-ink dark:hover:text-white" href={h}>{l}</a>)}
@@ -78,14 +84,14 @@ const more: [string, string][] = [['About', '/about'], ['Now', '/now'], ['Work w
         <a class="hover:text-ink dark:hover:text-white" href={`mailto:${EMAIL}`}>Email</a>
         <a class="hover:text-ink dark:hover:text-white" href={GITHUB_URL}>GitHub</a>
         <a class="hover:text-ink dark:hover:text-white" href={LINKEDIN_URL}>LinkedIn</a>
-        <a class="hover:text-ink dark:hover:text-white" href="/rss.xml">RSS</a>
+        {!PORTFOLIO_ONLY && <a class="hover:text-ink dark:hover:text-white" href="/rss.xml">RSS</a>}
         <span>© {new Date().getFullYear()} Mansfield</span>
       </div>
     </footer>
   </div>
   <script is:inline>
-    document.getElementById('theme').onclick=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');};
-    var m=document.getElementById('menu'),n=document.getElementById('mobile-nav');m.onclick=function(){var h=n.classList.toggle('hidden');m.setAttribute('aria-expanded',String(!h));};
+    var t=document.getElementById('theme');if(t)t.onclick=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');};
+    var m=document.getElementById('menu'),n=document.getElementById('mobile-nav');if(m)m.onclick=function(){var h=n.classList.toggle('hidden');m.setAttribute('aria-expanded',String(!h));};
   </script>
 </body>
 </html>
