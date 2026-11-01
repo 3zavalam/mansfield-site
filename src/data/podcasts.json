@@ -1,5 +1,35 @@
 [
   {
+    "show": "Acquired",
+    "title": "Coca-Cola",
+    "url": "https://www.acquired.fm/episodes/coca-cola",
+    "date": "2026-10-21",
+    "ideas": [
+      "- help your provider customer",
+      "- protect your brand (patents, lawsuits, etc)",
+      "- ad for the desire state of your client",
+      "- why before nothing was in color, the magazines, tv, etc",
+      "- they align the incentives of the retailers (and everyone) perfectly",
+      "- embrace technology, trends and look for people your competitors leave out",
+      "- grass root marketing",
+      "- I feel Pepsi is way better company than coke and coke had the first in the market advantage (so be the first always)",
+      "- I like the Pepsi company",
+      "- bragging rights???",
+      "- acquired the companies that get you business bigger when you can (Gatorade, frito lays)"
+    ],
+    "img": "/img/resources/podcasts/coca-cola.webp"
+  },
+  {
+    "show": "Colossus",
+    "title": "Mark Zuckerberg profile",
+    "url": "https://colossus.com/article/mark-zuckerberg-profile/",
+    "date": "2026-10-21",
+    "ideas": [
+      "- dictators dilema (examples of overcoming it)"
+    ],
+    "img": "/img/resources/podcasts/mark-zuckerberg.webp"
+  },
+  {
     "show": "The Tim Ferriss Show",
     "title": "#485 Jerry Seinfeld — A Comedy Legend's Systems, Routines, and Methods for Success",
     "url": "https://tim.blog/2020/12/08/jerry-seinfeld/",
@@ -28,6 +58,8 @@
     "url": "https://tim.blog/2023/09/28/shane-parrish-farnam-street/",
     "date": "2026-10-14",
     "ideas": [
+      "- 85 rule",
+      "- A lot i have to re listen",
       "- (no terminado, lo tengo que volver a escuchar)"
     ],
     "img": "/img/resources/podcasts/shane-parrish.webp"

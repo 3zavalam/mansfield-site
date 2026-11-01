@@ -107,6 +107,11 @@
     "status": "paused"
   },
   {
+    "title": "La paciente silenciosa",
+    "author": "Alex Michaelides",
+    "status": "read"
+  },
+  {
     "title": "Las Meditaciones",
     "author": "Marco Aurelio",
     "status": "read",
@@ -121,6 +126,10 @@
   {
     "title": "Million Dollar Weekend",
     "author": "Noah Kagan",
+    "status": "read"
+  },
+  {
+    "title": "On the Shortness of Life",
     "status": "read"
   },
   {
@@ -157,6 +166,11 @@
   {
     "title": "The 4-Hour Workweek",
     "author": "Tim Ferriss",
+    "status": "next"
+  },
+  {
+    "title": "The Ball Is Round",
+    "author": "David Goldblatt",
     "status": "next"
   },
   {

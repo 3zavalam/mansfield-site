@@ -75,7 +75,7 @@ for (const f of md(path.join(VAULT, 'Main/Resources/Leer/Lista'))) {
 write('books.json', books);
 
 // Podcasts: his ideas, one note per episode
-const SKIP_PODCASTS = ['Prueba'];
+const SKIP_PODCASTS = ['Prueba', 'Otros']; // Otros is a scratch note of loose ideas and to-dos, not an episode
 const ideas = new Map();
 const POD_DIRS = ['Main/Ideas', 'Main/Ideas/Podcasts'];
 for (const f of POD_DIRS.flatMap((d) => md(path.join(VAULT, d)).map((n) => path.join(d, n)))) {
