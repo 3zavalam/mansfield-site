@@ -8,5 +8,5 @@ export const UPWORK_URL = 'https://www.upwork.com/';
 // PLACEHOLDER: replace with Emilio's real X handle URL
 export const X_URL = 'https://x.com/';
 export const GITHUB_URL = 'https://github.com/3zavalam';
-export const LINKEDIN_URL = 'https://www.linkedin.com/in/emilio-zavala-miceli';
+export const LINKEDIN_URL = 'https://www.linkedin.com/in/emilio-zavala-miceli-86595927b/';
 export const OLD_PORTFOLIO_URL = 'https://portfolio-vercel-six-beige.vercel.app';
