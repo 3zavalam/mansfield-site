@@ -10,6 +10,7 @@ export default defineConfig({
   // Set PORTFOLIO_ONLY to false (here and in Base.astro) and rename the _ pages to bring them back.
   redirects: PORTFOLIO_ONLY ? {
     ...Object.fromEntries(['/writing', '/iteratev3', '/about', '/now', '/work-with-me', '/personal', '/analysis', '/projects', '/resources'].map((p) => [p, '/'])),
+    '/pronos': '/probis',
   } : {
     '/writing': '/analysis',
     '/writing/[...slug]': '/analysis/[...slug]',
@@ -20,6 +21,6 @@ export default defineConfig({
     '/iteratev3/resources': '/resources',
   },
   // The demo sites are for fictional businesses: keep them out of the sitemap (they're noindex too).
-  integrations: [sitemap({ filter: (page) => !/\/(casa-olivo|norte-dental|ruta-cafe|estudio-arca|atlas-fc|mar-azul|forma-gym|raiz)\/?$/.test(page) })],
+  integrations: [sitemap({ filter: (page) => !/\/(casa-olivo|norte-dental|ruta-cafe|estudio-arca|atlas-fc|mar-azul|forma-gym|raiz|probis|draft\/.*)\/?$/.test(page) })],
   vite: { plugins: [tailwindcss()] },
 });
