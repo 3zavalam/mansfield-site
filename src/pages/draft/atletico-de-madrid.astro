@@ -1,0 +1,603 @@
+---
+import PhoneChart from '../../atletico/PhoneChart.astro';
+// Draft (hidden): the Atlético de Madrid analysis as a scroll film. noindex and out of the sitemap until it
+// moves to /analysis. The 3D world lives in src/atletico/world.ts; each data-step below is one shot in it.
+const fans = [43.7, 46.6, 50.0, 56.3];
+const shop = [9.1, 10.0, 11.8, 16.2];
+const seasons = ['21-22', '22-23', '23-24', '24-25'];
+const spark = (v: number[], max: number) => v.map((x, i) => `${20 + i * 90},${110 - (x / max) * 90}`).join(' ');
+const powers: [string, string, string][] = [
+  ['Branding', 'Yes', '98% renewals, 8,000+ waiting, and season-ticket income up 29% in three years with the stadium already full. The identity of the other club in Madrid cannot be copied.'],
+  ['Cornered resource', 'Partly', 'The land next to the stadium, held on a 75-year concession, matters for events and leisure, not football. And Simeone, while he stays.'],
+  ['Switching costs', 'No', 'Fans never switch, but that is true of every club. It gives no edge over Real Madrid.'],
+  ['Process power', 'Weak', 'The closest thing is the Simeone system, and it belongs to one person.'],
+  ['Scale economies', 'Against', 'Real Madrid and Barcelona earn far more from the same structure: TV, sponsors, tours.'],
+  ['Network economies', 'No', 'One more fan does not make the club better for the others.'],
+  ['Counter-positioning', 'No', 'Nothing the club does that rivals refuse to copy.'],
+];
+// Capital increases (capital note, share counts). Bars share one scale, so 2024 is visibly smaller.
+const issues = [
+  { year: '2021', approved: 181.9, raised: 120.3, holdco: 120.0, quantum: 0, note: 'The holding company paid almost all of it. Quantum paid nothing, so its stake fell from 32% to 27.8%.' },
+  { year: '2024', approved: 70.8, raised: 69.7, holdco: 49.8, quantum: 19.7, note: 'This time both paid: the holding company about €49.8M, Quantum about €19.7M.' },
+];
+const notes = [['step-1', 'Step 1 · first look'], ['step-2', 'Step 2 · the P&L'], ['step-3', 'Step 3 · cash flow'], ['step-4', 'Step 4 · five years']];
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>The Other Club in Madrid</title>
+  <meta name="description" content="How Atlético de Madrid competes above its means, and who pays for it. Five years of annual accounts, read by hand." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Archivo+Narrow:wght@500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <canvas id="world" aria-hidden="true"></canvas>
+  <div class="bar"><span id="chap">The Other Club in Madrid</span><span class="draft">Draft · not published</span><i id="prog"></i></div>
+
+  <main>
+    <!-- OPENING -->
+    <section class="step hero" data-step="hero" data-chap="The Other Club in Madrid">
+      <div class="heroin">
+        <img class="crest" src="/img/atletico/atletico.svg" alt="Atlético de Madrid crest" width="72" height="72" />
+        <p class="eyebrow">The club as a business · 2020-21 to 2024-25</p>
+        <h1>The Other Club<br />in Madrid</h1>
+        <p class="dek">How Atlético competes above its means, and who pays for it.</p>
+        <div class="stats">
+          <div><b data-count="416.1" data-pre="€" data-post="M">€416.1M</b><span>revenue, 2024-25</span></div>
+          <div><b data-count="-337" data-pre="€" data-post="M">−€337M</b><span>free cash flow in five years</span></div>
+          <div><b data-count="192" data-pre="€" data-post="M">€192M</b><span>put in by shareholders</span></div>
+          <div><b>~€2.5bn</b><span>Apollo's valuation incl. debt, 2026 <a class="press" data-outlet="Forbes España · 2026" data-title="Apollo takes control of Atlético in a deal that values the club at €2,500M, debt included" href="https://forbes.es/sports/889627/apollo-control-atletico-madrid-ampliacion-capital-consejo-david-villa/" target="_blank" rel="noopener noreferrer">press ↗</a></span></div>
+        </div>
+      </div>
+      <p class="scroll">Scroll</p>
+    </section>
+    <section class="step hookstep" data-step="hook">
+      <p class="hook">For five years Atlético has not covered its own costs. In 2026 an American investment firm valued it at around €2.5 billion, debt included. This is the story of how both things are true.</p>
+    </section>
+
+    <!-- ACT I -->
+    <section class="step" data-step="moved" data-chap="I · The club that moved">
+      <div class="card">
+        <p class="eyebrow">Act I</p>
+        <h2>The club that moved</h2>
+        <p>Atlético has always been the other club in Madrid. Real Madrid had the titles, the money and the name. Atlético had a stadium by the river, the Vicente Calderón, and a crowd that took pride in losing well and winning rarely.</p>
+      </div>
+    </section>
+    <section class="step" data-step="timeline">
+      <div class="card">
+        <p>Three things shaped the business you see today. A family that took control in the late 1980s and still runs the club. A move across the city to a new stadium. And a debt that came with that move and never quite went away.</p>
+        <p class="src">Red posts are money events. Count them.</p>
+        <PhoneChart kind="timeline" />
+      </div>
+    </section>
+    <section class="step" data-step="calderon">
+      <div class="card">
+        <p>The move left a trace in the accounts for seventeen years. The club booked a €154.9M gain on the Calderón land in 2003-04, but the land only changed hands in 2019. Until 2020-21 the auditors qualified their opinion because of it.</p>
+        <p class="src">Annual accounts 2021, audit report.</p>
+      </div>
+    </section>
+    <section class="step right" data-step="covid">
+      <div class="card">
+        <h3>The year it nearly broke</h3>
+        <p>Then came COVID. In 2020-21 the stadium was empty and the wages did not fall. The club lost <b class="red">€86.1M</b>, the worst year in our five.</p>
+        <p>Two things saved it: a €300M loan pledged against future LaLiga TV money, and €120.3M of new shares, almost all of it paid by the owners' holding company.</p>
+        <p class="src">2021 accounts. Revenue includes €39.1M moved from 2019-20 because the season ran past 30 June.</p>
+      </div>
+    </section>
+
+    <!-- ACT II -->
+    <section class="step right" data-step="coins" data-chap="II · The gap">
+      <div class="card">
+        <p class="eyebrow">Act II</p>
+        <h2>The gap</h2>
+        <p>Strip away the stadium story and the business is simple to describe. Atlético earns a lot and spends more.</p>
+        <p>Of every €100 it earns, <b class="red">€67</b> goes to players and staff. Another <b class="blue">€18</b> goes, in effect, to other clubs: the cost of players bought, spread over their contracts.</p>
+        <PhoneChart kind="coins" />
+      </div>
+    </section>
+    <section class="step right" data-step="overflow">
+      <div class="card">
+        <p>Add everything else and the club spends <b class="red">€119</b> for every €100 it earns. Those nineteen coins outside the box are the gap. The rest of this story is about who fills it.</p>
+        <p class="src">2024-25 accounts, p. 11. Staff costs €279.9M = 67.3% of revenue.</p>
+        <PhoneChart kind="overflow" />
+      </div>
+    </section>
+    <section class="step" data-step="rev">
+      <div class="card">
+        <h3>Five years, one picture</h3>
+        <p>One bad year is a story. Five years is a model. Revenue grew by 28% from 2020-21 to 2024-25.</p>
+        <PhoneChart kind="rev" />
+      </div>
+    </section>
+    <section class="step" data-step="debt">
+      <div class="card">
+        <p>Net debt stayed at about half a billion euros the whole time. As a share of revenue it fell from 160% to 113%, but only because revenue grew. The club grew into its debt instead of paying it down.</p>
+        <p class="src">LaLiga's definition 2021–2024; ours for 2025.</p>
+        <PhoneChart kind="debt" />
+      </div>
+    </section>
+    <section class="step" data-step="fcf">
+      <div class="card">
+        <p>Now look under the pitch. Every one of the five years ended with less cash from the business than the club spent on running it and on players. Free cash flow was negative every single year.</p>
+        <PhoneChart kind="fcf" />
+      </div>
+    </section>
+    <section class="step" data-step="merge">
+      <div class="card">
+        <p>Put the five holes together and you get <b class="red">−€337M</b>. Shareholders filled 53% of it. The other 47% was borrowed.</p>
+        <button class="table-btn" type="button" id="tableBtn" aria-expanded="false">See the five-year table</button>
+        <div class="table" id="table" hidden>
+          <table>
+            <thead><tr><th>€M</th><th>20-21</th><th>21-22</th><th>22-23</th><th>23-24</th><th>24-25</th></tr></thead>
+            <tbody>
+              <tr><td>Revenue</td><td>325.6*</td><td>377.8</td><td>357.8</td><td>395.1</td><td>416.1</td></tr>
+              <tr><td>Wage ratio</td><td>76.0%</td><td>67.3%</td><td>68.4%</td><td>67.8%</td><td>67.3%</td></tr>
+              <tr><td>Net result</td><td>(86.1)</td><td>(22.6)</td><td>0.4</td><td>0.7</td><td>(6.0)</td></tr>
+              <tr><td>Cash from operations</td><td>(80.6)</td><td>58.8</td><td>(15.8)</td><td>(5.2)</td><td>15.3</td></tr>
+              <tr><td>Free cash flow</td><td>(128.1)</td><td>(110.1)</td><td>(16.7)</td><td>(34.0)</td><td>(48.1)</td></tr>
+              <tr><td>Shareholders (cash)</td><td>120.3</td><td>0.3</td><td>1.2</td><td>0</td><td>69.7</td></tr>
+              <tr><td>Net debt / revenue</td><td>160%</td><td>133%</td><td>144%</td><td>129%</td><td>113%</td></tr>
+            </tbody>
+          </table>
+          <p class="src">Individual annual accounts 2021–2025. *Includes €39.1M of 2019-20 revenue deferred by COVID.</p>
+        </div>
+        <PhoneChart kind="merge" />
+      </div>
+    </section>
+    <section class="step low" data-step="cash">
+      <div class="card">
+        <h3>One summer in cash</h3>
+        <p>Look closely at one year. In 2024-25 the business itself produced <b>€15.3M</b> of cash. Players sold brought in €101.6M. Players bought cost €139.6M in cash, and much more on credit from the selling clubs.</p>
+        <p>Then the owners added €69.7M and the club borrowed another €53.1M net.</p>
+        <p class="desk">Follow the dots. Every dot is money: it comes in from four sources on the left, passes through the club, and leaves on the right. The wider the stream, the more euros.</p>
+        <p class="phone">Top bar: where the money came from. Bottom bar: where it went. The wider the block, the more euros.</p>
+        <PhoneChart kind="cash" />
+      </div>
+    </section>
+    <section class="step right" data-step="cashwhy">
+      <div class="card">
+        <p>The gold <span class="desk">stream</span><span class="phone">block</span> is the surprise: that money never left. The club ended the year with <b class="gold">€74M</b> more in the bank. It raised far more than it needed.</p>
+        <p>The accounts don't say why. Our best guess: the summer 2025 signings, and €92M owed to other clubs within twelve months.</p>
+        <p class="src">2025 accounts, p. 14 (cash flow statement).</p>
+      </div>
+    </section>
+
+    <!-- ACT III -->
+    <section class="step right" data-step="tower" data-chap="III · Who closes the gap">
+      <div class="card">
+        <p class="eyebrow">Act III</p>
+        <h2>Who closes the gap</h2>
+        <p>A gap that size has to be paid by someone. At Atlético it is two groups: lenders, who get paid back with new loans, and owners, who have been paid back by the rising value of the club.</p>
+        <p>At 30 June 2025 the club owed <b>€599.6M</b> to lenders.</p>
+        <PhoneChart kind="tower" />
+      </div>
+    </section>
+    <section class="step" data-step="stairs">
+      <div class="card">
+        <h3>The debt that rolls</h3>
+        <p>Most of it is one loan, first signed for €300M in 2020-21 and made bigger three times since. Each time it cost more.</p>
+        <p>In 2024-25 the club borrowed €199.1M and repaid €146.0M. That is rolling the debt forward, not paying it down.</p>
+        <PhoneChart kind="stairs" />
+      </div>
+    </section>
+    <section class="step" data-step="shares">
+      <div class="card">
+        <h3>Who really paid</h3>
+        <p>The club issued new shares twice. Each time it sold fewer than were approved, and the share counts in the capital note show who bought them.</p>
+        <ul class="key">
+          <li><i class="k-hold"></i>Holding company (the owners)</li>
+          <li><i class="k-quan"></i>Quantum (the other big shareholder)</li>
+          <li><i class="k-none"></i>Approved but never sold</li>
+        </ul>
+        {issues.map((d) => (
+          <div class="issue">
+            <div class="ihead"><b>{d.year}</b><span>€{d.raised}M raised of €{d.approved}M approved</span></div>
+            <div class="ibar" style={`width:${(d.approved / 181.9) * 100}%`}>
+              <i class="k-hold" style={`flex:${d.holdco}`}>{d.holdco >= 20 && `€${d.holdco.toFixed(1)}M`}</i>
+              {d.quantum > 0 && <i class="k-quan" style={`flex:${d.quantum}`}>€{d.quantum}M</i>}
+              <i class="k-none" style={`flex:${d.approved - d.holdco - d.quantum}`}>{d.approved - d.holdco - d.quantum >= 20 && `€${(d.approved - d.raised).toFixed(1)}M`}</i>
+            </div>
+            <p class="inote">{d.note}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+    <section class="step" data-step="guar">
+      <div class="card">
+        <h3>From a person to the TV rights</h3>
+        <p>The quietest number in the accounts may be the most telling. In 2020 the club's chief executive, Miguel Ángel Gil Marín, and a related company personally guaranteed <b class="gold">€397M</b> of the club's debts. The club paid them a fee for it.</p>
+        <p>A year later the guarantees were €134M. By 2025, €36M.</p>
+        <p class="src">Related-parties note, 2020–2025 accounts. Fees ≈ €9.5M in six years.</p>
+        <PhoneChart kind="guar" />
+      </div>
+    </section>
+    <section class="step right" data-step="tv">
+      <div class="card">
+        <p>The big drop lines up with the €300M loan, pledged against LaLiga TV money. The risk moved off one person's balance sheet and onto the club's future television income.</p>
+      </div>
+    </section>
+
+    <!-- ACT IV -->
+    <section class="step" data-step="works" data-chap="IV · Why it still works">
+      <div class="card">
+        <p class="eyebrow">Act IV</p>
+        <h2>Why it still works</h2>
+        <p>On these numbers the club should be in trouble. Spanish football is full of clubs that spent like this and fell. Atlético didn't. Three things explain it: the fans, a coach and the owners' patience.</p>
+        <div class="duo"><div><b>98%</b><span>of season-ticket holders renew</span></div><div><b>8,000+</b><span>on the waiting list</span></div></div>
+      </div>
+    </section>
+    <section class="step right" data-step="members">
+      <div class="card">
+        <h3>Members, not customers</h3>
+        <p>They don't leave after a bad season. What they buy is belonging, and that gives the club pricing power: income from season tickets and membership rose 29% in three years with the stadium already full.</p>
+        <div class="sparks">
+          <figure>
+            <svg viewBox="0 0 310 130" role="img" aria-label="Season tickets and membership, 43.7 to 56.3 million euros">
+              <polyline points={spark(fans, 60)} />
+              {fans.map((v, i) => <><circle cx={20 + i * 90} cy={110 - (v / 60) * 90} r="4" /><text x={20 + i * 90} y={100 - (v / 60) * 90} text-anchor="middle">{v}</text></>)}
+            </svg>
+            <figcaption>Season tickets & membership, €M</figcaption>
+          </figure>
+          <figure>
+            <svg viewBox="0 0 310 130" role="img" aria-label="Shop sales, 9.1 to 16.2 million euros">
+              <polyline points={spark(shop, 20)} />
+              {shop.map((v, i) => <><circle cx={20 + i * 90} cy={110 - (v / 20) * 90} r="4" /><text x={20 + i * 90} y={100 - (v / 20) * 90} text-anchor="middle">{v}</text></>)}
+            </svg>
+            <figcaption>Shop sales, €M · <span class="gold">the old crest returns in 2024-25</span></figcaption>
+          </figure>
+        </div>
+        <p class="src">{seasons.join(' · ')}. The crest is supporting evidence, not proof. 77,690 members voted on it. €26M of future season-ticket sales are pledged to banks.</p>
+      </div>
+    </section>
+    <section class="step" data-step="coach">
+      <div class="card">
+        <h3>The coach</h3>
+        <p>In football, the wage bill predicts most of where a club finishes. Atlético pays the third-highest wages in Spain, about half of what Real Madrid and Barcelona pay. Under Diego Simeone it has finished third or better in twelve of fourteen seasons, won the league twice and reached two Champions League finals. Every season in the Champions League brings in money the business alone could not.</p>
+        <p class="src">Wage rank: <a class="press" href="https://mail.globalsportssalaries.com/GSSS%202019.pdf" target="_blank" rel="noopener noreferrer" data-outlet="Sporting Intelligence · Global Sports Salaries Survey 2019" data-title="Average first-team pay, LaLiga: Barcelona £9.8M, Real Madrid £8.9M, Atlético £5.6M, Valencia £2.5M">source ↗</a> · Finishes: <a class="press" href="https://en.wikipedia.org/wiki/List_of_Atl%C3%A9tico_Madrid_seasons" target="_blank" rel="noopener noreferrer" data-outlet="Wikipedia" data-title="List of Atlético Madrid seasons">source ↗</a></p>
+        <PhoneChart kind="coach" />
+      </div>
+    </section>
+    <section class="step right" data-step="value">
+      <div class="card">
+        <h3>Who keeps the value</h3>
+        <p>The players take most of the value every season, through wages and fees. The owners take theirs when they sell. The fans, the brand, the stadium and the land stay when the players leave. That is what the owners were building while the business lost money.</p>
+        <blockquote>Owning a football club is like owning a yacht. It costs money every year, and nobody buys one for the return.<cite>From my notebook</cite></blockquote>
+      </div>
+    </section>
+    <section class="step" data-step="soriano">
+      <div class="card">
+        <h3>The counter-example</h3>
+        <p>Ferran Soriano, who ran Barcelona and now runs Manchester City, sorts clubs into three groups: global brands, clubs that develop and sell, and clubs that just try to survive. His warning is that the worst place is in between: acting like a global brand without the money of one.</p>
+        <p>Atlético acts like a global brand: Champions League every year, and no stars sold to direct rivals.</p>
+        <blockquote>We will not negotiate with Barcelona under any circumstances.<cite>Gil Marín on Julián Álvarez, Movistar Plus, 27 Aug 2026 <a class="press" data-outlet="Reuters via The Star · 28 Aug 2026" data-title="Atletico chief says Alvarez will 'never, ever' join Barcelona amid transfer pursuit" href="https://www.thestar.com.my/sport/football/2026/08/28/soccer-atletico-chief-says-alvarez-will-039never-ever039-join-barcelona-amid-transfer-pursuit" target="_blank" rel="noopener noreferrer">press ↗</a></cite></blockquote>
+        <p>By Soriano's rule it should have collapsed. For fifteen years it hasn't. Atlético is the exception, and the question is how long an exception can last.</p>
+        <PhoneChart kind="soriano" />
+      </div>
+    </section>
+    <section class="step wide" data-step="powers">
+      <div class="inner">
+        <h3>What actually protects it</h3>
+        <p class="lead">Hamilton Helmer counts seven sources of lasting advantage. Each needs a benefit and a barrier that stops rivals copying it. Tap a card.</p>
+        <div class="powers">
+          {powers.map(([name, verdict, why]) => (
+            <button type="button" class={`pcard v-${verdict.toLowerCase()}`} aria-label={`${name}: ${verdict}`}>
+              <span class="front"><span class="pname">{name}</span><span class="stamp">{verdict}</span></span>
+              <span class="back">{why}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ACT V -->
+    <section class="step" data-step="apollo" data-chap="V · Apollo's bet">
+      <div class="card">
+        <p class="eyebrow">Act V</p>
+        <h2>Apollo's bet</h2>
+        <p>In 2026 Apollo, an American investment firm, took control of the club at a value of around €2.5 billion, debt included <a class="press" data-outlet="Forbes España · 2026" data-title="Apollo takes control of Atlético in a deal that values the club at €2,500M, debt included" href="https://forbes.es/sports/889627/apollo-control-atletico-madrid-ampliacion-capital-consejo-david-villa/" target="_blank" rel="noopener noreferrer">press ↗</a>. Apollo is not a family buying a yacht. It manages other people's money and has to sell one day at a profit.</p>
+        <p>The old owners could accept losses for two reasons: status, and an asset that kept growing in value while the business lost money. Apollo needs the business to pay its way, or the value to keep rising, before it sells.</p>
+        <PhoneChart kind="apollo" />
+      </div>
+    </section>
+    <section class="step wide" data-step="bullbear">
+      <div class="inner bb">
+        <div><h3>The bull case</h3><p>Elite clubs are scarce and their value keeps rising. Champions League every year, a coach who over-performs and fans who pay more. New income from the land next to the stadium. Apollo's equity raises LaLiga's squad cost limit; debt would not.</p></div>
+        <div class="bear"><h3>The bear case</h3><p>Simeone leaves in 2027. The next coach misses the Champions League twice. About €92M of UEFA money disappears, wages stay fixed at two-thirds of revenue, and Apollo has to choose between putting in more money and selling for less than €2.5bn.</p></div>
+      </div>
+    </section>
+    <section class="step" data-step="sim">
+      <div class="card">
+        <h3>Turn off the Champions League</h3>
+        <label for="seasons" class="simlab">Seasons without it: <b id="simN">0</b></label>
+        <input id="seasons" type="range" min="0" max="3" step="1" value="0" />
+        <div class="simout"><div><b id="simRes">−€6.0M</b><span>result per season</span></div><div><b id="simOwn">€0</b><span>owners must cover</span></div></div>
+        <p class="src">Illustrative, our simple model: 2024-25 result (−€6.0M) minus ~€92M of UEFA money per season, wages unchanged, no player sales.</p>
+      </div>
+    </section>
+    <section class="step right" data-step="deadline">
+      <div class="card">
+        <p>So the number to watch is a date. Simeone's contract runs until</p>
+        <p class="date">30·06·2027</p>
+        <p>fifteen months into Apollo's ownership. <a class="press" data-outlet="Vozpópuli" data-title="Diego Pablo Simeone renueva como entrenador con el Atlético de Madrid hasta 2027" href="https://www.vozpopuli.com/deportes/diego-pablo-simeone-renueva-entrenador-atletico-madrid-2027.html" target="_blank" rel="noopener noreferrer">press ↗</a></p>
+      </div>
+    </section>
+
+    <!-- LESSONS -->
+    <section class="step wide" data-step="lessons" data-chap="Lessons">
+      <div class="inner">
+        <p class="eyebrow">What I'm taking away</p>
+        <h2>Lessons</h2>
+        <ol class="lessons">
+          <li>Always check the incentives of whoever is putting money in.<small>Gil Marín guaranteed the debts and was paid for it. Apollo can earn as owner and as lender.</small></li>
+          <li>A number means nothing without something to compare it with.<small>Net debt is 113% of revenue. Real Madrid and Barcelona earn about 2.5 times as much.</small></li>
+          <li>Learn the rules the clubs play under.<small>New shares raise LaLiga's squad cost limit. Loans don't.</small></li>
+          <li>Watch what people do, not what they say.<small>Fans renew at 98%. The old crest came back after shop sales fell.</small></li>
+          <li>Profit, cash and value are three different things.<small>You can lose money every year and still own something worth billions.</small></li>
+          <li>Not every asset is meant to make a profit.<small>Some are bought for status, like a yacht.</small></li>
+          <li>An advantage only counts if rivals can't copy it.<small>Loyal fans are a feature of football. A brand rivals can't copy is a power.</small></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- BEHIND THE SCENES -->
+    <section class="step wide bts" data-step="bts" data-chap="Behind the scenes">
+      <div class="inner">
+        <p class="eyebrow">Behind the scenes</p>
+        <h2>From my notebook</h2>
+        <p class="lead">I read five years of Atlético's annual accounts one statement at a time, by hand. Numbers first; the story had to explain what the numbers showed.</p>
+        <div class="notes">
+          {notes.map(([f, cap]) => (
+            <button type="button" class="note" data-src={`/img/atletico/notes/${f}.webp`} aria-label={`Open ${cap}`}>
+              <img src={`/img/atletico/notes/${f}.webp`} alt={`Handwritten notebook page: ${cap}`} loading="lazy" />
+              <span>{cap}</span>
+            </button>
+          ))}
+        </div>
+        <h3>Sources</h3>
+        <p class="src">Atlético de Madrid S.A.D. individual annual accounts, 2020-21 to 2024-25 (page numbers cited above). Deloitte Football Money League 2026. Ferran Soriano, <em>Goal</em>. Hamilton Helmer, <em>7 Powers</em>. Kuper &amp; Szymanski, <em>Soccernomics</em>. Items marked <em class="press">press</em> come from news reports, not the accounts.</p>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="lightbox"><img alt="" /><button type="button" aria-label="Close">×</button></dialog>
+
+  <script>
+    import { start } from '../../atletico/world';
+
+    const cs = getComputedStyle(document.documentElement);
+    const fontLoads = [`${cs.getPropertyValue('--dw')} 72px ${cs.getPropertyValue('--display')}`, `500 44px ${cs.getPropertyValue('--label')}`, `400 19px ${cs.getPropertyValue('--body')}`];
+    Promise.all(fontLoads.map((f) => document.fonts.load(f))).catch(() => {}).then(() => document.fonts.ready).then(() => {
+      const world = start(document.getElementById('world') as HTMLCanvasElement);
+
+      // Seasons-without-Europe slider.
+      const range = document.getElementById('seasons') as HTMLInputElement;
+      const upd = () => {
+        const n = Number(range.value);
+        world.setSeasons(n);
+        document.getElementById('simN')!.textContent = String(n);
+        document.getElementById('simRes')!.textContent = n ? `−€${(6 + 92).toFixed(0)}M` : '−€6.0M';
+        document.getElementById('simOwn')!.textContent = n ? `€${98 * n}M` : '€0';
+      };
+      range.addEventListener('input', upd);
+      upd();
+    });
+
+    // Progress bar and chapter name.
+    const chaps = [...document.querySelectorAll<HTMLElement>('[data-chap]')];
+    const chap = document.getElementById('chap')!, prog = document.getElementById('prog')!;
+    const onScroll = () => {
+      const h = document.documentElement;
+      prog.style.width = `${(h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)) * 100}%`;
+      let c = chaps[0].dataset.chap!;
+      chaps.forEach((s) => { if (s.getBoundingClientRect().top < innerHeight * 0.5) c = s.dataset.chap!; });
+      chap.textContent = c;
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Count the opening numbers up once.
+    document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
+      const end = Number(el.dataset.count), pre = el.dataset.pre ?? '', post = el.dataset.post ?? '', dec = String(end).includes('.') ? 1 : 0;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const t0 = performance.now();
+      const tick = () => {
+        const k = Math.min(1, (performance.now() - t0) / 1600), v = end * (1 - Math.pow(1 - k, 3));
+        el.textContent = `${v < 0 ? '−' : ''}${pre}${Math.abs(v).toFixed(dec)}${post}`;
+        if (k < 1) requestAnimationFrame(tick);
+      };
+      tick();
+    });
+
+    // Five-year table.
+    const tb = document.getElementById('tableBtn')!, table = document.getElementById('table')!;
+    tb.addEventListener('click', () => { table.hidden = !table.hidden; tb.setAttribute('aria-expanded', String(!table.hidden)); });
+
+
+    // 7 Powers cards flip.
+    document.querySelectorAll('.pcard').forEach((c) => c.addEventListener('click', () => c.classList.toggle('flip')));
+
+    // Notebook lightbox.
+    const lb = document.getElementById('lightbox') as HTMLDialogElement;
+    document.querySelectorAll<HTMLElement>('.note').forEach((n) => n.addEventListener('click', () => { (lb.querySelector('img') as HTMLImageElement).src = n.dataset.src!; lb.showModal(); }));
+    lb.addEventListener('click', () => lb.close());
+  </script>
+
+  <style is:global>
+    :root {
+      --night: #0a0d18; --ink: #f4f4f1; --muted: rgba(244, 244, 241, 0.68); --red: #ff3550; --rojo: #d2122e; --blue: #8f9bff; --gold: #e8b84a;
+      --panel: rgba(10, 13, 24, 0.86); --line: rgba(244, 244, 241, 0.12);
+      --display: "Instrument Serif", Georgia, serif; --body: "Newsreader", Georgia, serif; --label: "Archivo Narrow", "Arial Narrow", sans-serif;
+      --dw: 400; --tt: none; --ls: -0.01em;
+      color-scheme: dark;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    /* Halos and hidden press previews reach past the edges; clip so the page never scrolls sideways. */
+    html, body { overflow-x: clip; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: radial-gradient(ellipse at 50% 20%, #151b33, var(--night) 70%) fixed; color: var(--ink); font: 19px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+    #world { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; transition: opacity 0.4s; }
+    main { position: relative; z-index: 1; }
+    .bar { position: fixed; z-index: 5; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; gap: 12px; padding: calc(10px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) 10px max(18px, env(safe-area-inset-left, 0px)); font: 600 12px/1 var(--label); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); background: linear-gradient(var(--night), transparent); }
+    .bar i { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: repeating-linear-gradient(90deg, var(--rojo) 0 16px, var(--ink) 16px 32px); }
+    .draft { color: var(--red); }
+
+    .step { min-height: 125vh; display: flex; align-items: center; padding: 20vh max(18px, env(safe-area-inset-right, 0px)) 20vh max(18px, env(safe-area-inset-left, 0px)); }
+    .step.right { justify-content: flex-end; }
+    /* Text that sits under a centred scene: kept at the bottom of the screen so the whole picture stays visible. */
+    .step.low { justify-content: center; align-items: flex-end; padding-bottom: 4vh; }
+    .step.low > .card { position: sticky; bottom: 4vh; width: min(720px, 100%); }
+    .card { width: min(470px, 100%); background: var(--panel); backdrop-filter: blur(20px) saturate(0.8); -webkit-backdrop-filter: blur(20px) saturate(0.8); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45); border: 1px solid var(--line); padding: 30px 30px 22px; margin-inline: clamp(0px, 5vw, 80px); }
+    .step.wide { justify-content: center; }
+    .inner { width: min(1080px, 100%); }
+
+    .hero { position: relative; min-height: 100vh; min-height: 100svh; justify-content: center; text-align: center; padding-top: 70px; padding-bottom: 96px; }
+    .heroin { position: relative; max-width: 900px; display: flex; flex-direction: column; align-items: center; }
+    .heroin::before { content: ""; position: absolute; z-index: -1; inset: -6% -14% 30%; background: radial-gradient(ellipse at center, rgba(10, 13, 24, 0.78), rgba(10, 13, 24, 0) 70%); pointer-events: none; }
+    .crest { width: 72px; height: auto; margin-bottom: 18px; }
+    h1 { font: var(--dw) clamp(54px, min(10vw, 14vh), 132px)/0.88 var(--display); text-transform: var(--tt); margin: 14px 0 18px; letter-spacing: var(--ls); text-shadow: 0 2px 6px rgba(5, 7, 14, 0.75), 0 8px 60px rgba(5, 7, 14, 0.9); }
+    .dek { font-size: clamp(20px, 2.6vw, 26px); font-style: italic; color: var(--ink); margin: 0 0 28px; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); width: 100%; backdrop-filter: blur(10px); }
+    .stats div { background: var(--panel); padding: 16px 12px; display: flex; flex-direction: column; gap: 6px; }
+    .stats b { font: var(--dw) clamp(28px, 4vw, 44px)/1 var(--display); font-variant-numeric: tabular-nums; }
+    .stats div:nth-child(2) b { color: var(--red); }
+    .stats span { font: 500 13px/1.3 var(--label); color: var(--muted); letter-spacing: 0.04em; }
+    .hookstep { justify-content: center; text-align: center; min-height: 130vh; }
+    .hookstep .hook { position: relative; }
+    .hookstep .hook::before { content: ""; position: absolute; z-index: -1; inset: -40% -20%; background: radial-gradient(ellipse at center, rgba(10, 13, 24, 0.85), rgba(10, 13, 24, 0) 70%); pointer-events: none; }
+    .hook { max-width: 760px; font: 400 clamp(28px, 3.6vw, 44px)/1.25 var(--display); margin: 0; text-wrap: balance; text-shadow: 0 2px 20px rgba(5, 7, 14, 0.9); }
+    .scroll { position: absolute; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; font: 600 12px/1 var(--label); letter-spacing: 0.3em; text-transform: uppercase; color: var(--ink); }
+    .scroll::after { content: ""; width: 1px; height: 34px; background: linear-gradient(var(--ink), transparent); animation: drip 2s ease-in-out infinite; transform-origin: top; }
+    @keyframes drip { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+
+    .eyebrow { font: 600 12px/1 var(--label); letter-spacing: 0.16em; text-transform: uppercase; color: var(--red); margin: 0 0 6px; }
+    h2 { font: var(--dw) clamp(40px, 6vw, 64px)/0.95 var(--display); text-transform: var(--tt); letter-spacing: var(--ls); margin: 6px 0 18px; text-wrap: balance; }
+    h3 { font: 700 14px/1.2 var(--label); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin: 0 0 12px; }
+    p { margin: 0 0 14px; }
+    .src { font: 500 13px/1.45 var(--label); color: var(--muted); letter-spacing: 0.02em; }
+    .phone { display: none; }
+    @media (max-width: 720px) { .phone { display: block; } span.phone { display: inline; } .desk { display: none; } }
+    .red { color: var(--red); } .blue { color: var(--blue); } .gold { color: var(--gold); }
+    a.press { text-decoration: none; cursor: pointer; transition: background 0.2s, color 0.2s; }
+    a.press:hover, a.press:focus-visible { background: var(--gold); color: var(--night); }
+    /* Hover preview: outlet, headline, and a reminder that it opens in a new tab. */
+    a.press { position: relative; }
+    a.press::after { content: attr(data-outlet) "\A" attr(data-title) "\A\AOpens in a new tab ↗"; position: absolute; z-index: 20; bottom: calc(100% + 10px); left: 50%; width: 260px; padding: 12px 14px; transform: translate(-50%, 6px); background: var(--ink); color: var(--night); font: 500 13px/1.4 var(--label); letter-spacing: 0; text-transform: none; text-align: left; white-space: pre-wrap; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); opacity: 0; pointer-events: none; transition: opacity 0.18s, transform 0.18s; }
+    a.press::before { content: ""; position: absolute; z-index: 20; bottom: calc(100% + 4px); left: 50%; border: 6px solid transparent; border-top-color: var(--ink); border-bottom: 0; transform: translate(-50%, 6px); opacity: 0; transition: opacity 0.18s, transform 0.18s; }
+    a.press:hover::after, a.press:focus-visible::after, a.press:hover::before, a.press:focus-visible::before { opacity: 1; transform: translate(-50%, 0); }
+    .press { font: 600 10px/1 var(--label); font-style: normal; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); border: 1px solid currentColor; padding: 2px 4px; vertical-align: 2px; white-space: nowrap; }
+    blockquote { margin: 18px 0; padding-left: 16px; border-left: 3px solid var(--red); font-size: 22px; line-height: 1.35; font-style: italic; }
+    cite { display: block; margin-top: 8px; font: 500 12px/1.4 var(--label); font-style: normal; color: var(--muted); letter-spacing: 0.04em; }
+    button { font: inherit; color: inherit; cursor: pointer; }
+    :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+    .table-btn { background: transparent; border: 1px solid var(--line); padding: 8px 14px; font: 600 12px/1 var(--label); letter-spacing: 0.1em; text-transform: uppercase; }
+    .table-btn:hover { background: var(--ink); color: var(--night); }
+    .table { margin-top: 14px; overflow-x: auto; }
+    table { border-collapse: collapse; font: 500 13px/1.3 var(--label); font-variant-numeric: tabular-nums; width: 100%; min-width: 420px; }
+    th, td { padding: 6px 6px; border-bottom: 1px solid var(--line); text-align: right; }
+    th:first-child, td:first-child { text-align: left; color: var(--muted); }
+
+
+    .key { list-style: none; padding: 0; margin: 4px 0 16px; display: grid; gap: 6px; font: 500 14px/1.3 var(--label); }
+    .key li { display: flex; align-items: center; gap: 10px; }
+    .key i, .ibar i { display: block; }
+    .key i { width: 16px; height: 16px; flex: none; }
+    .k-hold { background: var(--rojo); }
+    .k-quan { background: var(--blue); }
+    .k-none { background: repeating-linear-gradient(135deg, transparent 0 5px, rgba(244, 244, 241, 0.28) 5px 7px); outline: 1px dashed rgba(244, 244, 241, 0.5); outline-offset: -1px; }
+    .issue { margin-bottom: 16px; }
+    .ihead { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+    .ihead b { font: var(--dw) 28px/1 var(--display); }
+    .ihead span { font: 500 14px/1.3 var(--label); color: var(--muted); }
+    .ibar { display: flex; height: 36px; }
+    .ibar i { min-width: 3px; display: flex; align-items: center; padding-left: 8px; font: 600 13px/1 var(--label); font-style: normal; color: #fff; white-space: nowrap; overflow: hidden; }
+    .ibar .k-none { color: var(--muted); }
+    .inote { font-size: 16px; margin: 6px 0 0; }
+    .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+    .duo b { display: block; font: var(--dw) 54px/1 var(--display); color: var(--red); }
+    .duo span { font: 500 13px/1.3 var(--label); color: var(--muted); }
+    .sparks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 6px 0 10px; }
+    .sparks figure { margin: 0; min-width: 0; }
+    .sparks svg { width: 100%; height: auto; overflow: visible; }
+    .sparks polyline { fill: none; stroke: var(--red); stroke-width: 3; }
+    .sparks circle { fill: var(--ink); }
+    .sparks figure:last-child circle:last-of-type { fill: var(--gold); r: 7; }
+    .sparks text { fill: var(--ink); font: 600 16px var(--label); }
+    figcaption { font: 500 12px/1.3 var(--label); color: var(--muted); }
+
+    .lead { max-width: 640px; color: var(--muted); }
+    .powers { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 24px; perspective: 1200px; }
+    .pcard { position: relative; height: 210px; border: 0; padding: 0; background: none; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(.2, .7, .2, 1); text-align: left; }
+    .pcard.flip { transform: rotateY(180deg); }
+    .pcard .front, .pcard .back { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1px solid var(--line); background: var(--panel); backdrop-filter: blur(12px); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+    .pcard .back { transform: rotateY(180deg); font-size: 16px; line-height: 1.45; justify-content: center; }
+    .pname { font: var(--dw) 30px/1 var(--display); text-transform: var(--tt); }
+    .stamp { align-self: flex-start; font: 700 13px/1 var(--label); letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 10px; border: 2px solid currentColor; transform: rotate(-4deg); }
+    .v-yes .stamp { color: var(--gold); } .v-partly .stamp { color: var(--ink); } .v-no .stamp, .v-weak .stamp { color: var(--muted); } .v-against .stamp { color: var(--red); }
+    .v-yes .front { border-color: var(--gold); }
+
+    .bb { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .bb > div { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--line); padding: 30px; min-width: 0; }
+    .bb .bear { border-color: var(--red); }
+    .bb .bear p { font-weight: 500; }
+    .bb .bear h3 { color: var(--red); }
+    .simlab { font: 600 14px/1 var(--label); letter-spacing: 0.08em; text-transform: uppercase; }
+    #seasons { width: 100%; margin: 14px 0 18px; accent-color: var(--red); }
+    .simout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .simout b { display: block; font: var(--dw) 42px/1 var(--display); color: var(--red); font-variant-numeric: tabular-nums; }
+    .simout span { font: 500 13px/1.3 var(--label); color: var(--muted); }
+    .date { font: var(--dw) clamp(54px, 9vw, 92px)/1 var(--display); color: var(--gold); margin: 6px 0 14px; letter-spacing: 0.02em; }
+
+    .lessons { list-style: none; padding: 0; margin: 20px 0 0; counter-reset: l; display: grid; gap: 26px; max-width: 760px; }
+    .lessons li { counter-increment: l; display: grid; grid-template-columns: 58px 1fr; font-size: clamp(22px, 2.6vw, 28px); line-height: 1.3; }
+    .lessons li::before { content: counter(l); font: var(--dw) 44px/1 var(--display); color: var(--red); grid-row: span 2; }
+    .lessons small { font-size: 16px; font-style: italic; color: var(--muted); margin-top: 6px; }
+    .bts { min-height: auto; padding-bottom: 14vh; }
+    .notes { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin: 26px 0 40px; }
+    .note { border: 1px solid var(--line); background: #fff; padding: 0; display: flex; flex-direction: column; }
+    .note img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: top; display: block; transition: transform 0.4s; }
+    .note:hover img { transform: scale(1.02); }
+    .note span { background: var(--night); color: var(--ink); font: 600 12px/1 var(--label); letter-spacing: 0.1em; text-transform: uppercase; padding: 10px; text-align: left; }
+    dialog { border: 0; padding: 0; background: transparent; max-width: 94vw; max-height: 94vh; }
+    dialog::backdrop { background: rgba(5, 7, 14, 0.92); }
+    dialog img { max-width: 94vw; max-height: 92vh; display: block; }
+    dialog button { position: fixed; top: 16px; right: 20px; background: none; border: 0; font-size: 36px; color: var(--ink); }
+
+    @media (max-width: 720px) {
+      body { font-size: 17px; }
+      .step { min-height: 115vh; align-items: flex-end; padding-bottom: 8vh; }
+      .step.right { justify-content: flex-start; }
+      .card { margin-inline: 0; padding: 22px 20px 14px; }
+      /* Phones read as an article: after the 3D opening, each section is its text plus a flat chart. */
+      .step:not(.hero):not(.hookstep) { min-height: auto; padding-block: 5vh; align-items: stretch; }
+      .step.low > .card { position: static; }
+      .step.wide { padding-block: 5vh; }
+      /* Phones: no glass blur over the moving 3D (very heavy on iPhone); solid panels and a solid top bar instead. */
+      .card, .stats, .stats div, .bb > div, .pcard .front, .pcard .back { backdrop-filter: none; -webkit-backdrop-filter: none; }
+      :root { --panel: rgba(10, 13, 24, 0.94); }
+      body { background-attachment: scroll; }
+      .bar { background: var(--night); }
+      .bar { font-size: 10px; letter-spacing: 0.08em; }
+      .bar .draft { display: none; }
+      .bar span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .step.low > .card { bottom: 2vh; }
+      .card p { font-size: 16px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .bb, .sparks { grid-template-columns: 1fr; }
+      .hero { min-height: 100svh; align-items: center; padding-top: 56px; padding-bottom: 80px; }
+      .crest { width: 48px; margin-bottom: 10px; }
+      .heroin .eyebrow { font-size: 10px; letter-spacing: 0.12em; }
+      h1 { margin: 10px 0 12px; }
+      .dek { font-size: 18px; margin-bottom: 18px; }
+      .stats div { padding: 10px 8px; gap: 4px; }
+      .stats b { font-size: 26px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .scroll::after { animation: none; } .pcard, #world { transition: none; } }
+  </style>
+</body>
+</html>

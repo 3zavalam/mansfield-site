@@ -1,0 +1,244 @@
+---
+// Phone-only charts: the same numbers as the 3D scenes, drawn flat for a tall screen. Hidden on desktop.
+// Every figure here is the one used in world.ts and the page text (see "Atletico - findings.md").
+interface Props { kind: string }
+const { kind } = Astro.props;
+
+const years = ['20-21', '21-22', '22-23', '23-24', '24-25'];
+const revenue = [325.6, 377.8, 357.8, 395.1, 416.1];
+const netDebt = [1.6 * 325.6, 1.33 * 377.8, 1.44 * 357.8, 1.29 * 395.1, 469.4]; // ratio × revenue
+const fcf = [128.1, 110.1, 16.7, 34.0, 48.1];
+const k = 140 / 520, base = 180, bx = (i: number) => 34 + i * 62;
+
+const events: [string, string, boolean][] = [
+  ['1966', 'The Vicente Calderón opens by the river', false],
+  ['1987', 'The Gil family takes control (press)', false],
+  ['2003-04', '€154.9M gain booked on the Calderón land', true],
+  ['2017', 'The Metropolitano opens', false],
+  ['2019', 'Calderón land handed over', false],
+  ['2021', '€300M loan against TV rights · €120.3M of new shares', true],
+  ['2022', 'LaLiga Impulso loan · land next to the stadium', true],
+  ['2024', 'The old crest returns · €69.7M of new shares', true],
+  ['2026', 'Apollo takes control (press)', true],
+];
+
+const cashIn: [string, number, string][] = [['Players sold', 101.6, 'c-red'], ['The business', 15.3, 'c-grey'], ['Shareholders', 69.7, 'c-white'], ['Net new debt', 53.1, 'c-navy']];
+const cashOut: [string, number, string][] = [['Players bought', 139.6, 'c-red'], ['Facilities & other', 26.2, 'c-grey'], ['Cash left in the bank', 74.0, 'c-gold']];
+const seg = (items: [string, number, string][], total: number) => { let x = 0; return items.map(([n, v, c]) => { const w = (v / total) * 300; const r = { n, v, c, x: 20 + x, w }; x += w; return r; }); };
+
+const debt: [string, number, string, string][] = [['Refinancing loan', 392.4, 'c-red', 'pledged against LaLiga TV'], ['LaLiga Impulso', 146.2, 'c-white', '1.52% of LaLiga TV · 50 years'], ['Banks', 61.0, 'c-navy', '']];
+const steps: [string, number, string][] = [['2020-21', 300, '€300M at 2.75%'], ['2022', 350, '+€50M'], ['2023', 425, '+€75M at 4.99%'], ['2025', 495, '+€70M at 4.5%']];
+
+const guars: [string, number, number][] = [['2020', 397, 3.3], ['2021', 134, 3.3], ['2022', 88.6, 0.9], ['2023', 69.2, 0.8], ['2024', 59.4, 0.7], ['2025', 36, 0.5]];
+const gr = guars.map(([, v]) => 1.9 * Math.sqrt(v));
+let gx = 6;
+const gxs = gr.map((r, i) => { gx += (i ? gr[i - 1] : 0) + r + (i ? 6 : 0); return gx; });
+
+const finishes: [string, number][] = [['12-13', 3], ['13-14', 1], ['14-15', 3], ['15-16', 3], ['16-17', 3], ['17-18', 2], ['18-19', 2], ['19-20', 3], ['20-21', 1], ['21-22', 3], ['22-23', 3], ['23-24', 4], ['24-25', 3], ['25-26', 4]];
+const fx = (i: number) => 28 + i * 22, fy = (pos: number) => 30 + (pos - 1) * 42;
+
+const clubs: [string, string, number, number][] = [
+  ['Porto', '/img/atletico/porto.svg', -0.45, 0.22], ['Lyon', '/img/atletico/lyon.svg', 0.0, 0.2],
+  ['Atlético', '/img/atletico/atletico.svg', 0.72, 0.4], ['Barcelona', '/img/atletico/barcelona.svg', 0.86, 0.78], ['Real Madrid', '/img/atletico/real-madrid.svg', 1, 1],
+];
+const mx = (a: number) => 52 + ((a + 0.6) / 1.6) * 250, my = (m: number) => 205 - m * 165;
+---
+<div class="pchart" aria-hidden={kind === 'apollo' ? 'true' : undefined}>
+  {kind === 'timeline' && (
+    <ol class="ptl">
+      {events.map(([y, t, money]) => <li class={money ? 'money' : ''}><b>{y}</b><span>{t}</span></li>)}
+    </ol>
+  )}
+
+  {(kind === 'coins' || kind === 'overflow') && (
+    <div class="pcoins">
+      <div class="pgrid">{Array.from({ length: 100 }, (_, i) => <i class={i < 67 ? 'c-red' : i < 85 ? 'c-navy' : 'c-grey'} />)}</div>
+      {kind === 'overflow' && <div class="pgrid extra">{Array.from({ length: 19 }, () => <i class="c-hot" />)}</div>}
+      <ul class="plegend">
+        <li><i class="c-red" />€67 goes to staff</li>
+        <li><i class="c-navy" />€18 to other clubs</li>
+        <li><i class="c-grey" />€15 to everything else</li>
+        {kind === 'overflow' && <li><i class="c-hot" /><b>…and it spends €19 more</b></li>}
+      </ul>
+    </div>
+  )}
+
+  {(kind === 'rev' || kind === 'debt' || kind === 'fcf') && (
+    <svg viewBox={`0 0 340 ${kind === 'fcf' ? 250 : 210}`} role="img" aria-label="Revenue by season">
+      {revenue.map((v, i) => (
+        <g>
+          <rect x={bx(i)} y={base - v * k} width="40" height={v * k} class="f-white" />
+          <text x={bx(i) + 20} y={base - v * k - 6} class="t-sm">€{Math.round(v)}M</text>
+          {kind !== 'fcf' && <text x={bx(i) + 20} y={base + 16} class="t-sm muted">{years[i]}</text>}
+        </g>
+      ))}
+      <line x1="20" x2="320" y1={base} y2={base} class="axis" />
+      {(kind === 'debt' || kind === 'fcf') && (
+        <g>
+          <polyline points={netDebt.map((v, i) => `${bx(i) + 20},${base - v * k - 22}`).join(' ')} class="l-red" />
+          {netDebt.map((v, i) => <circle cx={bx(i) + 20} cy={base - v * k - 22} r="4" class="f-red" />)}
+          <text x="20" y="14" class="t-sm red">— Net debt ≈ €500M, flat (drawn above the bars)</text>
+        </g>
+      )}
+      {kind === 'fcf' && fcf.map((v, i) => (
+        <g>
+          <rect x={bx(i)} y={base} width="40" height={v * k} class="f-red" />
+          <text x={bx(i) + 20} y={base + v * k + 14} class="t-sm red">−{v}</text>
+          <text x={bx(i) + 20} y="244" class="t-sm muted">{years[i]}</text>
+        </g>
+      ))}
+    </svg>
+  )}
+
+  {kind === 'merge' && (
+    <div class="pstack">
+      <p class="pbig red">−€337M</p>
+      <div class="pbar"><i class="c-white" style="flex:192">€192M</i><i class="c-navy" style="flex:169">€169M</i></div>
+      <ul class="plegend"><li><i class="c-white" />Shareholders · 53%</li><li><i class="c-navy" />New debt · 47%</li></ul>
+    </div>
+  )}
+
+  {kind === 'cash' && (
+    <svg viewBox="0 0 340 270" role="img" aria-label="Cash in and out, 2024-25">
+      <text x="20" y="14" class="t-sm muted">Where it came from · €239.7M</text>
+      {seg(cashIn, 239.7).map((s) => <rect x={s.x} y="22" width={s.w - 1.5} height="28" class={s.c.replace('c-', 'f-')} />)}
+      <path d="M20 50 L320 50 L250 112 L90 112 Z" class="f-flow" />
+      <rect x="90" y="112" width="160" height="34" class="f-club" />
+      <text x="170" y="134" class="t-md center">The club</text>
+      <path d="M90 146 L250 146 L320 208 L20 208 Z" class="f-flow" />
+      {seg(cashOut, 239.7).map((s) => <rect x={s.x} y="208" width={s.w - 1.5} height="28" class={s.c.replace('c-', 'f-')} />)}
+      <text x="20" y="256" class="t-sm muted">Where it went · €239.7M</text>
+    </svg>
+    <div class="pcols">
+      <ul class="plegend">{cashIn.map(([n, v, c]) => <li><i class={c} />{n} €{v}M</li>)}</ul>
+      <ul class="plegend">{cashOut.map(([n, v, c]) => <li><i class={c} />{c === 'c-gold' ? <b class="gold">{n} €{v}M</b> : `${n} €${v}M`}</li>)}</ul>
+    </div>
+  )}
+
+  {kind === 'tower' && (
+    <div class="pstack">
+      <p class="pbig">€599.6M <small>owed to lenders, 30 June 2025</small></p>
+      <div class="pbar">{debt.map(([n, v, c]) => <i class={c} style={`flex:${v}`} />)}</div>
+      <ul class="plegend">{debt.map(([n, v, c, note]) => <li><i class={c} /><span>{n} €{v}M{note && <small> · {note}</small>}</span></li>)}</ul>
+    </div>
+  )}
+
+  {kind === 'stairs' && (
+    <svg viewBox="0 0 340 220" role="img" aria-label="The €300M loan made bigger three times">
+      {steps.map(([y, v, t], i) => (
+        <g>
+          <rect x={22 + i * 80} y={190 - v * 0.3} width="56" height={v * 0.3} class={i ? 'f-pink' : 'f-red'} />
+          <text x={50 + i * 80} y={190 - v * 0.3 - 22} class="t-sm center">{y}</text>
+          <text x={50 + i * 80} y={190 - v * 0.3 - 8} class="t-xs center muted">{t}</text>
+        </g>
+      ))}
+      <line x1="10" x2="330" y1="190" y2="190" class="axis" />
+      <text x="10" y="210" class="t-xs muted">Signed amounts of the one refinancing loan</text>
+    </svg>
+  )}
+
+  {kind === 'guar' && (
+    <svg viewBox="0 0 340 170" role="img" aria-label="Personal guarantees, 397 to 36 million euros">
+      {guars.map(([y, v, fee], i) => (
+        <g>
+          <circle cx={gxs[i]} cy={100 - gr[i]} r={gr[i]} class="f-gold" />
+          <text x={gxs[i]} y="122" class="t-sm center">€{v}M</text>
+          <text x={gxs[i]} y="136" class="t-xs center muted">{y}</text>
+          <text x={gxs[i]} y="149" class="t-xs center muted">fee {fee}</text>
+        </g>
+      ))}
+    </svg>
+  )}
+
+  {kind === 'coach' && (
+    <svg viewBox="0 0 340 200" role="img" aria-label="League finish each season under Simeone">
+      <rect x="14" y={fy(3) - 10} width="316" height="20" class="f-band" />
+      {[1, 2, 3, 4].map((pos) => <text x="8" y={fy(pos) + 4} class="t-xs muted">{pos}</text>)}
+      <polyline points={finishes.map(([, pos], i) => `${fx(i)},${fy(pos)}`).join(' ')} class="l-soft" />
+      {finishes.map(([s, pos], i) => <circle cx={fx(i)} cy={fy(pos)} r={pos === 1 ? 7 : 5} class={pos < 3 ? 'f-gold' : pos > 3 ? 'f-red' : 'f-white'} />)}
+      <text x={fx(1)} y={fy(1) - 12} class="t-xs center gold">title</text>
+      <text x={fx(8)} y={fy(1) - 12} class="t-xs center gold">title</text>
+      <text x="28" y="194" class="t-xs muted">2012-13</text>
+      <text x="330" y="194" class="t-xs muted end">2025-26</text>
+    </svg>
+    <ul class="plegend"><li><i class="c-gold" />Above its wages (1st or 2nd)</li><li><i class="c-white" />As its wages predict (3rd, shaded band)</li><li><i class="c-red" />Below (4th)</li></ul>
+  )}
+
+  {kind === 'soriano' && (
+    <svg viewBox="0 0 340 256" role="img" aria-label="Ambition versus means, illustrative">
+      <line x1="30" x2="330" y1="232" y2="232" class="axis" />
+      <line x1="30" x2="30" y1="14" y2="232" class="axis" />
+      <text x="330" y="248" class="t-xs muted end">Ambition →</text>
+      <text x="36" y="22" class="t-xs muted">Means ↑</text>
+      {clubs.map(([n, url, a, m]) => {
+        const me = n === 'Atlético', s = me ? 38 : 30;
+        return (
+          <g>
+            {me && <circle cx={mx(a)} cy={my(m)} r="24" class="ring" />}
+            <circle cx={mx(a)} cy={my(m)} r={s / 2 + 3} class="f-white" />
+            <image href={url} x={mx(a) - s / 2 + 4} y={my(m) - s / 2 + 4} width={s - 8} height={s - 8} />
+            {m > 0.6
+              ? <text x={mx(a) - s / 2 - 8} y={my(m) + 4} class="t-xs end">{n}</text>
+              : <text x={mx(a)} y={my(m) + s / 2 + 15} class={`t-xs center ${me ? 'red' : ''}`}>{n}</text>}
+          </g>
+        );
+      })}
+      <text x="30" y="248" class="t-xs muted start">Illustrative · our judgement</text>
+    </svg>
+  )}
+
+  {kind === 'apollo' && (
+    <div class="plogos"><span><img src="/img/atletico/apollo.svg" alt="" /></span><b>+</b><span><img src="/img/atletico/atletico.svg" alt="" /></span></div>
+  )}
+</div>
+
+<style>
+  .pchart { display: none; margin: 18px 0 6px; }
+  @media (max-width: 720px) { .pchart { display: block; } }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .t-sm { font: 600 12px var(--label); fill: var(--ink); text-anchor: middle; }
+  .t-md { font: 400 18px var(--display); fill: var(--ink); }
+  .t-xs { font: 500 10px var(--label); fill: var(--ink); }
+  .center { text-anchor: middle; } .end { text-anchor: end; } .start { text-anchor: start; }
+  .muted { fill: var(--muted); } .red { fill: var(--red); color: var(--red); } .gold { fill: var(--gold); color: var(--gold); }
+  svg text[x="20"], svg text[x="10"], svg text[x="8"], svg text[x="36"], svg text[x="28"] { text-anchor: start; }
+  .axis { stroke: var(--line); stroke-width: 1.5; }
+  .f-white { fill: var(--ink); } .f-red { fill: var(--rojo); } .f-pink { fill: #ff6b7d; } .f-navy { fill: #3a46a0; }
+  .f-grey { fill: #8f94a6; } .f-gold { fill: var(--gold); } .f-flow { fill: rgba(232, 184, 74, 0.14); } .f-club { fill: #1b2140; stroke: var(--ink); stroke-width: 1.5; }
+  .f-band { fill: rgba(244, 244, 241, 0.07); }
+  .l-red { fill: none; stroke: var(--red); stroke-width: 2.5; }
+  .l-soft { fill: none; stroke: rgba(244, 244, 241, 0.35); stroke-width: 1.5; }
+  .ring { fill: none; stroke: var(--red); stroke-width: 2.5; }
+
+  .c-red { background: var(--rojo); } .c-navy { background: #3a46a0; } .c-grey { background: #8f94a6; } .c-white { background: var(--ink); color: var(--night); }
+  .c-gold { background: var(--gold); } .c-hot { background: #ff3550; box-shadow: 0 0 8px rgba(255, 53, 80, 0.7); }
+
+  .ptl { list-style: none; margin: 0; padding: 0 0 0 14px; border-left: 2px solid var(--line); display: grid; gap: 14px; }
+  .ptl li { position: relative; display: grid; gap: 2px; }
+  .ptl li::before { content: ""; position: absolute; left: -21px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--ink); }
+  .ptl li.money::before { background: var(--rojo); }
+  .ptl b { font: 400 22px/1 var(--display); }
+  .ptl li.money b { color: var(--red); }
+  .ptl span { font: 500 14px/1.35 var(--label); color: var(--muted); }
+
+  .pgrid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; max-width: 300px; }
+  .pgrid i { aspect-ratio: 1; border-radius: 50%; }
+  .pgrid.extra { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--muted); }
+  .plegend { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 6px; font: 500 14px/1.3 var(--label); }
+  .plegend li { display: flex; align-items: center; gap: 9px; }
+  .plegend i { width: 14px; height: 14px; flex: none; border-radius: 2px; }
+  .plegend small { color: var(--muted); }
+  .pcols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pcols .plegend { font-size: 12px; }
+
+  .pbig { font: 400 40px/1 var(--display); margin: 0 0 12px; }
+  .pbig small { display: block; font: 500 13px/1.3 var(--label); color: var(--muted); margin-top: 4px; }
+  .pbar { display: flex; height: 40px; gap: 2px; }
+  .pbar i { display: flex; align-items: center; padding-left: 8px; font: 600 13px/1 var(--label); font-style: normal; color: #fff; }
+  .pbar i.c-white { color: var(--night); }
+
+  .plogos { display: flex; align-items: center; justify-content: center; gap: 18px; }
+  .plogos span { width: 92px; height: 92px; border-radius: 50%; background: var(--ink); display: grid; place-items: center; }
+  .plogos img { width: 66%; height: 66%; object-fit: contain; }
+  .plogos b { font: 400 32px var(--display); }
+</style>
