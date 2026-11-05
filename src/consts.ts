@@ -10,3 +10,6 @@ export const X_URL = 'https://x.com/';
 export const GITHUB_URL = 'https://github.com/3zavalam';
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/emilio-zavala-miceli-86595927b/';
 export const OLD_PORTFOLIO_URL = 'https://portfolio-vercel-six-beige.vercel.app';
+// WhatsApp for new projects (Mexican mobile, +52 993 159 0106). waLink('') gives the base to append encoded text to.
+export const WHATSAPP = '529931590106';
+export const waLink = (text: string) => `https://wa.me/${WHATSAPP}?text=${text ? encodeURIComponent(text) : ''}`;

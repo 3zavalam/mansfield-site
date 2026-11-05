@@ -1,0 +1,234 @@
+---
+// The portfolio as a crate of records: each website is a sleeve standing in a row. Scroll, drag, the arrow keys
+// or a click on a sleeve's top edge flips through them like digging for a vinyl; the one you land on stands up and
+// its record peeks out. Click it to pull it out: the sleeve opens with the site's details and links.
+import { webs } from '../webs';
+import { waLink } from '../consts';
+// Spanish label, description and record-label colour for each site (webs.ts is in English).
+const meta: Record<string, [string, string, string]> = {
+  desmi: ['Barreras contra sargazo', 'La web de ECE Corporativo, distribuidor oficial de DESMI: cómo funcionan sus barreras contra el sargazo, servicios, hoteles clientes y contacto directo por WhatsApp.', '#1f8fa8'],
+  'casa-olivo': ['Restaurante', 'Restaurante de cocina de temporada: un bowl de aceitunas en 3D, el menú con precios y reservaciones.', '#6b7f3a'],
+  'norte-dental': ['Clínica dental', 'Clínica limpia y luminosa: agenda de citas, tratamientos con precio claro y preguntas frecuentes.', '#2a9bd1'],
+  'ruta-cafe': ['Tostador de café', 'Tienda oscura y cálida: granos de café en 3D, los cafés del mes, el proceso y un club de suscripción.', '#c8873d'],
+  'estudio-arca': ['Arquitectura', 'Estudio de arquitectura con fotos a todo lo ancho y una lista de obras donde la foto de cada proyecto sigue al cursor.', '#b5a58a'],
+  'atlas-fc': ['Academia de fútbol', 'Academia con una cancha 3D donde el equipo hace una jugada de pases, categorías, método y clase de prueba.', '#f2c230'],
+  'mar-azul': ['Hotel boutique', 'Hotel en Tulum: el Caribe al amanecer animado, barra de reservación y las suites en fotos con arco.', '#3d8fb0'],
+  'forma-gym': ['Gimnasio', 'Gimnasio negro y neón: una pesa rusa en 3D, planes de membresía y el horario de clases.', '#e4ff3a'],
+  raiz: ['Inmobiliaria', 'Inmobiliaria en León: buscador de casas, propiedades recién llegadas y una sección para vender.', '#c45b3c'],
+  probis: ['Mantenimiento de inmuebles', 'Pintura, impermeabilización y mantenimiento en Mérida, con cotización directa por WhatsApp.', '#d9622b'],
+};
+const records = webs.map((w, i) => ({ ...w, n: String(i + 1).padStart(2, '0'), rubro: meta[w.id]?.[0] ?? w.client, d: meta[w.id]?.[1] ?? w.d, label: meta[w.id]?.[2] ?? '#c2410c', icon: w.img.replace('-1200.webp', '-480.webp') }));
+---
+<div class="crate" id="crate" style={`--n:${records.length}`}>
+  <div class="viewport" tabindex="0" role="listbox" aria-label="Webs del portafolio. Usa las flechas para pasar de una a otra." aria-activedescendant="rec-0">
+    <div class="box">
+      <div class="row">
+        {records.map((r, i) => (
+          <div class="rec" id={`rec-${i}`} role="option" aria-selected={i === 0 ? 'true' : 'false'} aria-label={`${r.t}, ${r.rubro}`} data-i={i} style={`--i:${i};--label:${r.label}`}>
+            <div class="disc" aria-hidden="true"><span></span></div>
+            <div class="sleeve">
+              <img src={r.icon} alt="" width="480" height="300" decoding="async" loading={i < 4 ? 'eager' : 'lazy'} />
+              <span class="sticker">{r.n}</span>
+              <span class="title">{r.t}</span>
+            </div>
+            <div class="back" aria-hidden="true"><b>{r.t}</b><span>{r.rubro}</span></div>
+          </div>
+        ))}
+      </div>
+      <div class="front" aria-hidden="true"><span>Mansfield · Webs</span></div>
+    </div>
+  </div>
+
+  <div class="now" aria-live="polite">
+    <button type="button" class="arrow prev" aria-label="Anterior">←</button>
+    <div class="info"><span class="count"><b data-n>01</b> / {String(records.length).padStart(2, '0')}</span><span class="name" data-name>{records[0].t}</span><span class="rubro" data-rubro>{records[0].rubro}</span></div>
+    <button type="button" class="arrow next" aria-label="Siguiente">→</button>
+  </div>
+  <p class="hint">Desliza o usa las flechas · Toca un disco para sacarlo</p>
+
+  <dialog class="out" aria-labelledby="out-title">
+    <div class="out-art">
+      <img class="out-sleeve" alt="" />
+      <div class="out-disc" aria-hidden="true"><span></span></div>
+    </div>
+    <div class="out-body">
+      <p class="out-rubro"></p>
+      <h3 id="out-title"></h3>
+      <p class="out-d"></p>
+      <div class="out-actions">
+        <a class="out-visit" target="_blank" rel="noopener">Ver la web ↗</a>
+        <a class="out-wa" target="_blank" rel="noopener">Quiero una así</a>
+      </div>
+      <button type="button" class="out-close" aria-label="Regresar el disco a la caja">✕</button>
+    </div>
+  </dialog>
+</div>
+
+<script define:vars={{ records: records.map((r) => ({ t: r.t, rubro: r.rubro, d: r.d, img: r.img, link: r.link ?? null, n: r.n, concept: !!r.concept })), wa: waLink('') }}>
+  const root = document.getElementById('crate');
+  const vp = root.querySelector('.viewport');
+  const recs = [...root.querySelectorAll('.rec')];
+  const $n = root.querySelector('[data-n]'), $name = root.querySelector('[data-name]'), $rubro = root.querySelector('[data-rubro]');
+  let cur = 0;
+
+  const set = (i) => {
+    cur = Math.max(0, Math.min(recs.length - 1, i));
+    root.style.setProperty('--cur', cur);
+    recs.forEach((r, k) => {
+      r.classList.toggle('past', k < cur);
+      r.classList.toggle('deep', k < cur - 2);
+      r.classList.toggle('on', k === cur);
+      r.setAttribute('aria-selected', String(k === cur));
+    });
+    vp.setAttribute('aria-activedescendant', `rec-${cur}`);
+    $n.textContent = records[cur].n;
+    $name.textContent = records[cur].t;
+    $rubro.textContent = records[cur].rubro;
+  };
+  set(0);
+
+  // Wheel: one record per notch, with a short lock so a trackpad flick doesn't skip the whole crate.
+  let lock = 0;
+  vp.addEventListener('wheel', (e) => {
+    const d = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    if (Math.abs(d) < 4) return;
+    const atEdge = (d < 0 && cur === 0) || (d > 0 && cur === recs.length - 1);
+    if (atEdge) return; // let the page scroll past the crate
+    e.preventDefault();
+    const now = performance.now();
+    if (now < lock) return;
+    lock = now + 140;
+    set(cur + Math.sign(d));
+  }, { passive: false });
+
+  // Drag / swipe: every 40 px moves one record.
+  let sx = null, sc = 0, moved = false;
+  vp.addEventListener('pointerdown', (e) => { sx = e.clientX + e.clientY; sc = cur; moved = false; });
+  addEventListener('pointermove', (e) => {
+    if (sx === null) return;
+    const d = sx - (e.clientX + e.clientY);
+    if (Math.abs(d) > 8) moved = true;
+    set(sc + Math.round(d / 40));
+  });
+  addEventListener('pointerup', () => { sx = null; });
+
+  vp.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown'].includes(e.key)) { e.preventDefault(); set(cur + 1); }
+    if (['ArrowLeft', 'ArrowUp'].includes(e.key)) { e.preventDefault(); set(cur - 1); }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pull(cur); }
+  });
+  root.querySelector('.prev').addEventListener('click', () => set(cur - 1));
+  root.querySelector('.next').addEventListener('click', () => set(cur + 1));
+
+  // A click on the record you're on pulls it out; on any other, flips to it.
+  recs.forEach((r, k) => r.addEventListener('click', () => { if (moved) return; k === cur ? pull(k) : set(k); }));
+
+  const out = root.querySelector('.out');
+  const q = (s) => out.querySelector(s);
+  function pull(i) {
+    const r = records[i];
+    q('.out-sleeve').src = r.img;
+    q('.out-rubro').textContent = `${r.n} · ${r.rubro}${r.concept ? ' · concepto' : ''}`;
+    q('#out-title').textContent = r.t;
+    q('.out-d').textContent = r.d;
+    const v = q('.out-visit');
+    v.hidden = !r.link;
+    if (r.link) v.href = r.link;
+    q('.out-wa').href = wa + encodeURIComponent(`Hola Emilio, vi la web de ${r.t} en tu portafolio y quiero una así para mi negocio.`);
+    out.style.setProperty('--label', recs[i].style.getPropertyValue('--label'));
+    out.showModal();
+  }
+  q('.out-close').addEventListener('click', () => out.close());
+  out.addEventListener('click', (e) => { if (e.target === out) out.close(); });
+</script>
+
+<style>
+  .crate { --cur: 0; --s: min(300px, 62vw); --gap: calc(var(--s) * 0.13); position: relative; display: flex; flex-direction: column; align-items: center; user-select: none; }
+  .viewport { position: relative; width: 100%; height: calc(var(--s) * 1.75); perspective: 1400px; perspective-origin: 50% -40%; outline: none; touch-action: pan-y; cursor: grab; }
+  .viewport:active { cursor: grabbing; }
+  .viewport:focus-visible .rec.on .sleeve { outline: 3px solid #1a1917; outline-offset: 4px; }
+  /* The whole crate is tipped back so you look down into it. */
+  .box { position: absolute; left: 50%; bottom: 8%; width: calc(var(--s) * 1.12); height: calc(var(--s) * 1.1); transform-style: preserve-3d; transform: translateX(-50%) rotateX(30deg) rotateY(-16deg); }
+  .row { position: absolute; inset: 0; transform-style: preserve-3d; }
+
+  .rec {
+    position: absolute; left: 50%; bottom: 0; width: var(--s); height: var(--s); margin-left: calc(var(--s) / -2);
+    transform-style: preserve-3d; transform-origin: 50% 100%; cursor: pointer;
+    /* Rows run front (0) to back; the crate scrolls toward you as you dig. */
+    --z: calc((var(--i) - var(--cur)) * var(--gap) * -1);
+    transform: translateZ(var(--z)) rotateX(10deg);
+    transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s, opacity 0.4s;
+    filter: brightness(calc(1 - (var(--i) - var(--cur)) * 0.07));
+  }
+  /* Records you've flipped past fall toward you, showing their backs. */
+  .rec.past { --d: calc(var(--cur) - var(--i)); transform: translateZ(calc(var(--gap) * (0.35 + var(--d) * 0.22))) rotateX(calc(-66deg - var(--d) * 6deg)); filter: brightness(0.92); }
+  /* Only the last two you flipped stay in view; older ones are lying flat under them. */
+  .rec.past.deep { opacity: 0; pointer-events: none; }
+  /* The one you're on stands up and lifts a little. */
+  .rec.on { transform: translateZ(0) translateY(calc(var(--s) * -0.08)) rotateX(2deg); filter: none; }
+  .rec:not(.past):not(.on):hover { transform: translateZ(var(--z)) translateY(calc(var(--s) * -0.05)) rotateX(10deg); }
+
+  .sleeve, .back { position: absolute; inset: 0; border-radius: 3px; backface-visibility: hidden; overflow: hidden; }
+  .sleeve { background: #111; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset, 0 18px 30px rgba(0, 0, 0, 0.28); }
+  .sleeve img { width: 100%; height: 100%; object-fit: cover; object-position: 0 0; pointer-events: none; }
+  .sleeve::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 35%), linear-gradient(0deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 38%); pointer-events: none; }
+  .sticker { position: absolute; top: 10px; right: 10px; z-index: 1; width: 34px; height: 34px; border-radius: 50%; background: var(--label); color: #111; display: grid; place-items: center; font: 600 12px/1 "SF Mono", ui-monospace, Menlo, monospace; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); }
+  .title { position: absolute; left: 14px; right: 14px; bottom: 12px; z-index: 1; color: #fff; font-weight: 600; font-size: calc(var(--s) * 0.068); letter-spacing: -0.01em; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5); }
+  .back { transform: rotateY(180deg) rotateZ(180deg); background: repeating-linear-gradient(90deg, #d8cdb8 0 2px, #d2c6af 2px 5px); color: #3a332a; display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; gap: 2px; font-size: 12px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
+  .back b { font-size: 15px; }
+
+  /* The record inside: hidden in the sleeve, slides up when its sleeve is the one you're on. */
+  .disc { position: absolute; left: 6%; right: 6%; top: 6%; aspect-ratio: 1; border-radius: 50%; transform: translateZ(-1px); transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s;
+    background: radial-gradient(circle, var(--label) 0 17%, #111 17.5% 19%, transparent 19.5%), repeating-radial-gradient(circle, #141414 0 1.5px, #1d1d1d 1.5px 3px), #111; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35); }
+  .disc span { position: absolute; inset: 49%; border-radius: 50%; background: #e9e5dc; }
+  .rec.on .disc { transform: translateZ(-1px) translateY(-34%) rotate(40deg); }
+  .rec.past .disc { visibility: hidden; }
+
+  /* Wooden crate front, covering the bottom of the sleeves. */
+  .front { position: absolute; left: -4%; right: -4%; bottom: -2%; height: 32%; transform: translateZ(calc(var(--gap) * 0.9)); border-radius: 4px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.08)), repeating-linear-gradient(90deg, #b88a5a 0 18px, #b0814f 18px 19px, #bd9061 19px 40px), #b88a5a;
+    box-shadow: 0 24px 40px rgba(0, 0, 0, 0.25), inset 0 2px 0 rgba(255, 255, 255, 0.3); display: grid; place-items: center; pointer-events: none; }
+  .front span { font: 600 11px/1 "SF Mono", ui-monospace, monospace; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(60, 35, 15, 0.55); }
+
+  .now { display: flex; align-items: center; gap: 18px; margin-top: 8px; }
+  .info { display: grid; justify-items: center; min-width: 220px; text-align: center; }
+  .count { font: 12px/1 "SF Mono", ui-monospace, monospace; color: #8a857c; }
+  .count b { color: #1a1917; font-weight: 600; }
+  .name { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin-top: 8px; }
+  .rubro { font-size: 13px; color: #6b665e; }
+  .arrow { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #d9d4c8; background: #fff; cursor: pointer; font-size: 18px; transition: background 0.2s, color 0.2s; }
+  .arrow:hover { background: #1a1917; color: #fff; }
+  .hint { margin: 14px 0 0; font-size: 12px; color: #9a958b; }
+
+  /* The pulled-out record. */
+  .out { margin: auto; border: 0; padding: 0; width: min(880px, 94vw); border-radius: 18px; background: #faf8f3; color: #1a1917; box-shadow: 0 40px 100px rgba(0, 0, 0, 0.35); overflow: visible; }
+  .out::backdrop { background: rgba(20, 18, 15, 0.55); backdrop-filter: blur(4px); }
+  .out[open] { display: grid; grid-template-columns: 1.1fr 1fr; animation: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  @keyframes rise { from { opacity: 0; transform: translateY(30px) scale(0.97); } }
+  .out-art { position: relative; padding: 28px 30% 28px 28px; }
+  .out-sleeve { position: relative; z-index: 1; width: 100%; aspect-ratio: 1; object-fit: cover; object-position: 0 0; border-radius: 4px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25); }
+  .out-disc { position: absolute; top: 34px; left: 34px; width: calc(70% - 40px); aspect-ratio: 1; border-radius: 50%; animation: slide 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+    background: radial-gradient(circle, var(--label) 0 17%, #111 17.5% 19%, transparent 19.5%), repeating-radial-gradient(circle, #141414 0 1.5px, #1f1f1f 1.5px 3px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35); }
+  .out-disc span { position: absolute; inset: 49%; border-radius: 50%; background: #e9e5dc; }
+  @keyframes slide { from { transform: translateX(0) rotate(0); } to { transform: translateX(40%) rotate(160deg); } }
+  .out-body { position: relative; padding: 44px 40px 36px 30px; display: flex; flex-direction: column; justify-content: center; }
+  .out-rubro { margin: 0; font: 12px/1.4 "SF Mono", ui-monospace, monospace; color: #8a857c; text-transform: uppercase; letter-spacing: 0.08em; }
+  #out-title { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.03em; margin: 10px 0 12px; line-height: 1.05; }
+  .out-d { margin: 0 0 26px; line-height: 1.6; color: #4a463f; }
+  .out-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .out-actions a { border-radius: 999px; padding: 12px 20px; font-weight: 600; font-size: 14px; text-decoration: none; }
+  .out-visit { background: #1a1917; color: #faf8f3; }
+  .out-visit[hidden] { display: none; }
+  .out-wa { background: #25d366; color: #06301a; }
+  .out-close { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: #ece7dd; cursor: pointer; font-size: 14px; }
+
+  @media (max-width: 720px) {
+    .out[open] { grid-template-columns: 1fr; }
+    .out-art { padding: 20px 20px 0; max-width: 300px; }
+    .out-body { padding: 20px 24px 28px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rec, .disc { transition: none; }
+    .out[open], .out-disc { animation: none; }
+  }
+</style>

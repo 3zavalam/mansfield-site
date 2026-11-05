@@ -1,0 +1,14 @@
+---
+// Previous home (Oct 2026): the Mac scene with the websites. Hidden since the crate landing took over; kept to come back to.
+import Base from '../layouts/Base.astro';
+import MacDesk from '../components/MacDesk.astro';
+import { EMAIL } from '../consts';
+---
+<Base bare>
+  <MacDesk />
+  <section class="mx-auto max-w-3xl px-5 py-20 sm:px-8 sm:py-28">
+    <h2 class="serif text-3xl leading-tight tracking-tight sm:text-5xl">Need a website?</h2>
+    <p class="mt-4 max-w-xl text-[17px] leading-relaxed text-stone-600 dark:text-stone-400">Fast, clean sites for businesses, designed and coded from scratch.</p>
+    <a href={`mailto:${EMAIL}`} class="mt-7 inline-block rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-paper transition hover:bg-accent dark:bg-stone-100 dark:text-night">Email me →</a>
+  </section>
+</Base>

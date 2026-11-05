@@ -1,14 +1,89 @@
 ---
-// Home in portfolio mode: the Mac scene with the websites I build. The personal home is hidden in _index.astro.
+// Home: the landing. Left, the pitch and a WhatsApp button; right, the portfolio as a crate of records (Crate.astro).
+// The previous Mac-scene home is kept in _home-mac.astro.
 import Base from '../layouts/Base.astro';
-import MacDesk from '../components/MacDesk.astro';
-import { EMAIL } from '../consts';
+import Crate from '../components/Crate.astro';
+import { webs } from '../webs';
+import { waLink } from '../consts';
+const wa = waLink('Hola Emilio, quiero una web para mi negocio.');
+const steps = [
+  ['Me cuentas', 'Por WhatsApp: qué haces, a quién le vendes y qué quieres que la gente haga en tu web.'],
+  ['Te enseño una propuesta', 'Un diseño hecho para tu negocio, no una plantilla. Lo ajustamos juntos.'],
+  ['La publicamos', 'Con tu dominio, rápida en celular y lista para que te escriban.'],
+];
 ---
-<Base bare>
-  <MacDesk />
-  <section class="mx-auto max-w-3xl px-5 py-20 sm:px-8 sm:py-28">
-    <h2 class="serif text-3xl leading-tight tracking-tight sm:text-5xl">Need a website?</h2>
-    <p class="mt-4 max-w-xl text-[17px] leading-relaxed text-stone-600 dark:text-stone-400">Fast, clean sites for businesses, designed and coded from scratch.</p>
-    <a href={`mailto:${EMAIL}`} class="mt-7 inline-block rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-paper transition hover:bg-accent dark:bg-stone-100 dark:text-night">Email me →</a>
-  </section>
+<Base bare title="Webs para negocios" description="Diseño y desarrollo webs a la medida para negocios. Escríbeme por WhatsApp.">
+  <div class="landing">
+    <header class="top">
+      <a href="/" class="logo">Mansfield<span>.</span></a>
+      <a href={wa} target="_blank" rel="noopener" class="top-wa">WhatsApp</a>
+    </header>
+
+    <section class="hero">
+      <div class="pitch">
+        <p class="kicker"><span></span>Disponible para nuevos proyectos</p>
+        <h1>Webs que hacen que <em>te escriban.</em></h1>
+        <p class="lead">Diseño y programo la web de tu negocio desde cero: rápida, bonita en el celular y con un botón directo a tu WhatsApp. Échale un ojo a la caja: cada disco es una web.</p>
+        <a href={wa} target="_blank" rel="noopener" class="cta">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
+          Escríbeme por WhatsApp
+        </a>
+        <p class="note">993 159 0106</p>
+        <ul class="facts">
+          <li><b>{webs.length}</b> webs en la caja</li>
+          <li><b>100%</b> a la medida</li>
+          <li><b>1</b> mensaje para empezar</li>
+        </ul>
+      </div>
+      <div class="digs">
+        <Crate />
+      </div>
+    </section>
+
+    <section class="how">
+      <h2>Así trabajamos</h2>
+      <ol>{steps.map(([t, d]) => <li><b>{t}</b><span>{d}</span></li>)}</ol>
+      <a href={wa} target="_blank" rel="noopener" class="cta dark">Empezar por WhatsApp →</a>
+    </section>
+  </div>
 </Base>
+
+<style>
+  .landing { --ink: #1a1917; --paper: #faf8f3; --accent: #c2410c; font-family: Futura, "Futura PT", Jost, "Century Gothic", ui-sans-serif, system-ui, sans-serif; }
+  .top { display: flex; justify-content: space-between; align-items: center; padding: 22px clamp(20px, 5vw, 64px); }
+  .logo { font-size: 22px; font-weight: 500; text-decoration: none; color: var(--ink); }
+  .logo span { color: var(--accent); }
+  .top-wa { font-size: 14px; font-weight: 500; text-decoration: none; color: var(--ink); border: 1px solid #d9d4c8; border-radius: 999px; padding: 8px 16px; }
+  .top-wa:hover { background: var(--ink); color: var(--paper); }
+
+  .hero { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); align-items: center; gap: clamp(20px, 4vw, 60px); min-height: calc(100vh - 90px); min-height: calc(100svh - 90px); padding: 0 clamp(20px, 5vw, 64px) 40px; }
+  .kicker { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 13px; color: #6b665e; }
+  .kicker span { width: 8px; height: 8px; border-radius: 50%; background: #25d366; box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.18); }
+  h1 { font-size: clamp(2.8rem, 6vw, 5.6rem); line-height: 0.98; letter-spacing: -0.035em; font-weight: 500; margin: 18px 0 0; color: var(--ink); }
+  h1 em { font-style: normal; color: var(--accent); }
+  .lead { font-size: 18px; line-height: 1.6; color: #4a463f; max-width: 30em; margin: 22px 0 30px; }
+  .cta { display: inline-flex; align-items: center; gap: 10px; background: #25d366; color: #06301a; font-weight: 600; font-size: 17px; text-decoration: none; padding: 16px 26px; border-radius: 999px; box-shadow: 0 12px 30px rgba(37, 211, 102, 0.3); transition: transform 0.2s, box-shadow 0.2s; }
+  .cta:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(37, 211, 102, 0.4); }
+  .cta svg { width: 22px; height: 22px; }
+  .cta.dark { background: var(--ink); color: var(--paper); box-shadow: none; }
+  .note { margin: 12px 0 0; font-size: 13px; color: #8a857c; }
+  .facts { display: flex; gap: 28px; list-style: none; padding: 26px 0 0; margin: 30px 0 0; border-top: 1px solid #e3ded3; font-size: 13px; color: #6b665e; }
+  .facts b { display: block; font-size: 26px; font-weight: 500; color: var(--ink); }
+  .digs { position: relative; }
+  .digs::before { content: ''; position: absolute; inset: 6% 2% 18%; border-radius: 50%; background: radial-gradient(closest-side, rgba(194, 65, 12, 0.08), rgba(194, 65, 12, 0)); z-index: -1; }
+
+  .how { padding: 90px clamp(20px, 5vw, 64px) 110px; max-width: 1200px; margin: 0 auto; }
+  .how h2 { font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 500; letter-spacing: -0.03em; margin: 0 0 34px; }
+  .how ol { list-style: none; margin: 0 0 40px; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: s; }
+  .how li { counter-increment: s; border: 1px solid #e3ded3; border-radius: 18px; padding: 26px; display: grid; gap: 8px; background: #fff; }
+  .how li::before { content: '0' counter(s); font: 12px/1 "SF Mono", ui-monospace, monospace; color: var(--accent); margin-bottom: 18px; }
+  .how b { font-size: 20px; font-weight: 500; }
+  .how span { color: #5a554d; line-height: 1.55; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; min-height: 0; padding-top: 10px; }
+    .digs { order: 0; }
+    .how ol { grid-template-columns: 1fr; }
+    .facts { gap: 20px; }
+  }
+</style>
