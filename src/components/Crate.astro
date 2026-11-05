@@ -44,7 +44,16 @@ const records = webs.map((w, i) => ({ ...w, n: String(i + 1).padStart(2, '0'), r
     <div class="info"><span class="count"><b data-n>01</b> / {String(records.length).padStart(2, '0')}</span><span class="name" data-name>{records[0].t}</span><span class="rubro" data-rubro>{records[0].rubro}</span></div>
     <button type="button" class="arrow next" aria-label="Siguiente">→</button>
   </div>
-  <p class="hint">Desliza o usa las flechas · Toca un disco para sacarlo</p>
+  <div class="go">
+    <a class="go-visit" target="_blank" rel="noopener" data-go>Ver esta web ↗</a>
+    <button type="button" class="go-more" data-more>Detalles</button>
+  </div>
+
+  <ul class="thumbs" aria-label="Todas las webs">
+    {records.map((r, i) => (
+      <li><button type="button" data-k={i} aria-label={`${r.t}, ${r.rubro}`} style={`--label:${r.label}`}><img src={r.icon} alt="" width="480" height="300" decoding="async" loading="lazy" /></button></li>
+    ))}
+  </ul>
 
   <dialog class="out" aria-labelledby="out-title">
     <div class="out-art">
@@ -69,6 +78,8 @@ const records = webs.map((w, i) => ({ ...w, n: String(i + 1).padStart(2, '0'), r
   const vp = root.querySelector('.viewport');
   const recs = [...root.querySelectorAll('.rec')];
   const $n = root.querySelector('[data-n]'), $name = root.querySelector('[data-name]'), $rubro = root.querySelector('[data-rubro]');
+  const $go = root.querySelector('[data-go]');
+  const thumbs = [...root.querySelectorAll('.thumbs button')];
   let cur = 0;
 
   const set = (i) => {
@@ -84,6 +95,11 @@ const records = webs.map((w, i) => ({ ...w, n: String(i + 1).padStart(2, '0'), r
     $n.textContent = records[cur].n;
     $name.textContent = records[cur].t;
     $rubro.textContent = records[cur].rubro;
+    // Sites without a public link (the client's) open the details instead.
+    $go.href = records[cur].link ?? '#';
+    $go.textContent = records[cur].link ? 'Ver esta web ↗' : 'Ver detalles';
+    $go.toggleAttribute('target', !!records[cur].link);
+    thumbs.forEach((b, k) => b.setAttribute('aria-current', String(k === cur)));
   };
   set(0);
 
@@ -119,6 +135,9 @@ const records = webs.map((w, i) => ({ ...w, n: String(i + 1).padStart(2, '0'), r
   });
   root.querySelector('.prev').addEventListener('click', () => set(cur - 1));
   root.querySelector('.next').addEventListener('click', () => set(cur + 1));
+  thumbs.forEach((b, k) => b.addEventListener('click', () => set(k)));
+  root.querySelector('[data-more]').addEventListener('click', () => pull(cur));
+  $go.addEventListener('click', (e) => { if (!records[cur].link) { e.preventDefault(); pull(cur); } });
 
   // A click on the record you're on pulls it out; on any other, flips to it.
   recs.forEach((r, k) => r.addEventListener('click', () => { if (moved) return; k === cur ? pull(k) : set(k); }));
@@ -198,7 +217,18 @@ const records = webs.map((w, i) => ({ ...w, n: String(i + 1).padStart(2, '0'), r
   .rubro { font-size: 13px; color: #6b665e; }
   .arrow { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #d9d4c8; background: #fff; cursor: pointer; font-size: 18px; transition: background 0.2s, color 0.2s; }
   .arrow:hover { background: #1a1917; color: #fff; }
-  .hint { margin: 14px 0 0; font-size: 12px; color: #9a958b; }
+  .go { display: flex; gap: 10px; margin-top: 14px; }
+  .go a, .go button { border-radius: 999px; padding: 11px 20px; font: inherit; font-weight: 600; font-size: 14px; text-decoration: none; cursor: pointer; }
+  .go-visit { background: #1a1917; color: #faf8f3; }
+  .go-more { background: transparent; color: #1a1917; border: 1px solid #d9d4c8; }
+  .go-more:hover { background: #fff; }
+  /* Every cover at a glance: tap one to jump straight to it. */
+  .thumbs { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; width: min(100%, 540px); }
+  @media (max-width: 560px) { .thumbs { grid-template-columns: repeat(5, 1fr); gap: 8px; } }
+  .thumbs button { display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 0; border-radius: 6px; overflow: hidden; cursor: pointer; background: #111; opacity: 0.55; outline: 2px solid transparent; outline-offset: 2px; transition: opacity 0.2s, outline-color 0.2s, transform 0.2s; }
+  .thumbs button:hover { opacity: 0.9; transform: translateY(-2px); }
+  .thumbs button[aria-current="true"] { opacity: 1; outline-color: var(--label); }
+  .thumbs img { width: 100%; height: 100%; object-fit: cover; object-position: 0 0; pointer-events: none; }
 
   /* The pulled-out record. */
   .out { margin: auto; border: 0; padding: 0; width: min(880px, 94vw); border-radius: 18px; background: #faf8f3; color: #1a1917; box-shadow: 0 40px 100px rgba(0, 0, 0, 0.35); overflow: visible; }
