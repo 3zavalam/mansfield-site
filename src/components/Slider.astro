@@ -1,0 +1,113 @@
+---
+// The portfolio as a simple side-to-side slider: one site per card, swipe or use the arrows.
+// (The earlier vinyl-crate version is parked in src/drafts/landing-tries/Crate.astro.)
+import { webs } from '../webs';
+import { waLink } from '../consts';
+// Spanish label and description for each site (webs.ts is in English).
+const meta: Record<string, [string, string]> = {
+  desmi: ['Barreras contra sargazo', 'La web de ECE Corporativo, distribuidor oficial de DESMI: barreras contra el sargazo, servicios y contacto directo por WhatsApp.'],
+  'casa-olivo': ['Restaurante', 'Cocina de temporada: un bowl de aceitunas en 3D, el menú con precios y reservaciones.'],
+  'norte-dental': ['Clínica dental', 'Clínica limpia y luminosa: agenda de citas, tratamientos con precio claro y preguntas frecuentes.'],
+  'ruta-cafe': ['Tostador de café', 'Tienda oscura y cálida: granos en 3D, los cafés del mes y un club de suscripción.'],
+  'estudio-arca': ['Arquitectura', 'Fotos a todo lo ancho y una lista de obras donde la foto de cada proyecto sigue al cursor.'],
+  'atlas-fc': ['Academia de fútbol', 'Una cancha 3D con una jugada de pases, categorías, método y clase de prueba.'],
+  'mar-azul': ['Hotel boutique', 'Hotel en Tulum: el Caribe al amanecer animado, reservación y las suites en fotos.'],
+  'forma-gym': ['Gimnasio', 'Negro y neón: una pesa rusa en 3D, planes de membresía y horario de clases.'],
+  raiz: ['Inmobiliaria', 'Inmobiliaria en León: buscador de casas, propiedades nuevas y una sección para vender.'],
+  probis: ['Mantenimiento de inmuebles', 'Pintura, impermeabilización y mantenimiento en Mérida, con cotización por WhatsApp.'],
+};
+const slides = webs.map((w, i) => ({
+  ...w,
+  n: String(i + 1).padStart(2, '0'),
+  rubro: meta[w.id]?.[0] ?? w.client,
+  d: meta[w.id]?.[1] ?? w.d,
+  small: w.img.replace('-1200.webp', '-480.webp'),
+  wa: waLink(`Hola Emilio, vi la web de ${w.t} en tu portafolio y quiero una así para mi negocio.`),
+}));
+const total = String(slides.length).padStart(2, '0');
+---
+<div class="slider" id="slider">
+  <div class="track" tabindex="0" aria-label="Webs del portafolio">
+    {slides.map((s, i) => (
+      <article class="card" aria-label={`${s.n} de ${total}: ${s.t}`}>
+        <a href={s.link} target="_blank" rel="noopener" class="shot" aria-hidden="true" tabindex="-1" data-nolink={!s.link || undefined}>
+          <img src={s.img} srcset={`${s.small} 480w, ${s.img} 1200w`} sizes="(max-width: 900px) 85vw, 40vw" alt="" width="1200" height="750" decoding="async" loading={i < 2 ? 'eager' : 'lazy'} />
+        </a>
+        <div class="body">
+          <p class="rubro">{s.n} · {s.rubro}</p>
+          <h3>{s.t}</h3>
+          <p class="d">{s.d}</p>
+          <div class="actions">
+            {s.link && <a href={s.link} target="_blank" rel="noopener" class="visit">Ver la web ↗</a>}
+            <a href={s.wa} target="_blank" rel="noopener" class="want">Quiero una así</a>
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+  <div class="nav">
+    <button type="button" class="prev" aria-label="Anterior">←</button>
+    <span class="count"><b data-n>01</b> / {total}</span>
+    <button type="button" class="next" aria-label="Siguiente">→</button>
+  </div>
+</div>
+
+<script>
+  const root = document.getElementById('slider')!;
+  const track = root.querySelector<HTMLElement>('.track')!;
+  const cards = [...root.querySelectorAll<HTMLElement>('.card')];
+  const $n = root.querySelector('[data-n]')!;
+  const prev = root.querySelector<HTMLButtonElement>('.prev')!;
+  const next = root.querySelector<HTMLButtonElement>('.next')!;
+
+  // `at` is the card we're on or heading to, so quick clicks each move one card even mid-animation.
+  let at = 0, timer = 0;
+  const step = () => cards[1].offsetLeft - cards[0].offsetLeft;
+  const show = (i: number) => {
+    $n.textContent = String(i + 1).padStart(2, '0');
+    prev.disabled = i <= 0;
+    next.disabled = i >= cards.length - 1;
+  };
+  const go = (i: number) => {
+    at = Math.max(0, Math.min(cards.length - 1, i));
+    track.scrollTo({ left: at * step(), behavior: 'smooth' });
+    show(at);
+  };
+  prev.addEventListener('click', () => go(at - 1));
+  next.addEventListener('click', () => go(at + 1));
+  // After a swipe settles, sync to where it landed.
+  track.addEventListener('scroll', () => {
+    clearTimeout(timer);
+    timer = window.setTimeout(() => { at = Math.round(track.scrollLeft / step()); show(at); }, 120);
+  }, { passive: true });
+  track.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(at + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(at - 1); }
+  });
+  show(0);
+</script>
+
+<style>
+  .slider { position: relative; min-width: 0; }
+  .track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; outline: none; padding: 4px 4px 34px; margin: 0 -4px; }
+  .track::-webkit-scrollbar { display: none; }
+  .card { flex: 0 0 86%; scroll-snap-align: start; background: #fff; border: 1px solid #e3ded3; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 12px 24px rgba(26, 25, 23, 0.07); }
+  .shot { display: block; aspect-ratio: 16 / 10; overflow: hidden; background: #eee; }
+  .shot[data-nolink] { pointer-events: none; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: 0 0; transition: transform 0.5s; }
+  .shot:hover img { transform: scale(1.03); }
+  .body { padding: 20px 22px 22px; display: flex; flex-direction: column; flex: 1; }
+  .rubro { margin: 0; font: 12px/1.4 "SF Mono", ui-monospace, Menlo, monospace; color: #8a857c; text-transform: uppercase; letter-spacing: 0.06em; }
+  h3 { margin: 6px 0 8px; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: #1a1917; }
+  .d { margin: 0 0 18px; line-height: 1.55; color: #5a554d; font-size: 15px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+  .actions a { border-radius: 999px; padding: 10px 18px; font-weight: 600; font-size: 14px; text-decoration: none; }
+  .visit { background: #1a1917; color: #faf8f3; }
+  .want { background: #25d366; color: #06301a; }
+  .nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 6px; }
+  .nav button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #d9d4c8; background: #fff; color: #1a1917; cursor: pointer; font-size: 18px; transition: background 0.2s, color 0.2s, opacity 0.2s; }
+  .nav button:hover:not(:disabled) { background: #1a1917; color: #fff; }
+  .nav button:disabled { opacity: 0.35; cursor: default; }
+  .count { font: 13px/1 "SF Mono", ui-monospace, monospace; color: #8a857c; min-width: 64px; text-align: center; }
+  .count b { color: #1a1917; }
+</style>

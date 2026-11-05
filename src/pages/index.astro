@@ -1,8 +1,8 @@
 ---
-// Home: the landing. Left, the pitch and a WhatsApp button; right, the portfolio as a crate of records (Crate.astro).
+// Home: the landing. Left, the pitch and a WhatsApp button; right, the portfolio as a side-to-side slider (Slider.astro).
 // The previous Mac-scene home is kept in _home-mac.astro.
 import Base from '../layouts/Base.astro';
-import Crate from '../components/Crate.astro';
+import Slider from '../components/Slider.astro';
 import { webs } from '../webs';
 import { waLink } from '../consts';
 const wa = waLink('Hola Emilio, quiero cotizar una web para mi negocio.');
@@ -23,20 +23,20 @@ const steps = [
       <div class="pitch">
         <p class="kicker"><span></span>Disponible para nuevos proyectos</p>
         <h1>Webs que hacen que <em>te escriban.</em></h1>
-        <p class="lead">Diseño y programo la web de tu negocio desde cero: rápida, bonita en el celular y con un botón directo a tu WhatsApp. Cada disco de la caja es una web: tócalo para verla.</p>
+        <p class="lead">Diseño y programo la web de tu negocio desde cero: rápida, bonita en el celular y con un botón directo a tu WhatsApp. Desliza para ver algunas de las webs que he hecho.</p>
         <a href={wa} target="_blank" rel="noopener" class="cta">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
           Quiero mi cotización gratis
         </a>
         <p class="note">Por WhatsApp · sin compromiso · 993 159 0106</p>
         <ul class="facts">
-          <li><b>{webs.length}</b> webs en la caja</li>
+          <li><b>{webs.length}</b> webs en el portafolio</li>
           <li><b>100%</b> a la medida</li>
           <li><b>1</b> mensaje para empezar</li>
         </ul>
       </div>
       <div class="digs">
-        <Crate />
+        <Slider />
       </div>
     </section>
 
@@ -69,8 +69,7 @@ const steps = [
   .note { margin: 12px 0 0; font-size: 13px; color: #8a857c; }
   .facts { display: flex; gap: 28px; list-style: none; padding: 26px 0 0; margin: 30px 0 0; border-top: 1px solid #e3ded3; font-size: 13px; color: #6b665e; }
   .facts b { display: block; font-size: 26px; font-weight: 500; color: var(--ink); }
-  .digs { position: relative; }
-  .digs::before { content: ''; position: absolute; inset: 6% 2% 18%; border-radius: 50%; background: radial-gradient(closest-side, rgba(194, 65, 12, 0.08), rgba(194, 65, 12, 0)); z-index: -1; }
+  .digs { position: relative; min-width: 0; }
 
   .how { padding: 90px clamp(20px, 5vw, 64px) 110px; max-width: 1200px; margin: 0 auto; }
   .how h2 { font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 500; letter-spacing: -0.03em; margin: 0 0 34px; }
@@ -81,7 +80,7 @@ const steps = [
   .how span { color: #5a554d; line-height: 1.55; }
 
   @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; min-height: 0; padding-top: 10px; }
+    .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; padding-top: 10px; }
     .digs { order: 0; }
     .how ol { grid-template-columns: 1fr; }
     .facts { gap: 20px; }
