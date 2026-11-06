@@ -81,10 +81,12 @@ const more: [string, string][] = PORTFOLIO_ONLY ? [] : [['About', '/about'], ['N
         {more.map(([l, h]) => <a class="hover:text-ink dark:hover:text-white" href={h}>{l}</a>)}
       </div>
       <div class="flex flex-wrap gap-x-4 gap-y-2">
-        <a class="hover:text-ink dark:hover:text-white" href={`mailto:${EMAIL}`}>Email</a>
-        <a class="hover:text-ink dark:hover:text-white" href={GITHUB_URL}>GitHub</a>
-        <a class="hover:text-ink dark:hover:text-white" href={LINKEDIN_URL}>LinkedIn</a>
-        {!PORTFOLIO_ONLY && <a class="hover:text-ink dark:hover:text-white" href="/rss.xml">RSS</a>}
+        {!PORTFOLIO_ONLY && <>
+          <a class="hover:text-ink dark:hover:text-white" href={`mailto:${EMAIL}`}>Email</a>
+          <a class="hover:text-ink dark:hover:text-white" href={GITHUB_URL}>GitHub</a>
+          <a class="hover:text-ink dark:hover:text-white" href={LINKEDIN_URL}>LinkedIn</a>
+          <a class="hover:text-ink dark:hover:text-white" href="/rss.xml">RSS</a>
+        </>}
         <span>© {new Date().getFullYear()} Mansfield</span>
       </div>
     </footer>
