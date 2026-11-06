@@ -22,7 +22,7 @@ const slides = webs.map((w, i) => ({
   rubro: meta[w.id]?.[0] ?? w.client,
   d: meta[w.id]?.[1] ?? w.d,
   small: w.img.replace('-1200.webp', '-480.webp'),
-  wa: waLink(`Hola Emilio, vi la web de ${w.t} en tu portafolio y quiero una así para mi negocio.`),
+  wa: waLink(`Hola, vi la web de ${w.t} en tu portafolio y quiero una así para mi negocio.`),
 }));
 const total = String(slides.length).padStart(2, '0');
 ---
