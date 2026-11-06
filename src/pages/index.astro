@@ -21,7 +21,6 @@ const steps = [
 
     <section class="hero">
       <div class="pitch">
-        <p class="kicker"><span></span>Disponible este mes</p>
         <h1>Tu negocio, con una web que <em>sí trae clientes.</em></h1>
         <p class="lead">Webs a la medida, rápidas en el celular y con WhatsApp a un toque. Tu primer diseño, en menos de 24 horas.</p>
         <a href={wa} target="_blank" rel="noopener" class="cta">
@@ -56,9 +55,7 @@ const steps = [
   .top-wa:hover { background: var(--ink); color: var(--paper); }
 
   .hero { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); align-items: center; gap: clamp(20px, 4vw, 60px); min-height: calc(100vh - 90px); min-height: calc(100svh - 90px); padding: 0 clamp(20px, 5vw, 64px) 40px; }
-  .kicker { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 13px; color: #6b665e; }
-  .kicker span { width: 8px; height: 8px; border-radius: 50%; background: #25d366; box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.18); }
-  h1 { font-size: clamp(2.8rem, 6vw, 5.6rem); line-height: 0.98; letter-spacing: -0.035em; font-weight: 500; margin: 18px 0 0; color: var(--ink); }
+  h1 { font-size: clamp(2.8rem, 6vw, 5.6rem); line-height: 0.98; letter-spacing: -0.035em; font-weight: 500; margin: 0; color: var(--ink); }
   h1 em { font-style: normal; color: var(--accent); }
   .lead { font-size: 18px; line-height: 1.6; color: #4a463f; max-width: 30em; margin: 22px 0 30px; }
   .cta { display: inline-flex; align-items: center; gap: 10px; background: #25d366; color: #06301a; font-weight: 600; font-size: 17px; text-decoration: none; padding: 16px 26px; border-radius: 999px; box-shadow: 0 12px 30px rgba(37, 211, 102, 0.3); transition: transform 0.2s, box-shadow 0.2s; }
