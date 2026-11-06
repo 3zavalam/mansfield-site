@@ -5,10 +5,10 @@ import Base from '../layouts/Base.astro';
 import Slider from '../components/Slider.astro';
 import { webs } from '../webs';
 import { waLink } from '../consts';
-const wa = waLink('Hola Emilio, quiero cotizar una web para mi negocio.');
+const wa = waLink('Hola Emilio, quiero una web para mi negocio.');
 const steps = [
   ['Me cuentas', 'Por WhatsApp: qué haces, a quién le vendes y qué quieres que la gente haga en tu web.'],
-  ['Te enseño una propuesta', 'Un diseño hecho para tu negocio, no una plantilla. Lo ajustamos juntos.'],
+  ['Te enseño el primer diseño', 'En menos de 24 horas. Hecho para tu negocio, no una plantilla; lo ajustamos juntos.'],
   ['La publicamos', 'Con tu dominio, rápida en celular y lista para que te escriban.'],
 ];
 ---
@@ -16,23 +16,23 @@ const steps = [
   <div class="landing">
     <header class="top">
       <a href="/" class="logo">Mansfield<span>.</span></a>
-      <a href={wa} target="_blank" rel="noopener" class="top-wa">Cotizar gratis</a>
+      <a href={wa} target="_blank" rel="noopener" class="top-wa">Quiero mi web</a>
     </header>
 
     <section class="hero">
       <div class="pitch">
-        <p class="kicker"><span></span>Disponible para nuevos proyectos</p>
-        <h1>Webs que hacen que <em>te escriban.</em></h1>
-        <p class="lead">Diseño y programo la web de tu negocio desde cero: rápida, bonita en el celular y con un botón directo a tu WhatsApp. Desliza para ver algunas de las webs que he hecho.</p>
+        <p class="kicker"><span></span>Disponible este mes</p>
+        <h1>Tu negocio, con una web que <em>sí trae clientes.</em></h1>
+        <p class="lead">Webs a la medida, rápidas en el celular y con WhatsApp a un toque. Tu primer diseño, en menos de 24 horas.</p>
         <a href={wa} target="_blank" rel="noopener" class="cta">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
-          Quiero mi cotización gratis
+          Quiero mi web
         </a>
-        <p class="note">Por WhatsApp · 993 159 0106</p>
+        <p class="note">Te respondo por WhatsApp · 993 159 0106</p>
         <ul class="facts">
           <li><b>{webs.length}</b> webs en el portafolio</li>
           <li><b>100%</b> a la medida</li>
-          <li><b>1</b> mensaje para empezar</li>
+          <li><b>24 h</b> primer diseño</li>
         </ul>
       </div>
       <div class="digs">
@@ -43,7 +43,7 @@ const steps = [
     <section class="how">
       <h2>Así trabajamos</h2>
       <ol>{steps.map(([t, d]) => <li><b>{t}</b><span>{d}</span></li>)}</ol>
-      <a href={wa} target="_blank" rel="noopener" class="cta dark">Cotizar mi web gratis →</a>
+      <a href={wa} target="_blank" rel="noopener" class="cta dark">Quiero mi web →</a>
     </section>
   </div>
 </Base>
