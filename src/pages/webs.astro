@@ -1,0 +1,39 @@
+---
+// The web portfolio on its own page: the home is now the dental-clinic chatbot landing and links here from its "Webs" card.
+import Base from '../layouts/Base.astro';
+import Slider from '../components/Slider.astro';
+import { waLink } from '../consts';
+const wa = waLink('Hola, quiero una web para mi negocio.');
+---
+<Base bare title="Webs que hemos hecho" description="Webs a la medida para negocios: rápidas en el celular y con WhatsApp a un toque.">
+  <link slot="head" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <div class="page">
+    <header class="top">
+      <a href="/" class="logo">Mansfield<span>.</span></a>
+      <a href="/" class="back">← Inicio</a>
+    </header>
+    <section class="intro">
+      <h1>Webs que hemos hecho</h1>
+      <p>Webs a la medida, rápidas en el celular y con WhatsApp a un toque. Tu primer diseño, en menos de 24 horas.</p>
+    </section>
+    <section class="work"><Slider /></section>
+    <section class="end">
+      <a href={wa} target="_blank" rel="noopener" class="cta">Quiero mi web</a>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .page { --ink: #1a1917; --paper: #faf8f3; --muted: #6b665e; --accent: #c2410c; font-family: Nunito, ui-sans-serif, system-ui, sans-serif; color: var(--ink); }
+  .top { display: flex; justify-content: space-between; align-items: center; padding: 22px clamp(20px, 5vw, 64px); }
+  .logo { font-size: 22px; font-weight: 500; text-decoration: none; color: var(--ink); }
+  .logo span { color: var(--accent); }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--ink); }
+  .intro, .work, .end { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 64px); }
+  .intro { padding-top: 40px; padding-bottom: 36px; }
+  h1 { font-size: clamp(2.2rem, 4.5vw, 3.6rem); font-weight: 500; letter-spacing: -0.03em; line-height: 1.05; margin: 0 0 16px; }
+  .intro p { font-size: 18px; line-height: 1.6; color: #4a463f; max-width: 32em; margin: 0; }
+  .end { padding-top: 50px; padding-bottom: 90px; }
+  .cta { display: inline-flex; background: #25d366; color: #06301a; font-weight: 600; font-size: 17px; text-decoration: none; padding: 16px 26px; border-radius: 999px; box-shadow: 0 12px 30px rgba(37, 211, 102, 0.3); }
+</style>
