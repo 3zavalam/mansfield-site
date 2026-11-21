@@ -3,7 +3,8 @@
 import Base from '../layouts/Base.astro';
 import Slider from '../components/Slider.astro';
 import { waLink } from '../consts';
-const wa = waLink('Hola, quiero una web para mi negocio.');
+import { WA_MSG } from '../ofertas';
+const wa = waLink(WA_MSG.web);
 ---
 <Base bare title="Webs que hemos hecho" description="Webs a la medida para negocios: rápidas en el celular y con WhatsApp a un toque.">
   <link slot="head" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -24,6 +25,8 @@ const wa = waLink('Hola, quiero una web para mi negocio.');
 </Base>
 
 <style>
+  /* Light-only design: ignore the site's dark mode (system dark mode was turning the body dark under dark text). */
+  :global(html.dark body) { background: #faf8f3; color: #1a1917; }
   .page { --ink: #1a1917; --paper: #faf8f3; --muted: #6b665e; --accent: #c2410c; font-family: Nunito, ui-sans-serif, system-ui, sans-serif; color: var(--ink); }
   .top { display: flex; justify-content: space-between; align-items: center; padding: 22px clamp(20px, 5vw, 64px); }
   .logo { font-size: 22px; font-weight: 500; text-decoration: none; color: var(--ink); }

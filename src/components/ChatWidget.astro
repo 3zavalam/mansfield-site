@@ -1,0 +1,362 @@
+---
+// Floating chat (bottom right). Two bots, picked by the layout (Base.astro `chat` prop, Demo.astro):
+// - bot="mansfield" (every page but the landing): our sales assistant, /api/chat (functions/api/chat.ts, Claude Haiku),
+//   answers about packages, offers and services and hands off to WhatsApp. History lives in sessionStorage and is sent each turn.
+// - bot="clinica" (the dental-clinic landing): a live demo of the clinics' WhatsApp bot (chatbot-clinicas) as a patient of the
+//   demo clinic Norte Dental, via /api/clinica (functions/api/clinica.ts → the bot's /prueba simulator). The bot keeps the
+//   conversation on its side, keyed by a fake patient number stored here; we only keep what's on screen to redraw it.
+// Styles are global with an mc- prefix because messages are created by JS (scoped styles wouldn't reach them),
+// and they're plain CSS, not Tailwind utilities (the dev server serves stale Tailwind).
+import { waLink } from '../consts';
+import { WA_MSG, type Tema } from '../ofertas';
+// tema: the starting topic for the WhatsApp button ("web" on /webs and the demo sites); the Mansfield assistant updates it
+// as the conversation goes (functions/api/chat.ts returns `tema`), so WhatsApp opens with the matching first message (WA_MSG).
+interface Props { bot?: 'mansfield' | 'clinica'; tema?: Tema }
+const { bot = 'mansfield', tema = 'general' } = Astro.props;
+const links = Object.fromEntries(Object.entries(WA_MSG).map(([k, v]) => [k, waLink(v)]));
+const clinica = bot === 'clinica';
+const cfg = clinica
+  ? {
+      title: 'Norte Dental',
+      sub: 'Demo del chatbot · clínica de ejemplo',
+      hint: 'Pruébalo: escríbele como paciente',
+      label: 'Probar el chatbot para clínicas',
+      placeholder: 'Escribe como paciente…',
+      cta: 'Quiero este chatbot en mi clínica',
+      wa: links.clinica_demo,
+      chips: ['¿Cuánto cuesta una limpieza?', 'Quiero agendar una cita', '¿Qué horario tienen?', '¿Dónde están?'],
+    }
+  : {
+      title: 'Asistente de Mansfield',
+      sub: 'Respuestas automáticas · al momento',
+      hint: '¿Dudas con los precios? Pregúntame',
+      label: 'Abrir chat: pregunta por precios y ofertas',
+      placeholder: 'Escribe tu pregunta…',
+      cta: 'Seguir en WhatsApp',
+      wa: links[tema],
+      chips: ['¿Cuánto cuesta?', '¿Cómo funciona la instalación gratis?', '¿Qué diferencia hay entre los paquetes?', 'Quiero un chatbot para otro negocio'],
+    };
+---
+<div class:list={['mc', clinica && 'mc-clinica']} id="mc" data-bot={bot} data-wa={cfg.wa} data-label={cfg.label} data-tema={tema} data-links={JSON.stringify(links)}>
+  <section class="mc-panel" id="mc-panel" role="dialog" aria-label={cfg.title} hidden>
+    <header class="mc-head">
+      <span class="mc-dot" aria-hidden="true">
+        {clinica
+          ? <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7.5 3C5 3 3.5 5 3.5 7.6c0 2.2 1 3.6 1.6 5.6.6 2 .9 7.8 2.9 7.8 1.6 0 1.6-5.2 4-5.2s2.4 5.2 4 5.2c2 0 2.3-5.8 2.9-7.8.6-2 1.6-3.4 1.6-5.6C20.5 5 19 3 16.5 3c-2 0-3 1.2-4.5 1.2S9.5 3 7.5 3z"/></svg>
+          : 'M'}
+      </span>
+      <span class="mc-who"><b>{cfg.title}</b><small>{cfg.sub}</small></span>
+      {clinica && (
+        <button type="button" class="mc-x" id="mc-reset" aria-label="Empezar la demo de nuevo" title="Empezar de nuevo">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+      )}
+      <button type="button" class="mc-x" id="mc-close" aria-label="Cerrar chat">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+      </button>
+    </header>
+    <div class="mc-log" id="mc-log" aria-live="polite"></div>
+    <div class="mc-chips" id="mc-chips">
+      {cfg.chips.map((c) => <button type="button" class="mc-chip">{c}</button>)}
+    </div>
+    <form class="mc-form" id="mc-form">
+      <textarea id="mc-input" rows="1" maxlength="1000" placeholder={cfg.placeholder} aria-label="Tu mensaje"></textarea>
+      <button type="submit" class="mc-send" aria-label="Enviar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.1L4 11l9 1-9 1-2 6.3a1 1 0 0 0 1.4 1.1z" /></svg>
+      </button>
+    </form>
+    <a class="mc-wa" id="mc-wa" href={cfg.wa} target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z" /></svg>
+      {cfg.cta}
+    </a>
+  </section>
+
+  <button type="button" class="mc-fab" id="mc-fab" aria-controls="mc-panel" aria-expanded="false" aria-label={cfg.label}>
+    <svg class="mc-i-open" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm3 6.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6zm5 0a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6zm5 0a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z" /></svg>
+    <svg class="mc-i-close" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg>
+  </button>
+  <span class="mc-hint" id="mc-hint" aria-hidden="true">{cfg.hint}</span>
+</div>
+
+<script>
+  // On screen: 'user' / 'assistant' bubbles, 'aviso' = what the clinic's staff would receive (clinic demo only).
+  type Line = { role: 'user' | 'assistant' | 'aviso'; content: string };
+  type Opcion = { titulo: string; descripcion: string };
+
+  const root = document.getElementById('mc')!;
+  const BOT = root.dataset.bot as 'mansfield' | 'clinica';
+  const CLINICA = BOT === 'clinica';
+  const KEY = CLINICA ? 'mansfield-chat-clinica' : 'mansfield-chat';
+  const INTRO = CLINICA
+    ? 'Demo en vivo: escribe como si fueras paciente de Norte Dental, una clínica de ejemplo. Te contesta el mismo chatbot que instalamos en el WhatsApp de tu clínica.'
+    : 'Hola. Soy el asistente automático de Mansfield. Puedo contestarte sobre el chatbot de WhatsApp para clínicas, los paquetes, la instalación gratis y nuestros otros servicios. ¿Qué te gustaría saber?';
+
+  const panel = document.getElementById('mc-panel')!;
+  const fab = document.getElementById('mc-fab')!;
+  const log = document.getElementById('mc-log')!;
+  const chips = document.getElementById('mc-chips')!;
+  const form = document.getElementById('mc-form') as HTMLFormElement;
+  const input = document.getElementById('mc-input') as HTMLTextAreaElement;
+  const hint = document.getElementById('mc-hint')!;
+  let wa = root.dataset.wa!;
+  const links: Record<string, string> = JSON.parse(root.dataset.links || '{}');
+  const waBtn = document.getElementById('mc-wa') as HTMLAnchorElement;
+
+  type State = { lines: Line[]; tel?: string; opciones?: Opcion[]; tema?: string };
+  let st: State = { lines: [] };
+  try { st = JSON.parse(sessionStorage.getItem(KEY) || 'null') || st; if (!Array.isArray(st.lines)) st = { lines: [] }; } catch {}
+  const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(st)); } catch {} };
+  // Clinic demo: a fake patient number in the 52199 range (the only one /api/clinica accepts).
+  const newTel = () => '52199' + String(Math.floor(Math.random() * 1e8)).padStart(8, '0');
+  if (CLINICA && !st.tel) { st.tel = newTel(); save(); }
+  let busy = false;
+  // Mansfield assistant: the WhatsApp button opens with the first message for the topic of the conversation.
+  // Starts from this page's topic; once the assistant has named one, that one wins (it's remembered across pages).
+  function setTema(t?: string | null) {
+    if (CLINICA) return;
+    if (t && links[t]) { st.tema = t; save(); }
+    const use = st.tema && st.tema !== 'general' ? st.tema : root.dataset.tema!;
+    wa = links[use] || wa;
+    waBtn.href = wa;
+  }
+  setTema();
+
+  // Minimal formatting: escape everything, then **bold** / *bold* (WhatsApp style), links to our own pages, line breaks.
+  const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+  const fmt = (s: string) =>
+    esc(s)
+      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+      .replace(/(?<![\w/])\*(?!\s)([^*\n]+?)\*(?!\w)/g, '<b>$1</b>')
+      .replace(/(?:https?:\/\/)?getmansfield\.com(\/[\w\-/]*)?/g, (_m, p = '/') => `<a href="${p}">getmansfield.com${p === '/' ? '' : p}</a>`)
+      .replace(/\n/g, '<br>');
+
+  function bubble(line: Line, extra = '') {
+    const el = document.createElement('div');
+    if (line.role === 'aviso') {
+      el.className = 'mc-aviso';
+      el.innerHTML = `<small>Aviso que le llega a la clínica por WhatsApp</small>${fmt(line.content)}`;
+    } else {
+      el.className = `mc-m mc-${line.role === 'user' ? 'out' : 'in'} ${extra}`.trim();
+      el.innerHTML = fmt(line.content);
+    }
+    log.appendChild(el);
+    log.scrollTop = log.scrollHeight;
+    return el;
+  }
+  function note(text: string) {
+    const el = document.createElement('div');
+    el.className = 'mc-note';
+    el.textContent = text;
+    log.appendChild(el);
+  }
+  // Tappable options (the clinic bot's WhatsApp buttons/lists). Tapping one sends it like WhatsApp does.
+  function drawOptions() {
+    log.querySelector('.mc-opts')?.remove();
+    if (!st.opciones?.length) return;
+    const box = document.createElement('div');
+    box.className = 'mc-opts';
+    st.opciones.forEach((o) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = `<b>${esc(o.titulo)}</b>${o.descripcion ? `<small>${esc(o.descripcion)}</small>` : ''}`;
+      b.addEventListener('click', () => send(o.titulo, o));
+      box.appendChild(b);
+    });
+    log.appendChild(box);
+    log.scrollTop = log.scrollHeight;
+  }
+  function render() {
+    log.innerHTML = '';
+    if (CLINICA) note(INTRO); else bubble({ role: 'assistant', content: INTRO });
+    st.lines.forEach((l) => bubble(l));
+    drawOptions();
+    chips.hidden = st.lines.length > 0;
+  }
+
+  function setOpen(open: boolean) {
+    panel.hidden = !open;
+    root.classList.toggle('mc-open', open);
+    fab.setAttribute('aria-expanded', String(open));
+    fab.setAttribute('aria-label', open ? 'Cerrar chat' : root.dataset.label!);
+    hint.remove();
+    try { sessionStorage.setItem(KEY + '-seen', '1'); } catch {}
+    if (open) {
+      log.scrollTop = log.scrollHeight;
+      if (matchMedia('(min-width: 561px)').matches) input.focus();
+    }
+  }
+  fab.addEventListener('click', () => setOpen(panel.hidden));
+  document.getElementById('mc-close')!.addEventListener('click', () => { setOpen(false); fab.focus(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) { setOpen(false); fab.focus(); } });
+
+  // Clinic demo: start over as a new patient (the old conversation and its demo appointments are cleared on the bot's side).
+  document.getElementById('mc-reset')?.addEventListener('click', () => {
+    if (busy) return;
+    const old = st.tel;
+    st = { lines: [], tel: newTel() };
+    save();
+    render();
+    if (old) fetch('/api/clinica', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ tel: old, reiniciar: true }) }).catch(() => {});
+    input.focus();
+  });
+
+  // A small nudge after a few seconds, once per visit.
+  let seen = false;
+  try { seen = !!sessionStorage.getItem(KEY + '-seen'); } catch {}
+  if (seen) hint.remove(); else setTimeout(() => hint.isConnected && hint.classList.add('mc-show'), 6000);
+
+  // POST with a short retry when the server itself is restarting (a plain-text 503 from the runtime, not our JSON errors).
+  async function post(url: string, body: unknown, tries = 3): Promise<Response> {
+    const r = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+    if (r.status === 503 && tries > 1 && !(r.headers.get('content-type') || '').includes('json')) {
+      await new Promise((ok) => setTimeout(ok, 1500));
+      return post(url, body, tries - 1);
+    }
+    return r;
+  }
+
+  async function ask(text: string, toca?: Opcion): Promise<Line[]> {
+    if (CLINICA) {
+      const r = await post('/api/clinica', toca ? { tel: st.tel, toca } : { tel: st.tel, texto: text });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || String(r.status));
+      st.opciones = d.opciones ?? [];
+      const out: Line[] = [...(d.respuestas ?? []).map((c: string) => ({ role: 'assistant', content: c })), ...(d.avisos ?? []).map((c: string) => ({ role: 'aviso', content: c }))];
+      // Handed to a person and nothing to say (the bot stays quiet while staff take over).
+      if (!out.length && d.pausado) out.push({ role: 'aviso', content: 'La conversación pasó a una persona de la clínica. En la demo, toca ↺ para empezar de nuevo.' });
+      if (!out.length) throw new Error('empty');
+      return out;
+    }
+    const history = st.lines.filter((l) => l.role !== 'aviso').slice(-30);
+    const r = await post('/api/chat', { messages: history });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.reply) throw new Error(d.error || String(r.status));
+    setTema(d.tema);
+    return [{ role: 'assistant', content: d.reply }];
+  }
+
+  async function send(text: string, toca?: Opcion) {
+    text = text.trim();
+    if (!text || busy) return;
+    busy = true;
+    chips.hidden = true;
+    st.opciones = [];
+    drawOptions();
+    const mine: Line = { role: 'user', content: text };
+    st.lines.push(mine);
+    save();
+    bubble(mine);
+    input.value = '';
+    input.style.height = '';
+    const typing = bubble({ role: 'assistant', content: '' }, 'mc-typing');
+    typing.innerHTML = '<i></i><i></i><i></i>';
+    try {
+      const got = await ask(text, toca);
+      typing.remove();
+      for (const l of got) { st.lines.push(l); bubble(l); }
+      save();
+      drawOptions();
+    } catch (err) {
+      typing.remove();
+      // The Mansfield bot gets the whole history each turn, so a failed question is dropped to keep it clean.
+      if (!CLINICA) { st.lines.pop(); save(); }
+      const el = bubble({ role: 'assistant', content: String(err).includes('too_long')
+        ? 'Esta conversación ya es larga. Para seguir, escríbenos por WhatsApp.'
+        : CLINICA ? 'La demo no pudo contestar en este momento. Escríbenos por WhatsApp y te la mostramos.'
+        : 'No pude contestar en este momento. Escríbenos por WhatsApp y seguimos ahí.' }, 'mc-err');
+      const a = document.createElement('a');
+      a.href = wa; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Abrir WhatsApp →';
+      el.append(document.createElement('br'), a);
+    } finally {
+      busy = false;
+    }
+  }
+
+  form.addEventListener('submit', (e) => { e.preventDefault(); send(input.value); });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(input.value); } });
+  input.addEventListener('input', () => { input.style.height = ''; input.style.height = Math.min(input.scrollHeight, 110) + 'px'; });
+  chips.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => send(b.textContent || '')));
+
+  render();
+</script>
+
+<style is:global>
+  .mc { --mc-ink: #1a1917; --mc-paper: #faf8f3; --mc-line: #e3ded3; --mc-muted: #6b665e; --mc-green: #25d366; --mc-head: #1a1917; --mc-out: #1a1917; --mc-out-ink: #fff; --mc-bg: #faf8f3; font-family: Nunito, ui-sans-serif, system-ui, sans-serif; }
+  /* Clinic demo: WhatsApp colors, like the phone in the hero. */
+  .mc-clinica { --mc-head: #128c4a; --mc-out: #d9fdd3; --mc-out-ink: #111b21; --mc-bg: #efeae2; }
+  .mc-fab { position: fixed; right: 20px; bottom: 20px; z-index: 9998; width: 62px; height: 62px; border: 0; border-radius: 50%; background: var(--mc-head); color: #fff; cursor: pointer; display: grid; place-items: center; box-shadow: 0 14px 34px -8px rgba(26, 25, 23, 0.55); transition: transform 0.2s; }
+  .mc-fab:hover { transform: scale(1.06); }
+  .mc-fab svg { width: 28px; height: 28px; grid-area: 1 / 1; transition: opacity 0.2s, transform 0.2s; }
+  .mc-fab::after { content: ''; position: absolute; top: 3px; right: 3px; width: 14px; height: 14px; border-radius: 50%; background: #3cc35f; border: 2.5px solid #fff; }
+  .mc-clinica .mc-fab::after { background: #f59e0b; }
+  .mc-open .mc-fab::after { display: none; }
+  .mc-i-close { opacity: 0; transform: rotate(-60deg); }
+  .mc-open .mc-i-open { opacity: 0; transform: rotate(60deg); }
+  .mc-open .mc-i-close { opacity: 1; transform: none; }
+
+  .mc-hint { position: fixed; right: 92px; bottom: 34px; z-index: 9997; padding: 9px 14px; background: #fff; color: var(--mc-ink); font-size: 14px; font-weight: 600; border: 1px solid var(--mc-line); border-radius: 14px 14px 4px 14px; box-shadow: 0 10px 30px -12px rgba(26, 25, 23, 0.35); opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity 0.3s, transform 0.3s; white-space: nowrap; }
+  .mc-hint.mc-show { opacity: 1; transform: none; }
+
+  .mc-panel { position: fixed; right: 20px; bottom: 96px; z-index: 9999; width: 370px; height: min(600px, calc(100svh - 120px)); display: flex; flex-direction: column; background: var(--mc-bg); color: var(--mc-ink); border: 1px solid var(--mc-line); border-radius: 22px; overflow: hidden; box-shadow: 0 30px 70px -20px rgba(26, 25, 23, 0.45); animation: mc-in 0.22s ease-out; text-align: left; line-height: normal; letter-spacing: normal; }
+  .mc-panel[hidden] { display: none; }
+  @keyframes mc-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+  .mc-head { display: flex; align-items: center; gap: 8px; padding: 14px 12px 14px 16px; background: var(--mc-head); color: #fff; }
+  .mc-dot { width: 36px; height: 36px; flex: none; margin-right: 3px; border-radius: 50%; background: #3cc35f; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 17px; }
+  .mc-clinica .mc-dot { background: #fff; color: #8696a0; }
+  .mc-dot svg { width: 20px; height: 20px; }
+  .mc-who { display: grid; line-height: 1.25; flex: 1; min-width: 0; }
+  .mc-who b { font-size: 15px; font-weight: 600; }
+  .mc-who small { font-size: 12px; color: rgba(255, 255, 255, 0.7); }
+  .mc-x { width: 34px; height: 34px; flex: none; border: 0; border-radius: 50%; background: transparent; color: #fff; cursor: pointer; display: grid; place-items: center; }
+  .mc-x:hover { background: rgba(255, 255, 255, 0.14); }
+  .mc-x svg { width: 18px; height: 18px; }
+
+  .mc-log { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 16px 14px; overscroll-behavior: contain; }
+  .mc-m { max-width: 86%; padding: 9px 12px; border-radius: 16px; font-size: 14.5px; line-height: 1.45; overflow-wrap: anywhere; }
+  .mc-m b { font-weight: 700; }
+  .mc-m a { color: inherit; font-weight: 600; }
+  .mc-in { align-self: flex-start; background: #fff; border: 1px solid var(--mc-line); border-bottom-left-radius: 4px; }
+  .mc-out { align-self: flex-end; background: var(--mc-out); color: var(--mc-out-ink); border-bottom-right-radius: 4px; }
+  .mc-clinica .mc-m { border-radius: 10px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08); border: 0; }
+  .mc-clinica .mc-in { border-top-left-radius: 2px; border-bottom-left-radius: 10px; }
+  .mc-clinica .mc-out { border-top-right-radius: 2px; border-bottom-right-radius: 10px; }
+  .mc-err { background: #fff6ed; border-color: #fed7aa; }
+  .mc-note { align-self: center; max-width: 92%; padding: 8px 12px; border-radius: 10px; background: #fff3c4; color: #54471a; font-size: 13px; line-height: 1.4; text-align: center; }
+  .mc-aviso { align-self: stretch; padding: 9px 12px; border-radius: 10px; border: 1px dashed #d4a72c; background: #fffbea; color: #54471a; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
+  .mc-aviso small { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #a16207; margin-bottom: 3px; }
+  .mc-opts { display: grid; gap: 6px; align-self: flex-start; width: 86%; }
+  .mc-opts button { display: grid; gap: 1px; padding: 9px 12px; font: inherit; text-align: center; background: #fff; color: #027eb5; border: 0; border-radius: 10px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08); cursor: pointer; }
+  .mc-opts button:hover { background: #f5f6f6; }
+  .mc-opts b { font-size: 14.5px; font-weight: 600; }
+  .mc-opts small { font-size: 12px; color: #667781; }
+  .mc-typing { display: flex; gap: 4px; padding: 13px 14px; }
+  .mc-typing i { width: 6px; height: 6px; border-radius: 50%; background: #9a948a; animation: mc-dot 1s infinite; }
+  .mc-typing i:nth-child(2) { animation-delay: 0.15s; }
+  .mc-typing i:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes mc-dot { 0%, 60%, 100% { opacity: 0.3; transform: none; } 30% { opacity: 1; transform: translateY(-2px); } }
+
+  .mc-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 10px; }
+  .mc-chips[hidden] { display: none; }
+  .mc-chip { padding: 7px 12px; font: inherit; font-size: 13px; font-weight: 600; color: var(--mc-ink); background: #fff; border: 1px solid #d9d4c8; border-radius: 999px; cursor: pointer; text-align: left; }
+  .mc-chip:hover { border-color: var(--mc-ink); }
+
+  .mc-form { display: flex; align-items: flex-end; gap: 8px; margin: 0 12px; padding: 6px 6px 6px 14px; background: #fff; border: 1px solid #d9d4c8; border-radius: 20px; }
+  .mc-form:focus-within { border-color: var(--mc-ink); }
+  .mc-form textarea { flex: 1; min-width: 0; resize: none; border: 0; outline: 0; background: transparent; font: inherit; font-size: 16px; line-height: 1.4; padding: 6px 0; max-height: 110px; color: var(--mc-ink); }
+  .mc-send { width: 38px; height: 38px; flex: none; border: 0; border-radius: 50%; background: var(--mc-head); color: #fff; cursor: pointer; display: grid; place-items: center; }
+  .mc-send svg { width: 18px; height: 18px; }
+  .mc-wa { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 10px 12px 12px; padding: 11px; border-radius: 999px; background: var(--mc-green); color: #06301a; font-size: 14.5px; font-weight: 700; text-decoration: none; }
+  .mc-wa:hover { filter: brightness(0.96); }
+  .mc-wa svg { width: 18px; height: 18px; }
+
+  /* Phones: the panel becomes a full-width sheet and the button tucks in a bit. */
+  @media (max-width: 560px) {
+    .mc-fab { right: 16px; bottom: 16px; width: 58px; height: 58px; }
+    .mc-hint { right: 84px; bottom: 28px; font-size: 13px; }
+    .mc-panel { right: 0; left: 0; bottom: 0; width: auto; height: min(88svh, 640px); border-radius: 22px 22px 0 0; border-bottom: 0; }
+    .mc-open .mc-fab { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mc-panel, .mc-hint, .mc-fab, .mc-fab svg { animation: none; transition: none; }
+  }
+</style>

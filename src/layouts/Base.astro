@@ -2,12 +2,14 @@
 import '../styles/global.css';
 import { SITE_TITLE, SITE_DESCRIPTION, EMAIL, GITHUB_URL, LINKEDIN_URL } from '../consts';
 import { NAV } from '../sections';
+import ChatWidget from '../components/ChatWidget.astro';
 // Portfolio mode (Oct 2026): the personal sections are hidden (pages renamed to _*.astro, not deleted).
 // To bring them back, rename the pages and set this to false.
 const PORTFOLIO_ONLY = true;
 // bare: no header, and <main> goes full width (the home page's Mac scene).
-interface Props { title?: string; description?: string; type?: string; bare?: boolean }
-const { title, description = SITE_DESCRIPTION, type = 'website', bare = false } = Astro.props;
+// chat: the floating chat at the bottom right. Our sales assistant everywhere; the landing shows the clinic-bot demo instead.
+interface Props { title?: string; description?: string; type?: string; bare?: boolean; chat?: 'mansfield' | 'clinica' | false }
+const { title, description = SITE_DESCRIPTION, type = 'website', bare = false, chat = 'mansfield' } = Astro.props;
 const fullTitle = title ? `${title} · Mansfield` : `Mansfield · ${SITE_TITLE}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const og = new URL('/og.png', Astro.site);
@@ -95,5 +97,6 @@ const more: [string, string][] = PORTFOLIO_ONLY ? [] : [['About', '/about'], ['N
     var t=document.getElementById('theme');if(t)t.onclick=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');};
     var m=document.getElementById('menu'),n=document.getElementById('mobile-nav');if(m)m.onclick=function(){var h=n.classList.toggle('hidden');m.setAttribute('aria-expanded',String(!h));};
   </script>
+  {chat && <ChatWidget bot={chat} tema={path.startsWith('/webs') ? 'web' : 'general'} />}
 </body>
 </html>

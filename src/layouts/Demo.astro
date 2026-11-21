@@ -3,6 +3,7 @@
 // search engines and carry a small badge saying they're a concept, so nobody takes them for the real thing.
 interface Props { title: string; description: string; fonts: string; bg: string; color: string }
 const { title, description, fonts, bg, color } = Astro.props;
+import ChatWidget from '../components/ChatWidget.astro';
 ---
 <!doctype html>
 <html lang="es">
@@ -34,5 +35,6 @@ const { title, description, fonts, bg, color } = Astro.props;
 <body style={`background:${bg};color:${color}`}>
   <slot />
   <a class="mf-badge" href="/">Concepto · hecho por Mansfield</a>
+  <ChatWidget tema="web" />
 </body>
 </html>
