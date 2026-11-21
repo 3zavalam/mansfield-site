@@ -80,7 +80,7 @@ const cfg = clinica
 
 <script>
   // On screen: 'user' / 'assistant' bubbles, 'aviso' = what the clinic's staff would receive (clinic demo only).
-  type Line = { role: 'user' | 'assistant' | 'aviso'; content: string };
+  type Line = { role: 'user' | 'assistant' | 'aviso' | 'nota'; content: string };
   type Opcion = { titulo: string; descripcion: string };
 
   const root = document.getElementById('mc')!;
@@ -102,7 +102,8 @@ const cfg = clinica
   const links: Record<string, string> = JSON.parse(root.dataset.links || '{}');
   const waBtn = document.getElementById('mc-wa') as HTMLAnchorElement;
 
-  type State = { lines: Line[]; tel?: string; opciones?: Opcion[]; tema?: string };
+  // fin: the visitor used up the clinic demo (5 messages a day, functions/api/clinica.ts) and sees the sign-up card.
+  type State = { lines: Line[]; tel?: string; opciones?: Opcion[]; tema?: string; fin?: boolean };
   let st: State = { lines: [] };
   try { st = JSON.parse(sessionStorage.getItem(KEY) || 'null') || st; if (!Array.isArray(st.lines)) st = { lines: [] }; } catch {}
   const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(st)); } catch {} };
@@ -132,7 +133,10 @@ const cfg = clinica
 
   function bubble(line: Line, extra = '') {
     const el = document.createElement('div');
-    if (line.role === 'aviso') {
+    if (line.role === 'nota') {
+      el.className = 'mc-note';
+      el.textContent = line.content;
+    } else if (line.role === 'aviso') {
       el.className = 'mc-aviso';
       el.innerHTML = `<small>Aviso que le llega a la clínica por WhatsApp</small>${fmt(line.content)}`;
     } else {
@@ -165,12 +169,28 @@ const cfg = clinica
     log.appendChild(box);
     log.scrollTop = log.scrollHeight;
   }
+  // End of the clinic demo: a card that sends them to WhatsApp to set it up in their clinic, and the input is locked.
+  function drawFin() {
+    log.querySelector('.mc-fin')?.remove();
+    form.style.display = st.fin ? 'none' : '';
+    if (!st.fin) return;
+    chips.hidden = true;
+    const box = document.createElement('div');
+    box.className = 'mc-fin';
+    box.innerHTML = '<b>Terminaste la demo</b><p>Así contestaría a tus pacientes en el WhatsApp de tu clínica, con tus precios y tu horario.</p><p>Primeras 5 clínicas: instalación gratis y 30 días de prueba. Si no te gusta, no pagas nada.</p>';
+    const a = document.createElement('a');
+    a.href = wa; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Quiero mi instalación gratis →';
+    box.append(a);
+    log.appendChild(box);
+    log.scrollTop = log.scrollHeight;
+  }
   function render() {
     log.innerHTML = '';
     if (CLINICA) note(INTRO); else bubble({ role: 'assistant', content: INTRO });
     st.lines.forEach((l) => bubble(l));
     drawOptions();
     chips.hidden = st.lines.length > 0;
+    drawFin();
   }
 
   function setOpen(open: boolean) {
@@ -193,7 +213,7 @@ const cfg = clinica
   document.getElementById('mc-reset')?.addEventListener('click', () => {
     if (busy) return;
     const old = st.tel;
-    st = { lines: [], tel: newTel() };
+    st = { lines: [], tel: newTel(), fin: st.fin };
     save();
     render();
     if (old) fetch('/api/clinica', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ tel: old, reiniciar: true }) }).catch(() => {});
@@ -221,6 +241,8 @@ const cfg = clinica
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.error || String(r.status));
       st.opciones = d.opciones ?? [];
+      if (d.limite) { st.fin = true; return []; }
+      if (d.restantes === 0) st.fin = true;
       const out: Line[] = [...(d.respuestas ?? []).map((c: string) => ({ role: 'assistant', content: c })), ...(d.avisos ?? []).map((c: string) => ({ role: 'aviso', content: c }))];
       // Handed to a person and nothing to say (the bot stays quiet while staff take over).
       if (!out.length && d.pausado) out.push({ role: 'aviso', content: 'La conversación pasó a una persona de la clínica. En la demo, toca ↺ para empezar de nuevo.' });
@@ -256,6 +278,7 @@ const cfg = clinica
       for (const l of got) { st.lines.push(l); bubble(l); }
       save();
       drawOptions();
+      drawFin();
     } catch (err) {
       typing.remove();
       // The Mansfield bot gets the whole history each turn, so a failed question is dropped to keep it clean.
@@ -321,6 +344,10 @@ const cfg = clinica
   .mc-clinica .mc-in { border-top-left-radius: 2px; border-bottom-left-radius: 10px; }
   .mc-clinica .mc-out { border-top-right-radius: 2px; border-bottom-right-radius: 10px; }
   .mc-err { background: #fff6ed; border-color: #fed7aa; }
+  .mc-fin { align-self: stretch; padding: 14px; border-radius: 12px; background: #fff; border: 1px solid var(--mc-line); color: var(--mc-ink); font-size: 14px; line-height: 1.45; }
+  .mc-fin b { display: block; font-size: 15px; margin-bottom: 4px; }
+  .mc-fin p { margin: 0 0 8px; }
+  .mc-fin a { display: block; margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--mc-green); color: #fff; font-weight: 800; text-align: center; text-decoration: none; }
   .mc-note { align-self: center; max-width: 92%; padding: 8px 12px; border-radius: 10px; background: #fff3c4; color: #54471a; font-size: 13px; line-height: 1.4; text-align: center; }
   .mc-aviso { align-self: stretch; padding: 9px 12px; border-radius: 10px; border: 1px dashed #d4a72c; background: #fffbea; color: #54471a; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
   .mc-aviso small { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #a16207; margin-bottom: 3px; }

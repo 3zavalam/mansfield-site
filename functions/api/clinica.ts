@@ -12,6 +12,15 @@ const CLINICA = 'demo-web';
 const ALLOWED_HOSTS = /^(getmansfield\.com|www\.getmansfield\.com|[a-z0-9-]+\.mansfield-site\.pages\.dev|localhost|127\.0\.0\.1)$/;
 // Web visitors get fake numbers in their own range, so the web can only ever reach demo conversations.
 const TEL = /^52199\d{8}$/;
+// Demo cap: messages per visitor every 24 h, counted by the bot per hashed IP (the ↺ button gives a new number each time,
+// so the number can't be the key). At the cap the widget shows the "activate it in your clinic" card instead.
+const LIMITE = 5;
+
+async function visitante(request: Request): Promise<string> {
+  const ip = request.headers.get('cf-connecting-ip') ?? 'local';
+  const h = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`demo-web|${ip}`)));
+  return 'v-' + [...h.slice(0, 16)].map((x) => x.toString(16).padStart(2, '0')).join('');
+}
 
 type Env = { CLINIC_BOT_URL?: string; CLINIC_ADMIN_KEY?: string };
 type Body = { tel?: string; texto?: string; toca?: { titulo?: string; descripcion?: string }; reiniciar?: boolean };
@@ -40,7 +49,7 @@ export async function onRequestPost({ request, env }: { request: Request; env: E
   const r = await fetch(new URL('/prueba', env.CLINIC_BOT_URL), {
     method: 'POST',
     headers: { authorization: `Bearer ${env.CLINIC_ADMIN_KEY}`, 'content-type': 'application/json' },
-    body: JSON.stringify({ clinica_id: CLINICA, tel: b.tel, nombre: 'Visitante web', ...payload }),
+    body: JSON.stringify({ clinica_id: CLINICA, tel: b.tel, nombre: 'Visitante web', visitante: await visitante(request), limite: LIMITE, ...payload }),
   }).catch(() => null);
   if (!r || !r.ok) {
     console.error('clinic bot error', r?.status, r && (await r.text()).slice(0, 500));
@@ -48,10 +57,11 @@ export async function onRequestPost({ request, env }: { request: Request; env: E
   }
   if (b.reiniciar) return json({ ok: true });
 
-  const d = (await r.json()) as { respuestas?: string[]; opciones?: Opcion[]; avisos?: string[]; pausado?: boolean };
+  const d = (await r.json()) as { respuestas?: string[]; opciones?: Opcion[]; avisos?: string[]; pausado?: boolean; limite?: boolean; restantes?: number | null };
+  if (d.limite) return json({ respuestas: [], opciones: [], avisos: [], limite: true, restantes: 0 });
   // The simulator appends the buttons to the message as text ("  [1] ..."); the widget draws real buttons instead.
   const respuestas = (d.respuestas ?? []).map((t) => t.split('\n  [1] ')[0]).filter((t) => t.trim());
   // Notices are what the clinic's staff would get on their WhatsApp. "[a avisos generales] ..." → just the text.
   const avisos = (d.avisos ?? []).map((a) => a.replace(/^\[[^\]]*\]\s*/, '').replace(/\nChat: wa\.me\/\d+/, ''));
-  return json({ respuestas, opciones: d.opciones ?? [], avisos, pausado: !!d.pausado });
+  return json({ respuestas, opciones: d.opciones ?? [], avisos, pausado: !!d.pausado, restantes: d.restantes ?? null });
 }
